@@ -9,7 +9,11 @@
                     <ul class="list-inline mb-0">
                         <li><a href="#" class="btn btn-warning" onclick="refresh()"><i
                                     class="feather icon-refresh-cw"></i></a></li>
-                        <!-- <li><a href="#" class="btn btn-primary form-data" data-url="{{ route('dataUser.create') }}"><i class="feather icon-plus-square"></i> Tambah Data</a></li> -->
+                        <li>
+                            <a href="#" class="btn btn-primary form-data" data-url="{{ route('dataUser.create') }}">
+                                <i class="feather icon-plus-square"></i> Tambah Data
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
