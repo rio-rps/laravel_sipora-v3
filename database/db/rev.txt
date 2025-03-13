@@ -1,0 +1,7 @@
+.env
+view
+*tambah isi pada table bidang usaha
+*buat table baru : ddd_biodata_upload_dok
+route
+model
+controller
