@@ -13,7 +13,7 @@ class AktivasiAkunController extends Controller
     public function index()
     {
         $data = [
-            'title' => 'AKTIVASI AKUN',
+            'title' => 'AKTIVASI AKUNS',
         ];
         return view('private.aktivasi_akun.view')->with($data);
     }
