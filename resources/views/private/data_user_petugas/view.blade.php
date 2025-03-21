@@ -9,6 +9,12 @@
                     <ul class="list-inline mb-0">
                         <li><a href="#" class="btn btn-warning" onclick="refresh()"><i
                                     class="feather icon-refresh-cw"></i></a></li>
+                        <li>
+                            <a class="btn btn-primary form-data" data-url="{{ route('dataUserPetugas.create') }}"
+                                id="tombolModalForm">
+                                <i class="feather icon-plus-square"></i> Tambah Data
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -22,6 +28,7 @@
                                 <th>Nama</th>
                                 <th>Email</th>
                                 <th>Level</th>
+                                <th>Kab/Kota</th>
                                 <th width="10%" align="center">Action</th>
                             </tr>
                         </thead>
@@ -40,7 +47,7 @@
             myTable = $('#myTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ url('dataUser/show') }}",
+                ajax: "{{ url('dataUserPetugas/show') }}",
                 // "data": null,
                 // "class": "align-top",
                 // "orderable": false,
@@ -66,6 +73,10 @@
                     {
                         data: 'level',
                         name: 'level'
+                    },
+                    {
+                        data: 'kabkota',
+                        name: 'kabkota'
                     },
                     {
                         data: 'action',

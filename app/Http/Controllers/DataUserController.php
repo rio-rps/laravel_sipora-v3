@@ -82,7 +82,7 @@ class DataUserController extends Controller
     public function show($id)
     {
         if (request()->ajax()) {
-            return  DataTables::of(DataUserModel::query())
+            return  DataTables::of(DataUserModel::where('level', 3)->get())
                 ->addColumn('action', 'private.data_user.action')
                 ->addColumn('level', function ($row) {
                     return level($row->level);

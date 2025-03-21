@@ -119,7 +119,13 @@
                 <li class="nav-item {{ request()->url() == url('/dataUser') ? 'active' : '' }}">
                     <a href="{{ route('dataUser.index') }}">
                         <i class="fa fa-th-large"></i>
-                        <span class="menu-title" data-i18n="Data User">Data User</span>
+                        <span class="menu-title" data-i18n="Data User">Data User Pengguna</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ request()->url() == url('/dataUserPetugas') ? 'active' : '' }}">
+                    <a href="{{ route('dataUserPetugas.index') }}">
+                        <i class="fa fa-th-large"></i>
+                        <span class="menu-title" data-i18n="Data User">Data User Petugas</span>
                     </a>
                 </li>
             @elseif (Auth::user()->level == 3)

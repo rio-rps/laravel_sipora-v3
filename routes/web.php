@@ -10,6 +10,7 @@ use App\Http\Controllers\CparTrayekController;
 use App\Http\Controllers\DataKendaraanController;
 use App\Http\Controllers\DataPermohonanController;
 use App\Http\Controllers\DataUserController;
+use App\Http\Controllers\DataUserPetugasController;
 use App\Http\Controllers\KartuCekController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LayoutController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ToolsController;
 use App\Http\Controllers\TTDDokumenController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\UserDataAksesKabKotaController;
 use App\Http\Controllers\UserDataController;
 use App\Models\MappingMengangkutModel;
 use GuzzleHttp\Psr7\Request;
@@ -66,6 +68,11 @@ Route::controller(RegisterController::class)->group(function () {
 
 
 Route::group(['middleware' => ['auth']], function () {
+    //panel
+    Route::get('panel/show_count_jenis_permohonan', [PanelController::class, 'show_count_jenis_permohonan'])->name('panel.show_count_jenis_permohonan');
+    Route::get('panel/show_jenis_permohonan', [PanelController::class, 'show_jenis_permohonan'])->name('panel.show_jenis_permohonan');
+    //
+
     Route::get('aktivasiAkun', [AktivasiAkunController::class, 'index'])->name('aktivasiAkun.index');
     Route::post('aktivasiAkun/store', [AktivasiAkunController::class, 'store'])->name('aktivasiAkun.store');
 
@@ -80,12 +87,18 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('dataUser/email', [PengaturanAkunController::class, 'email'])->name('dataUser.email');
     Route::get('dataUser/password', [PengaturanAkunController::class, 'index'])->name('dataUser.password');
 
+    // client
     Route::get('dataUser/editResetPassword/{id}', [DataUserController::class, 'editResetPassword'])->name('dataUser.editResetPassword');
     Route::put('dataUser/updateResetPassword/{id}', [DataUserController::class, 'updateResetPassword'])->name('dataUser.updateResetPassword');
     Route::get('dataUser/editEmail/{id}', [DataUserController::class, 'editEmail'])->name('dataUser.editEmail');
     Route::put('dataUser/updateEmail/{id}', [DataUserController::class, 'updateEmail'])->name('dataUser.updateEmail');
     Route::get('dataUser/viewBiodata/{id}', [DataUserController::class, 'viewBiodata'])->name('dataUser.viewBiodata');
 
+    // data 
+    Route::get('dataUserPetugas/editResetPassword/{id}', [DataUserPetugasController::class, 'editResetPassword'])->name('dataUserPetugas.editResetPassword');
+    Route::put('dataUserPetugas/updateResetPassword/{id}', [DataUserPetugasController::class, 'updateResetPassword'])->name('dataUserPetugas.updateResetPassword');
+    Route::get('dataUserPetugas/editEmail/{id}', [DataUserPetugasController::class, 'editEmail'])->name('dataUserPetugas.editEmail');
+    Route::put('dataUserPetugas/updateEmail/{id}', [DataUserPetugasController::class, 'updateEmail'])->name('dataUserPetugas.updateEmail');
 
     // Jenis Permohonan
     Route::get('cparJenisPermohonan', [CparJenisPermohonanController::class, 'index'])->name('cparJenisPermohonan.index');
@@ -185,6 +198,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('upload/updateUpload/{id}', [UploadController::class, 'updateUpload'])->name('upload.updateUpload');
     Route::delete('upload/destroy/{id}', [UploadController::class, 'destroy'])->name('upload.destroy');
 
+    // user akses kabkota
+    Route::get('userdataakseskabkota/kabkota_pilih', [UserDataAksesKabKotaController::class, 'kabkota_pilih'])->name('userdataakseskabkota.kabkota_pilih');
 
     Route::group(['middleware' => ['cekUserLogin:3']], function () {
         //biodata
@@ -198,5 +213,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('cparMengangkut', CparMengangkutController::class);
         Route::resource('dataUser', DataUserController::class);
         Route::resource('ttddokumen', TTDDokumenController::class);
+        Route::resource('dataUserPetugas', DataUserPetugasController::class);
+        Route::resource('userdataakseskabkota', UserDataAksesKabKotaController::class);
     });
 });

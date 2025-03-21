@@ -11,10 +11,32 @@ class PengajuanPermohonanModel extends Model
     public $table = "tr_permohonan";
     protected $primarykey = "id_permohonan_izin";
     protected $fillable = [
-        'id_jenis_permohonan', 'id_par_permohonan', 'id_trayek', 'id_jenis_angkutan', 'id_mengangkut',
-        'id_merek_kendaraan', 'id_type_kendaraan', 'nm_kendaraan', 'plat_no_kendaraan', 'daya_angkut_orang', 'daya_angkut_barang', 'thn_pembuatan', 'no_rangka', 'no_mesin',
-        'id_biodata', 'id_badan_usaha', 'nm_perusahaan_personal', 'nm_pimpinan_pemilik', 'alamat_biodata', 'email', 'no_telp',
-        'tgl_kirim_permohonan', 'status_permohonan', 'file_kir', 'file_stnk', 'id_kendaraan_history'
+        'id_jenis_permohonan',
+        'id_par_permohonan',
+        'id_trayek',
+        'id_jenis_angkutan',
+        'id_mengangkut',
+        'id_merek_kendaraan',
+        'id_type_kendaraan',
+        'nm_kendaraan',
+        'plat_no_kendaraan',
+        'daya_angkut_orang',
+        'daya_angkut_barang',
+        'thn_pembuatan',
+        'no_rangka',
+        'no_mesin',
+        'id_biodata',
+        'id_badan_usaha',
+        'nm_perusahaan_personal',
+        'nm_pimpinan_pemilik',
+        'alamat_biodata',
+        'email',
+        'no_telp',
+        'tgl_kirim_permohonan',
+        'status_permohonan',
+        'file_kir',
+        'file_stnk',
+        'id_kendaraan_history'
     ];
 
     public function JkendaraanMerek()

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BparKabKotaModel;
+use App\Models\CparJenisPermohonanModel;
 use App\Models\KategoriModel;
 use App\Models\PostModel;
 use App\Models\UserAktivasiAkunModel;
@@ -14,8 +16,66 @@ class PanelController extends Controller
     {
         //AktivasiAkunHelper();
         if (Auth::user()) {
-            $data = [];
+            $data = [
+                'resultPermohonan' => BparKabKotaModel::leftJoin('tr_permohonan', function ($join) {
+                    $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')
+                        ->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
+                })
+                    ->selectRaw('bpar_002_kabkota.*, 
+                COUNT(CASE WHEN tr_permohonan.status_permohonan = 2 THEN tr_permohonan.id_permohonan_izin END) as jmlh_masuk,
+                COUNT(CASE WHEN tr_permohonan.status_permohonan = 4 THEN tr_permohonan.id_permohonan_izin END) as jmlh_diproses,
+                COUNT(CASE WHEN tr_permohonan.status_permohonan = 5 THEN tr_permohonan.id_permohonan_izin END) as jmlh_selesai')
+                    ->groupBy('bpar_002_kabkota.id_kabkota') // Pastikan untuk mengelompokkan berdasarkan kolom yang relevan
+                    ->orderBy('bpar_002_kabkota.kode_kabkota', 'ASC')
+                    // ->where('bpar_002_kabkota.id_kabkota', 18)
+                    ->get(),
+                'resultKabKota' => BparKabKotaModel::orderBy('kode_kabkota', 'ASC')->get()
+            ];
             return view('private.layout.beranda', $data);
+        } else {
+            return redirect('/login');
+        }
+    }
+
+    public function show_count_jenis_permohonan(Request $r)
+    {
+        if (Auth::user()) {
+            $data = [
+                'title_form' => 'JUMLAH JENIS PERMOHONAN',
+                'result' => CparJenisPermohonanModel::all(),
+            ];
+            return view('private.layout.data.modal_count_jenis_permohonan', $data);
+        } else {
+            return redirect('/login');
+        }
+    }
+
+    public function show_jenis_permohonan(Request $r)
+    {
+        if (Auth::user()) {
+            if ($r->status == 2) {
+                $isi = 'MASUK';
+            } else if ($r->status == 2) {
+                $isi = 'PROSES';
+            } else {
+                $isi = 'SELESAI';
+            }
+            $data = [
+                'title_form' => 'PERMOHONAN ' . $isi,
+                'resultJenisPermohonan' => CparJenisPermohonanModel::leftJoin('tr_permohonan', function ($join) {
+                    $join->on('tr_permohonan.id_jenis_permohonan', '=', 'cpar_permohonan_001_jenis_permohonan.id_jenis_permohonan');
+                })
+                    ->selectRaw('
+                    cpar_permohonan_001_jenis_permohonan.nm_jenis_permohonan,
+                    COUNT(CASE WHEN tr_permohonan.status_permohonan = 2 THEN tr_permohonan.id_permohonan_izin END) as jmlh_masuk,
+                    COUNT(CASE WHEN tr_permohonan.status_permohonan = 4 THEN tr_permohonan.id_permohonan_izin END) as jmlh_diproses,
+                    COUNT(CASE WHEN tr_permohonan.status_permohonan = 5 THEN tr_permohonan.id_permohonan_izin END) as jmlh_selesai
+                ')
+                    ->groupBy('cpar_permohonan_001_jenis_permohonan.nm_jenis_permohonan')
+                    ->where('tr_permohonan.status_permohonan', $r->status)
+                    ->get()
+            ];
+            return view('private.layout.data.view_jenis_permohonan', $data);
         } else {
             return redirect('/login');
         }

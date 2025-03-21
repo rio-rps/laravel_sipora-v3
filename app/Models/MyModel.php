@@ -21,4 +21,12 @@ class MyModel extends Model
         $result = DB::table($tableName)->update($data);
         return $result;
     }
+
+    public function MyTableKabkota($kode_provinsi, $kode_kabkota)
+    {
+        $data = DB::table('bpar_002_kabkota')
+            ->where('kode_provinsi', $kode_provinsi)
+            ->where('kode_kabkota', $kode_kabkota);
+        return $data;
+    }
 }
