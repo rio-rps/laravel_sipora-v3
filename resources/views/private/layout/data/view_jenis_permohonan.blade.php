@@ -8,7 +8,7 @@
                           <div class="media">
                               <div class="media-body text-left w-100">
                                   <h3 class="primary">
-                                      {{ number_format($resultJenisPermohonanAll->jmlh_selesai, 0, ',', '.') }} Data
+                                      {{ number_format($resultJenisPermohonanAll->total, 0, ',', '.') }} Data
                                   </h3>
                                   <span>{{ $resultJenisPermohonanAll->nm_jenis_permohonan }}</span>
                               </div>

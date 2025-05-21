@@ -36,7 +36,9 @@ class PengajuanPermohonanModel extends Model
         'status_permohonan',
         'file_kir',
         'file_stnk',
-        'id_kendaraan_history'
+        'id_kendaraan_history',
+        'kode_provinsi',
+        'kode_kabkota'
     ];
 
     public function JkendaraanMerek()

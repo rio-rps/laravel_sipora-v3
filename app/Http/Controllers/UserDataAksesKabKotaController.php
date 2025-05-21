@@ -75,9 +75,9 @@ class UserDataAksesKabKotaController extends Controller
         $cek2 = UserDataAksesKabKotaModel::where('id_user', $r->id)
             ->count();
 
-        if ($row->level == 2 and $cek2 >= 1) {
-            return response()->json(['errors' => 'Kab/ Kota harus satu !'], 423);
-        }
+        // if ($row->level == 2 and $cek2 >= 1) {
+        //     return response()->json(['errors' => 'Kab/ Kota harus satu !'], 423);
+        // }
 
         if ($cek > 0) {
             return response()->json(['errors' => 'Data sudah Ada'], 423);

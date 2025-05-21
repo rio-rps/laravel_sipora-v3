@@ -406,6 +406,7 @@
                 success: function(response) {
                     var len = response.length;
                     $("#id_par_permohonan").empty().append("<option value='' selected>-- Pilih --</option>");
+                    $("#id_mengangkut").empty().append("<option value='' selected>-- Pilih --</option>");
                     for (var i = 0; i < len; i++) {
                         var id = response[i]['id_par_permohonan'];
                         var name = response[i]['nm_par_permohonan'];

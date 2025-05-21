@@ -13,9 +13,9 @@
                         <div class="card box-shadow-0 border-blue box-sm">
                             <div class="card-header card-head-inverse bg-secondary">
                                 <!-- <center>
-                                    <div class="pull-right">
-                                        <a href="" class="btn btn-sm btn-outline-info"><i class="fa fa-print"></i> Cetak</a>
-                                </center> -->
+                                        <div class="pull-right">
+                                            <a href="" class="btn btn-sm btn-outline-info"><i class="fa fa-print"></i> Cetak</a>
+                                    </center> -->
                                 <h4 class="card-title"><i class="fa fa-id-card"></i> Data Permohonan</h4>
                             </div>
 
@@ -28,6 +28,11 @@
                                                 <td>Tanggal Kirim Permohonan</td>
                                                 <td>:</td>
                                                 <td>{{ cek_date_ddmmyyyy_his_v1($row->tgl_kirim_permohonan) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Kab/Kota</td>
+                                                <td>:</td>
+                                                <td>{{ $row->nm_kabkota }}</td>
                                             </tr>
                                             <tr>
                                                 <td colspan="3">

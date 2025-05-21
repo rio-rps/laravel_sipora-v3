@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BiodataModel;
 use App\Models\HistoriDataPermohonanModel;
+use App\Models\MyModel;
 use App\Models\PengajuanPermohonanModel;
 use App\Models\PermohonanUploadBiodataModel;
 use App\Models\ValidasiPermohonanModel;
@@ -222,6 +223,11 @@ class DataPermohonanController extends Controller
                 ->addColumn('statusText', function ($row) {
                     return $row->status_permohonan;
                 })
+                ->addColumn('KabKota', function ($row) {
+                    $Mymodel = new MyModel();
+                    $tmp = $Mymodel->MyTableKabkota($row->kode_provinsi, $row->kode_kabkota)->first();
+                    return $tmp->nm_kabkota;
+                })
                 ->rawColumns(['status', 'action'])
                 ->make(true);
         } else {
@@ -260,11 +266,16 @@ class DataPermohonanController extends Controller
 
     public function kartuInput($id)
     {
+
         $id = Crypt::decrypt($id);
         $data = [
             'title' => 'KARTU PENGAWAS',
             //'rowValidasi' => PengajuanPermohonanModel::all(),
-            'row' => PengajuanPermohonanModel::where('id_permohonan_izin', $id)->first()
+            'row' => PengajuanPermohonanModel::Join('bpar_002_kabkota', function ($join) {
+                $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')
+                    ->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
+            })
+                ->where('id_permohonan_izin', $id)->first()
 
         ];
         return view('private/permohonan_data/kartuInput')->with($data);

@@ -37,13 +37,40 @@
 
                     </ul>
                 </li>
-                <li class="nav-item {{ request()->url() == url('/datapermohonan/viewProses/HistoriPengawas') ? 'active' : '' }}"
-                    style="font-size: 13px;">
-                    <a href="{{ route('datapermohonan.viewProses', ['act' => 'HistoriPengawas']) }}">
+                {{--  <li class="nav-item {{ request()->url() == url('/datapermohonan/viewProses/HistoriPengawas') ? 'active' : '' }}"
+style="font-size: 13px;">
+<a href="{{ route('datapermohonan.viewProses', ['act' => 'HistoriPengawas']) }}">
+<i class="fa fa-clone"></i>
+<span class="menu-title" data-i18n="Histori Kartu Pengawas">Histori Kartu Pengawas</span>
+</a>
+</li>  --}}
+
+
+                <li class="nav-item ">
+                    <a href="{{ route('historikartupengawas.index') }}">
                         <i class="fa fa-clone"></i>
                         <span class="menu-title" data-i18n="Histori Kartu Pengawas">Histori Kartu Pengawas</span>
                     </a>
                 </li>
+
+
+                <li class="nav-item">
+                    <a href="#">
+                        <i class="fa fa-print"></i>
+                        <span class="menu-title" data-i18n="Laporan">Laporan</span>
+                    </a>
+                    <ul class="menu-content">
+                        <li class="nav-item ">
+                            <a href="{{ route('laporan.permohonan') }}">
+                                <i class="fa fa-file-pdf-o"></i>
+                                <span class="menu-title" data-i18n="Lap. Permohonan">Lap. Permohonan</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+
 
                 <li class="nav-item">
                     <a href="#">
@@ -179,12 +206,13 @@
                 </li>
             @endif
             <!--
-            <li class="nav-item">
+                <li class="nav-item">
                 <a href="{{ route('kartucek.NomorKartu') }}">
-                    <i class="fa fa-file-text-o"></i>
-                    <span class="menu-title" data-i18n="Cek Manual Kartu Pengawas" title="Cek Manual Kartu Pengawas" style="font-size:12px;">Cek Manual Kartu Pengawas</span>
+                <i class="fa fa-file-text-o"></i>
+                <span class="menu-title" data-i18n="Cek Manual Kartu Pengawas" title="Cek Manual Kartu Pengawas" style="font-size:12px;">Cek Manual Kartu Pengawas</span>
                 </a>
-            </li> -->
+                </li>
+            -->
 
         </ul>
     </div>

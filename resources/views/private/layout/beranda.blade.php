@@ -44,20 +44,24 @@
             <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
             <div class="heading-elements">
                 <ul class="list-inline mb-0">
-                    <select name="ambilData" id="ambilData" onclick="ambilData(this)">
-                        <option value="" selected>--Pilih--</option>
-                        <option value="All">Tampilkan Semua Data</option>
-                        @foreach ($resultKabKota as $resultKabKotaAll)
-                            <option value="{{ $resultKabKotaAll->id_kabkota }}">{{ $resultKabKotaAll->nm_kabkota }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <select name="ambilData" id="ambilData" onclick="ambilData(this)">
-                        <option value="" selected>--Pilih--</option>
-                        <option value="2">Masuk</option>
-                        <option value="4">Proses</option>
-                        <option value="5">Selesai</option>
-                    </select>
+                    <div class="input-group">
+                        <select id="id_kabkota" class="mr-1">
+                            <option value="" selected>--Pilih--</option>
+                            <option value="All">Tampilkan Semua Data</option>
+                            @foreach ($resultKabKota as $resultKabKotaAll)
+                                <option value="{{ $resultKabKotaAll->id_kabkota }}">{{ $resultKabKotaAll->nm_kabkota }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <select id="status_permohonan" class="mr-1">
+                            <option value="" selected>--Pilih--</option>
+                            <option value="2">Masuk</option>
+                            <option value="4">Proses</option>
+                            <option value="5">Selesai</option>
+                        </select>
+                        <button id="btn-tampilkan1" class="btn btn-primary btn-sm">Tampilkan</button>
+                    </div>
+
                 </ul>
             </div>
         </div>
@@ -69,12 +73,6 @@
     <div class="card">
         <div class="card-header">
             <h4 class="card-title fw-bold">DATA PERMOHONAN</h4>
-            <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
-            <div class="heading-elements">
-                <ul class="list-inline mb-0">
-                    <li><a data-action="reload"><i class="feather icon-rotate-cw"></i></a></li>
-                </ul>
-            </div>
         </div>
         <div class="card-content mr-1 ml-1">
             <div class="table-responsive">
@@ -278,9 +276,10 @@
     </div>
     <div class="viewModal" style="display:none;width:100%"></div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            ambilData(5);
+            getFilter('All', 5);
         });
 
         $('.nama-kabkota').on('click', function() {
@@ -350,29 +349,38 @@
         });
         */
 
-        function ambilData(selectElement) {
-            var selectedValue = selectElement;
-            if (selectedValue) {
-                $.ajax({
-                    url: "{{ route('panel.show_jenis_permohonan') }}",
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: {
-                        status: selectedValue
-                    },
-                    success: function(response) {
-                        $('.viewData').html(response).show();
-                        //alert(response);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Terjadi kesalahan: " + error);
-                    }
-                });
+        $('#btn-tampilkan1').on('click', function() {
+            var id_kabkota = $('#id_kabkota').val();
+            var status_permohonan = $('#status_permohonan').val();
+            if (id_kabkota == '') {
+                Swal.fire('Gagal', 'Silakan Pilih Kab/kota !', 'warning');
+            } else if (status_permohonan == '') {
+                Swal.fire('Gagal', 'Silakan Pilih Status Permohonan !', 'warning');
             } else {
-                console.log("Silakan pilih opsi.");
+                getFilter(id_kabkota, status_permohonan);
             }
+        });
+
+        function getFilter(id_kabkota = null, status_permohonan = null) {
+
+            $.ajax({
+                url: "{{ route('panel.show_jenis_permohonan') }}",
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    id_kabkota: id_kabkota,
+                    status: status_permohonan
+                },
+                success: function(response) {
+                    $('.viewData').html(response).show();
+                    //alert(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Terjadi kesalahan: " + error);
+                }
+            });
         }
     </script>
 @endsection

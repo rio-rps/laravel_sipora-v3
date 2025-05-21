@@ -53,27 +53,47 @@ class PanelController extends Controller
     public function show_jenis_permohonan(Request $r)
     {
         if (Auth::user()) {
-            if ($r->status == 2) {
-                $isi = 'MASUK';
-            } else if ($r->status == 2) {
-                $isi = 'PROSES';
+            $id_kabkota = $r->id_kabkota;
+            $status = $r->status;
+            if ($id_kabkota == 'All') {
+                $kode_provinsi = '';
+                $kode_kabkota = '';
+                $namakab = 'SEMUA';
             } else {
-                $isi = 'SELESAI';
+                $kabkota = BparKabKotaModel::where('id_kabkota', $id_kabkota)->first();
+                $kode_provinsi = $kabkota->kode_provinsi;
+                $kode_kabkota = $kabkota->kode_kabkota;
+                $namakab = $kabkota->nm_kabkota;
             }
+
+
+
+
+
+
+            $resultJenisPermohonan = CparJenisPermohonanModel::leftJoin('tr_permohonan as tp', function ($join) use ($id_kabkota, $status, $kode_provinsi, $kode_kabkota) {
+                $join->on('tp.id_jenis_permohonan', '=', 'cpar_permohonan_001_jenis_permohonan.id_jenis_permohonan')
+                    ->whereRaw('tp.status_permohonan=?', [$status]);
+                if ($id_kabkota != 'All') {
+                    $join->whereRaw('tp.kode_provinsi = ?', [$kode_provinsi])
+                        ->whereRaw('tp.kode_kabkota = ?', [$kode_kabkota]);
+                }
+            })
+                ->selectRaw('
+                cpar_permohonan_001_jenis_permohonan.nm_jenis_permohonan,  
+                COALESCE(COUNT(tp.id_permohonan_izin), 0) AS total
+            ')
+                ->groupBy(
+                    'cpar_permohonan_001_jenis_permohonan.id_jenis_permohonan',
+                    'cpar_permohonan_001_jenis_permohonan.nm_jenis_permohonan'
+                )
+                ->get();
+
+
+
             $data = [
-                'title_form' => 'PERMOHONAN ' . $isi,
-                'resultJenisPermohonan' => CparJenisPermohonanModel::leftJoin('tr_permohonan', function ($join) {
-                    $join->on('tr_permohonan.id_jenis_permohonan', '=', 'cpar_permohonan_001_jenis_permohonan.id_jenis_permohonan');
-                })
-                    ->selectRaw('
-                    cpar_permohonan_001_jenis_permohonan.nm_jenis_permohonan,
-                    COUNT(CASE WHEN tr_permohonan.status_permohonan = 2 THEN tr_permohonan.id_permohonan_izin END) as jmlh_masuk,
-                    COUNT(CASE WHEN tr_permohonan.status_permohonan = 4 THEN tr_permohonan.id_permohonan_izin END) as jmlh_diproses,
-                    COUNT(CASE WHEN tr_permohonan.status_permohonan = 5 THEN tr_permohonan.id_permohonan_izin END) as jmlh_selesai
-                ')
-                    ->groupBy('cpar_permohonan_001_jenis_permohonan.nm_jenis_permohonan')
-                    ->where('tr_permohonan.status_permohonan', $r->status)
-                    ->get()
+                'title_form' => 'PERMOHONAN ' . $namakab . ' (' . cek_status_permohonan($r->status) . ')',
+                'resultJenisPermohonan' =>  $resultJenisPermohonan
             ];
             return view('private.layout.data.view_jenis_permohonan', $data);
         } else {

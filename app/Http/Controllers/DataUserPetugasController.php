@@ -100,10 +100,14 @@ class DataUserPetugasController extends Controller
                 })
                 ->addColumn('kabkota', function ($row) {
                     $Mymodel = new MyModel();
-                    $kabkota = UserDataAksesKabKotaModel::where('id_user', $row->id)->first();
-                    if ($kabkota) {
-                        $row = $Mymodel->MyTableKabkota($kabkota->kode_provinsi, $kabkota->kode_kabkota)->first();
-                        return $row->nm_kabkota;
+                    $kabkota = UserDataAksesKabKotaModel::where('id_user', $row->id)->get();
+
+                    $kabkotaNames = [];
+                    foreach ($kabkota as $resultAll) {
+                        $kabkotaNames[] =  $Mymodel->MyTableKabkota($resultAll->kode_provinsi, $resultAll->kode_kabkota)->first()->nm_kabkota;
+                    }
+                    if ($kabkotaNames) {
+                        return implode(', ', $kabkotaNames) . ' (' . count($kabkota) . ')';
                     } else {
                         return '<span class="badge badge-danger">Belum ada Akses</span>';
                     }

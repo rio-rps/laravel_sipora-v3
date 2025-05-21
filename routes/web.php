@@ -11,6 +11,7 @@ use App\Http\Controllers\DataKendaraanController;
 use App\Http\Controllers\DataPermohonanController;
 use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\DataUserPetugasController;
+use App\Http\Controllers\HistoriKartuPengawasController;
 use App\Http\Controllers\KartuCekController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LayoutController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\TTDDokumenController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserDataAksesKabKotaController;
 use App\Http\Controllers\UserDataController;
+use App\Http\Controllers\VmodalController;
 use App\Models\MappingMengangkutModel;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Route;
@@ -182,6 +184,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('laporan/cetakQRcode/{id}', [LaporanController::class, 'cetakQRcode'])->name('laporan.cetakQRcode');
     Route::get('laporan/cetakKartuPengawas/{id}', [LaporanController::class, 'cetakKartuPengawas'])->name('laporan.cetakKartuPengawas');
     Route::get('laporan/cetakKartuPengawasElektronik/{id}', [LaporanController::class, 'cetakKartuPengawasElektronik'])->name('laporan.cetakKartuPengawasElektronik');
+    Route::get('laporan/permohonan', [LaporanController::class, 'permohonan'])->name('laporan.permohonan');
+    Route::get('laporan/getLapPermohonan', [LaporanController::class, 'getLapPermohonan'])->name('laporan.getLapPermohonan');
+    Route::get('laporan/cetakPermohonanFilter', [LaporanController::class, 'cetakPermohonanFilter'])->name('laporan.cetakPermohonanFilter');
+    Route::get('laporan/exportPermohonanFilter', [LaporanController::class, 'exportPermohonanFilter'])->name('laporan.exportPermohonanFilter');
 
     // mengangkut 
     Route::get('cparMengangkut/createMapping/{id}', [CparMengangkutController::class, 'createMapping'])->name('cparMengangkut.createMapping');
@@ -201,6 +207,11 @@ Route::group(['middleware' => ['auth']], function () {
     // user akses kabkota
     Route::get('userdataakseskabkota/kabkota_pilih', [UserDataAksesKabKotaController::class, 'kabkota_pilih'])->name('userdataakseskabkota.kabkota_pilih');
 
+    //Vmodal
+    Route::get('vmodal/show_kabkota', [VmodalController::class, 'show_kabkota'])->name('vmodal.show_kabkota');
+
+    Route::resource('historikartupengawas', HistoriKartuPengawasController::class);
+    Route::resource('laporan', LaporanController::class);
     Route::group(['middleware' => ['cekUserLogin:3']], function () {
         //biodata
         Route::resource('biodata', BiodataController::class);

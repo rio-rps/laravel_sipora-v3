@@ -1,21 +1,87 @@
 @extends('private.layout.main')
 @section('isi')
-    <style>
-
-    </style>
-    @if (auth()->check() && in_array(getLevel(), [3]))
-        <script type="text/javascript">
-            window.location = "/";
-        </script>
-    @endif
     <div class="content-body">
         <div class="card">
             <div class="card-header">
                 <h4 class="card-title"><b>{{ $title }}</b></h4>
                 <hr class="border-secondary">
             </div>
-            <!-- {{ url('/datapermohonan/viewProses/Masuk') }}<br>
-                                                {{ request()->url() }} -->
+
+            <div class="col-md-12">
+                <div id="accordionWrap1" role="tablist" aria-multiselectable="true">
+                    <div class="card accordion collapse-icon accordion-icon-rotate">
+                        <div id="heading11" class="card-header primary collapsed" data-toggle="collapse" href="#accordion11"
+                            aria-expanded="false" aria-controls="accordion11">
+                            <a class="card-title lead" href="#">FILTER</a>
+                        </div>
+                        <div id="accordion11" role="tabpanel" data-parent="#accordionWrap1" aria-labelledby="heading11"
+                            class="collapse" style="">
+                            <div class="card-content card border-teal border-lighten-2 mr-1 ml-1">
+                                <div class="card-body ">
+                                    <div class="modal-body">
+                                        <div class="form-body">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label border-bottom">Jenis
+                                                    Permohonan</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control" name="name"
+                                                        maxlength="225">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label border-bottom">Permohonan</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control" name="email"
+                                                        maxlength="225">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label border-bottom">Trayek</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control" name="email"
+                                                        maxlength="225">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label border-bottom">Jenis Angkutan</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control" name="email"
+                                                        maxlength="225">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label border-bottom">Mengangkut</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control" name="email"
+                                                        maxlength="225">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label border-bottom">Kab/Kota</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control" name="email"
+                                                        maxlength="225">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-md-9">
+                                                    <button type="submit" class="btn-send btn btn-primary btn-glow"
+                                                        id="tombolSave">
+                                                        <i class='feather icon-play mr-25'></i> <span
+                                                            class="d-sm-inline">Cari</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
 
             <div class="col-md-12">
                 <div class="table-responsive">
@@ -24,7 +90,7 @@
                         <thead>
                             <tr>
                                 <th width=" 1%">No</th>
-                                <th>Tgl {{ $label }} </th>
+                                <th>Tgl </th>
                                 <th>Nomor</th>
                                 <th>Perusahaan</th>
                                 <th>Pimpinan</th>

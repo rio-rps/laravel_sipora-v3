@@ -31,7 +31,7 @@ class LaporanController extends Controller
             'title' => "LAPORAN",
             'resultPermohonan' => CparJenisPermohonanModel::get()
         ];
-        return view('private.laporan.view_permohonan', $data);
+        return view('private.laporan.view', $data);
     }
 
     public function getLapPermohonan(Request $r)
@@ -160,9 +160,7 @@ class LaporanController extends Controller
                 'jenisPermohonanFilter' => $id_jenis_permohonan,
                 'sttsPermohonanFilter' => $status_permohonan,
                 'id_kabkotaFilter' => $id_kabkota,
-                'dateFilter' => $r->datesFilter,
-                'font_size' => $r->font_size,
-                'font_family' => str_replace('+', ' ', urldecode($r->font_family))
+                'dateFilter' => $r->datesFilter
             ]
         ];
 
