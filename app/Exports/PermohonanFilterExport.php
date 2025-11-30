@@ -106,7 +106,7 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
 
         // Tambahkan kolom validasi hanya jika status_permohonan == 5
         if ($row->status_permohonan == 5) {
-            $data[] = $row->tgl_validasi_proses ? cek_date_ddmmyyyy_his_v2($row->tgl_validasi_proses) :  '-';
+            $data[] = $row->tgl_validasi_selesai ? cek_date_ddmmyyyy_his_v2($row->tgl_validasi_selesai) :  '-';
             $data[] = $row->no_kartu_pengawas ?? '-';
             $data[] = $row->tgl_sk ? cek_ddmmyy_v1($row->tgl_sk) : '-';
             $data[] = "'" . (string) ($row->no_sk ?? '-');
@@ -131,7 +131,7 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
         $data[] = $row->jmengangkut->nm_mengangkut ?? '-';
         $data[] = $row->daya_angkut_orang ?? '-';
         $data[] = $row->daya_angkut_barang ?? '-';
-        $data[] = $row->plat_no_kendaraan ?? '-';
+        $data[] = "'" . $row->plat_no_kendaraan ?? '-';
         $data[] = $row->nm_kabkota ?? '-';
 
         return $data;
@@ -139,12 +139,15 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
 
 
 
-    // public function columnFormats(): array
-    // {
-    //     return [
-    //         'No SK' => NumberFormat::FORMAT_TEXT, // Misal kolom 'E' adalah kolom no_sk
-    //     ];
-    // }
+
+    public function columnFormats(): array
+    {
+        return [
+            'I' => NumberFormat::FORMAT_TEXT, // No Rangka
+            'J' => NumberFormat::FORMAT_TEXT, // No Mesin
+            'R' => NumberFormat::FORMAT_TEXT, // No Plat Kendaraan
+        ];
+    }
 
     public function headings(): array
     {

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\BiodataController;
+use App\Http\Controllers\CekPasswordController;
 use App\Http\Controllers\CparJenisPermohonanController;
 use App\Http\Controllers\CparKendaraanMerekController;
 use App\Http\Controllers\CparKendaraanTypeController;
@@ -11,15 +12,23 @@ use App\Http\Controllers\DataKendaraanController;
 use App\Http\Controllers\DataPermohonanController;
 use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\DataUserPetugasController;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HistoriKartuPengawasController;
 use App\Http\Controllers\KartuCekController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LayoutController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MutasiPICController;
 use App\Http\Controllers\PanelController;
 use App\Http\Controllers\PengajuanPermohonanController;
 use App\Http\Controllers\PengaturanAkunController;
+use App\Http\Controllers\PICController;
+use App\Http\Controllers\PindahPICController;
+use App\Http\Controllers\QrcodeController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\RiwayatController;
+use App\Http\Controllers\StikerController;
 use App\Http\Controllers\ToolsController;
 use App\Http\Controllers\TTDDokumenController;
 use App\Http\Controllers\UploadController;
@@ -47,32 +56,69 @@ use Illuminate\Support\Facades\Route;
 //Route::get('/', [LayoutController::class, 'index'])->name('auth');
 //Route::get('login', [LoginController::class, 'index'])->name('login');
 //Route::get('beranda', [BerandaController::class, 'index'])->middleware('auth');
-Route::get('/', [LoginController::class, 'index'])->name('index');
+//Route::get('/', [LoginController::class, 'index'])->name('index');
 
+Route::get('/', [LayoutController::class, 'index'])->name('index');
 Route::get('/panel', [PanelController::class, 'index'])->name('panel.index');
 
 // kartu cek
 Route::get('kartucek/QRcode/{id}', [KartuCekController::class, 'QRcode'])->name('kartucek.QRcode');
 Route::get('kartucek/NomorKartu', [KartuCekController::class, 'NomorKartu'])->name('kartucek.NomorKartu');
 
+Route::get('/generate-stiker', [StikerController::class, 'generateImage']);
 
 Route::controller(LoginController::class)->group(function () {
-    route::get('login', 'index')->name('login');
-    Route::post('login/proses', 'proses');
+    route::get('login', 'login')->name('login');
+    Route::post('proses', 'proses')->name('proses');
     Route::get('logout', 'logout')->name('logout');
 });
 
+Route::controller(ForgotPasswordController::class)->group(function () {
+    Route::post('sendResetEmail', 'sendResetEmail')->name('sendResetEmail');
+    Route::get('reset-password-link', 'reset-password-link')->name('reset-password-link');
+});
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('password.reset');
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
+
+
+Route::get('/mshow_lupa_password', [ForgotPasswordController::class, 'mshow_lupa_password'])->name('mshow_lupa_password');
+Route::get('/mshow_lupa_email', [ForgotPasswordController::class, 'mshow_lupa_email'])->name('mshow_lupa_email');
+
+
 Route::controller(RegisterController::class)->group(function () {
-    route::get('register', 'index')->name('register');
-    Route::post('register/do_register', 'do_register');
     route::get('register/success/{name}/{email}', 'success')->name('success');
 });
 
+// halaman depan
+Route::get('show_pencarian', [LayoutController::class, 'show_pencarian'])->name('show_pencarian');
+
+
+// register
+Route::get('register', [RegisterController::class, 'register'])->name('register');
+Route::post('store_register', [RegisterController::class, 'store_register'])->name('store_register');
+Route::get('register_success', [RegisterController::class, 'register_success'])->name('register_success');
+
+
+
+Route::get('mshow_detail/{id}', [LayoutController::class, 'mshow_detail'])->name('mshow_detail');
+
+
+Route::get('kirimUjiEmail', [EmailController::class, 'kirimUjiEmail'])->name('kirimUjiEmail');
+
+
+Route::get('laporan/cetakSuratRekomendasiKepala/{id}', [LaporanController::class, 'cetakSuratRekomendasiKepala'])->name('laporan.cetakSuratRekomendasiKepala');
 
 Route::group(['middleware' => ['auth']], function () {
+    Route::get('cekpassword/password', [CekPasswordController::class, 'password'])->name('cekpassword.password');
+
     //panel
     Route::get('panel/show_count_jenis_permohonan', [PanelController::class, 'show_count_jenis_permohonan'])->name('panel.show_count_jenis_permohonan');
     Route::get('panel/show_jenis_permohonan', [PanelController::class, 'show_jenis_permohonan'])->name('panel.show_jenis_permohonan');
+    Route::get('panel/show_permohonan', [PanelController::class, 'show_permohonan'])->name('panel.show_permohonan');
+    Route::get('panel/show_grafik_tahunan', [PanelController::class, 'show_grafik_tahunan'])->name('panel.show_grafik_tahunan');
+
+    Route::get('panel/filter_monitoringAll', [PanelController::class, 'filter_monitoringAll'])->name('panel.filter_monitoringAll');
+    Route::get('panel/show_getDataGrafikDetailTahunan', [PanelController::class, 'show_getDataGrafikDetailTahunan'])->name('panel.show_getDataGrafikDetailTahunan');
     //
 
     Route::get('aktivasiAkun', [AktivasiAkunController::class, 'index'])->name('aktivasiAkun.index');
@@ -120,11 +166,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('datakendaraan/createUpload/{id}', [DataKendaraanController::class, 'createUpload'])->name('datakendaraan.createUpload');
     Route::get('datakendaraan/createUploadForm', [DataKendaraanController::class, 'createUploadForm'])->name('datakendaraan.createUploadForm');
     Route::get('datakendaraan/showUploadDokumenKendaraan/{id}', [DataKendaraanController::class, 'showUploadDokumenKendaraan'])->name('datakendaraan.showUploadDokumenKendaraan');
+    Route::get('datakendaraan/edit_status/{id}', [DataKendaraanController::class, 'edit_status'])->name('datakendaraan.edit_status');
 
     Route::post('datakendaraan/storeUpload', [DataKendaraanController::class, 'storeUpload'])->name('datakendaraan.storeUpload');
     Route::put('datakendaraan/updateUpload/{id}', [DataKendaraanController::class, 'updateUpload'])->name('datakendaraan.updateUpload');
     Route::put('datakendaraan/destroyUploadKir/{id}', [DataKendaraanController::class, 'destroyUploadKir'])->name('datakendaraan.destroyUploadKir');
     Route::put('datakendaraan/destroyUploadSTNK/{id}', [DataKendaraanController::class, 'destroyUploadSTNK'])->name('datakendaraan.destroyUploadSTNK');
+    Route::put('datakendaraan/update_status/{id}', [DataKendaraanController::class, 'update_status'])->name('datakendaraan.update_status');
 
 
 
@@ -136,6 +184,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('pengajuanpermohonan/getJenisAngkutan', [PengajuanPermohonanController::class, 'getJenisAngkutan'])->name('pengajuanpermohonan.getJenisAngkutan');
     Route::get('pengajuanpermohonan/getMengangkut', [PengajuanPermohonanController::class, 'getMengangkut'])->name('pengajuanpermohonan.getMengangkut');
     Route::get('pengajuanpermohonan/getPilih/{id}', [PengajuanPermohonanController::class, 'getPilih'])->name('pengajuanpermohonan.getPilih');
+    Route::get('pengajuanpermohonan/showUploadDokumenBiodata/{id}', [PengajuanPermohonanController::class, 'showUploadDokumenBiodata'])->name('pengajuanpermohonan.showUploadDokumenBiodata');
     Route::resource('pengajuanpermohonan', PengajuanPermohonanController::class);
 
     // data permohonan
@@ -164,30 +213,38 @@ Route::group(['middleware' => ['auth']], function () {
 
 
 
-    // kartu pengawas
-    Route::get('tools/ubahStatusKartuPengawas', [ToolsController::class, 'ubahStatusKartuPengawas'])->name('tools.ubahStatusKartuPengawas');
-    Route::get('tools/showKartuPengawas', [ToolsController::class, 'showKartuPengawas'])->name('tools.showKartuPengawas');
-    Route::get('tools/editKartuPengawas/{id}', [ToolsController::class, 'editKartuPengawas'])->name('tools.editKartuPengawas');
-    Route::put('tools/updateKartuPengawas/{id}', [ToolsController::class, 'updateKartuPengawas'])->name('tools.updateKartuPengawas');
+    Route::get('qrcode', [QrcodeController::class, 'index'])->name('qrcode.index');
+    Route::group(['middleware' => ['cekUserLogin:1']], function () {
 
 
 
-    // proses
-    Route::get('tools/ubahStatusProses', [ToolsController::class, 'ubahStatusProses'])->name('tools.ubahStatusProses');
-    Route::get('tools/showProses', [ToolsController::class, 'showProses'])->name('tools.showProses');
-    Route::get('tools/editProses/{id}', [ToolsController::class, 'editProses'])->name('tools.editProses');
-    Route::put('tools/updateProses/{id}', [ToolsController::class, 'updateProses'])->name('tools.updateProses');
+        // kartu pengawas
+        Route::get('tools/ubahStatusKartuPengawas', [ToolsController::class, 'ubahStatusKartuPengawas'])->name('tools.ubahStatusKartuPengawas');
+        Route::get('tools/showKartuPengawas', [ToolsController::class, 'showKartuPengawas'])->name('tools.showKartuPengawas');
+        Route::get('tools/editKartuPengawas/{id}', [ToolsController::class, 'editKartuPengawas'])->name('tools.editKartuPengawas');
+        Route::put('tools/updateKartuPengawas/{id}', [ToolsController::class, 'updateKartuPengawas'])->name('tools.updateKartuPengawas');
 
+
+
+        // proses
+        Route::get('tools/ubahStatusProses', [ToolsController::class, 'ubahStatusProses'])->name('tools.ubahStatusProses');
+        Route::get('tools/showProses', [ToolsController::class, 'showProses'])->name('tools.showProses');
+        Route::get('tools/editProses/{id}', [ToolsController::class, 'editProses'])->name('tools.editProses');
+        Route::put('tools/updateProses/{id}', [ToolsController::class, 'updateProses'])->name('tools.updateProses');
+    });
 
     // laporan
     Route::get('laporan/cetakpengajuanpermohonan/{id}', [LaporanController::class, 'cetakpengajuanpermohonan'])->name('laporan.cetakpengajuanpermohonan');
     Route::get('laporan/cetakQRcode/{id}', [LaporanController::class, 'cetakQRcode'])->name('laporan.cetakQRcode');
     Route::get('laporan/cetakKartuPengawas/{id}', [LaporanController::class, 'cetakKartuPengawas'])->name('laporan.cetakKartuPengawas');
     Route::get('laporan/cetakKartuPengawasElektronik/{id}', [LaporanController::class, 'cetakKartuPengawasElektronik'])->name('laporan.cetakKartuPengawasElektronik');
+    Route::get('laporan/cetakKartuPengawasElektronikV2/{id}', [LaporanController::class, 'cetakKartuPengawasElektronikV2'])->name('laporan.cetakKartuPengawasElektronikV2');
     Route::get('laporan/permohonan', [LaporanController::class, 'permohonan'])->name('laporan.permohonan');
     Route::get('laporan/getLapPermohonan', [LaporanController::class, 'getLapPermohonan'])->name('laporan.getLapPermohonan');
     Route::get('laporan/cetakPermohonanFilter', [LaporanController::class, 'cetakPermohonanFilter'])->name('laporan.cetakPermohonanFilter');
     Route::get('laporan/exportPermohonanFilter', [LaporanController::class, 'exportPermohonanFilter'])->name('laporan.exportPermohonanFilter');
+
+    Route::get('laporan/cetak_info_QRcode/{id}', [LaporanController::class, 'cetak_info_QRcode'])->name('laporan.cetak_info_QRcode');
 
     // mengangkut 
     Route::get('cparMengangkut/createMapping/{id}', [CparMengangkutController::class, 'createMapping'])->name('cparMengangkut.createMapping');
@@ -209,6 +266,14 @@ Route::group(['middleware' => ['auth']], function () {
 
     //Vmodal
     Route::get('vmodal/show_kabkota', [VmodalController::class, 'show_kabkota'])->name('vmodal.show_kabkota');
+    Route::get('vmodal/show_pic', [VmodalController::class, 'show_pic'])->name('vmodal.show_pic');
+    Route::get('vmodal/bgCard/{id}', [VmodalController::class, 'bgCard'])->name('vmodal.bgCard');
+
+    //Riwayat
+    Route::get('badanUsaha', [RiwayatController::class, 'badanUsaha'])->name('badanUsaha');
+    Route::get('badanUsaha_detail/{id}', [RiwayatController::class, 'badanUsaha_detail'])->name('badanUsaha_detail');
+    Route::get('kendaraan', [RiwayatController::class, 'kendaraan'])->name('kendaraan');
+    Route::get('riwayat/cek_kendaraan', [RiwayatController::class, 'cek_kendaraan'])->name('riwayat.cek_kendaraan');
 
     Route::resource('historikartupengawas', HistoriKartuPengawasController::class);
     Route::resource('laporan', LaporanController::class);
@@ -216,6 +281,7 @@ Route::group(['middleware' => ['auth']], function () {
         //biodata
         Route::resource('biodata', BiodataController::class);
     });
+    Route::resource('PIC', PICController::class);
     Route::group(['middleware' => ['cekUserLogin:1']], function () {
         // UMUM
         Route::resource('cparKendaraanMerek', CparKendaraanMerekController::class);
@@ -226,5 +292,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('ttddokumen', TTDDokumenController::class);
         Route::resource('dataUserPetugas', DataUserPetugasController::class);
         Route::resource('userdataakseskabkota', UserDataAksesKabKotaController::class);
+        Route::resource('mutasiPIC', MutasiPICController::class);
     });
 });

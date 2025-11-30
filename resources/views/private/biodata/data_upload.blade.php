@@ -5,8 +5,9 @@
             <td width="1%">:</td>
             <td>
                 @if (isset($row->file_dokumen))
-                    <a target="_blank"
-                        href="{{ asset('upload/file_biodata/' . $row->file_dokumen) }}">{{ $row->file_dokumen }}</a>
+                    <a target="_blank" href="{{ asset('upload/file_biodata/' . $row->file_dokumen) }}">
+                        [Download]
+                    </a>
                 @else
                     <span class="text-danger">Kosong</span>
                 @endif
@@ -38,8 +39,9 @@
             <td>:</td>
             <td>
                 @if (isset($row2->file_dokumen))
-                    <a target="_blank"
-                        href="{{ asset('upload/file_biodata/' . $row2->file_dokumen) }}">{{ $row2->file_dokumen }}</a>
+                    <a target="_blank" href="{{ asset('upload/file_biodata/' . $row2->file_dokumen) }}">
+                        [Download]
+                    </a>
                 @else
                     <span class="text-danger">Kosong</span>
                 @endif
@@ -71,8 +73,9 @@
             <td>:</td>
             <td>
                 @if (isset($row3->file_dokumen))
-                    <a target="_blank"
-                        href="{{ asset('upload/file_biodata/' . $row3->file_dokumen) }}">{{ $row3->file_dokumen }}</a>
+                    <a target="_blank" href="{{ asset('upload/file_biodata/' . $row3->file_dokumen) }}">
+                        [Download]
+                    </a>
                 @else
                     <span class="text-danger">Kosong</span>
                 @endif
@@ -104,8 +107,9 @@
             <td>:</td>
             <td>
                 @if (isset($row4->file_dokumen))
-                    <a target="_blank"
-                        href="{{ asset('upload/file_biodata/' . $row4->file_dokumen) }}">{{ $row4->file_dokumen }}</a>
+                    <a target="_blank" href="{{ asset('upload/file_biodata/' . $row4->file_dokumen) }}">
+                        [Download]
+                    </a>
                 @else
                     <span class="text-danger">Kosong</span>
                 @endif
@@ -132,11 +136,62 @@
                 </center>
             </td>
         </tr>
+
+        {{--  <tr>
+            <td colspan="4">
+                <div class="bs-callout-danger callout-border-left callout-bordered mt-1 p-1">
+                    <h4 class="danger">Informasi !</h4>
+                    <p>
+                        Lengkapi data perusahaan Anda 
+                    </p>
+                </div>
+            </td>
+        </tr>  --}}
     </table>
 @else
-    <div class="card-body">
-        <div class="alert alert-danger" role="alert">
-            Data Kosong, Silakan Edit Biodata !
-        </div>
+    <div class="alert alert-danger" role="alert">
+        Silakan Isi Biodata agar bisa mengupload dokumen !
     </div>
+    <table class="table table-responsive">
+        <tr>
+            <td width="30%">NIB</td>
+            <td width="1%">:</td>
+            <td>
+                -
+            </td>
+            <td align="right">
+                -
+            </td>
+        </tr>
+        <tr>
+            <td>KTP</td>
+            <td>:</td>
+            <td>
+                -
+            </td>
+            <td align="right">
+                -
+            </td>
+        </tr>
+        <tr>
+            <td>AKTE PENDIRIAN</td>
+            <td>:</td>
+            <td>
+                -
+            </td>
+            <td align="right">
+                -
+            </td>
+        </tr>
+        <tr>
+            <td>NPWP</td>
+            <td>:</td>
+            <td>
+                -
+            </td>
+            <td align="right">
+                -
+            </td>
+        </tr>
+    </table>
 @endif

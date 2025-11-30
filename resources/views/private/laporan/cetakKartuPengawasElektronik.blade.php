@@ -72,6 +72,7 @@
         font-family: Arial, Helvetica, sans-serif;
     } */
 </style>
+
 <div class="kotak_depan">
 
     <table style="font-size:9px; width:350px;">
@@ -80,8 +81,10 @@
                 <table style="width:350px;padding-right:10px;font-size:12px;">
                     <tr>
                         <td><img src="{{ public_path('images/kartu/logo_dishub.png') }}" width="40px;"></td>
-                        <td width="100%" align="center" style="font-weight: bold;">DINAS PERHUBUNGAN<br>PROVINSI SUMATERA SELATAN</td>
-                        <td><img src="{{ public_path('images/kartu/logo_report.png') }}" class="pull-right" width="50px;"></td>
+                        <td width="100%" align="center" style="font-weight: bold;">DINAS PERHUBUNGAN<br>PROVINSI SUMATERA
+                            SELATAN</td>
+                        <td><img src="{{ public_path('images/kartu/logo_report.png') }}" class="pull-right"
+                                width="50px;"></td>
                     </tr>
                 </table>
             </td>
@@ -96,7 +99,8 @@
             <td colspan="4" align="center"><b>KARTU PENGAWASAN ELEKTRONIK</b></td>
         </tr>
         <tr>
-            <td rowspan="4" width="10px;" align="center"><img src="data:image/png;base64, {!! base64_encode(QrCode::size(400)->generate($QRcode)) !!} " style="width: 50px;"></td>
+            <td rowspan="4" width="10px;" align="center"><img src="data:image/png;base64, {!! base64_encode(QrCode::size(400)->generate($QRcode)) !!} "
+                    style="width: 50px;"></td>
             <td style="vertical-align: top;">NOMOR</td>
             <td width="1px" style="vertical-align: top;">:</td>
             <td style="vertical-align: top;">{{ $row->no_kartu_pengawas }}</td>
@@ -134,7 +138,8 @@
         </tr>
         <tr>
             <td style="vertical-align: top;">2.</td>
-            <td style="vertical-align: top;">Tanggap terhadap kebutuhan masyarakat akan pelayanan jasa yang tertib, teratur, tepat waktu, bersih dan nyaman.</td>
+            <td style="vertical-align: top;">Tanggap terhadap kebutuhan masyarakat akan pelayanan jasa yang tertib,
+                teratur, tepat waktu, bersih dan nyaman.</td>
         </tr>
         <tr>
             <td>3.</td>

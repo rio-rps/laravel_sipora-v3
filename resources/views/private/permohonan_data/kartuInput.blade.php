@@ -12,14 +12,10 @@
                     <div class="col-md-6">
                         <div class="card box-shadow-0 border-blue box-sm">
                             <div class="card-header card-head-inverse bg-secondary">
-                                <!-- <center>
-                                        <div class="pull-right">
-                                            <a href="" class="btn btn-sm btn-outline-info"><i class="fa fa-print"></i> Cetak</a>
-                                    </center> -->
                                 <h4 class="card-title"><i class="fa fa-id-card"></i> Data Permohonan</h4>
                             </div>
 
-                            <div class="card-content collapse show">
+                            <div class="card-content  ">
                                 <div class="card-body">
                                     <table style="vertical-align: top;" class="table-striped table-responsive">
 
@@ -30,7 +26,7 @@
                                                 <td>{{ cek_date_ddmmyyyy_his_v1($row->tgl_kirim_permohonan) }}</td>
                                             </tr>
                                             <tr>
-                                                <td>Kab/Kota</td>
+                                                <td>PIC Kab/Kota</td>
                                                 <td>:</td>
                                                 <td>{{ $row->nm_kabkota }}</td>
                                             </tr>
@@ -121,21 +117,6 @@
                                                 <td>{{ $row->plat_no_kendaraan }}</td>
                                             </tr>
                                             <tr>
-                                                <td>Daya Angkut Orang</td>
-                                                <td width="1%">:</td>
-                                                <td>{{ $row->daya_angkut_orang }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Daya Angkut Barang</td>
-                                                <td width="1%">:</td>
-                                                <td>{{ $row->daya_angkut_barang }} kg</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Tahun Pembuatan</td>
-                                                <td width="1%">:</td>
-                                                <td>{{ $row->thn_pembuatan }}</td>
-                                            </tr>
-                                            <tr>
                                                 <td>Nomor Rangka</td>
                                                 <td width="1%">:</td>
                                                 <td>{{ $row->no_rangka }}</td>
@@ -145,11 +126,59 @@
                                                 <td width="1%">:</td>
                                                 <td>{{ $row->no_mesin }}</td>
                                             </tr>
+                                            <tr>
+                                                <td>Warna TNKB</td>
+                                                <td width="1%">:</td>
+                                                <td>
+                                                    {{ $row->warna_tnkb ? $row->warna_tnkb : '-' }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Bahan Bakar</td>
+                                                <td width="1%">:</td>
+                                                <td>
+                                                    {{ $row->bahan_bakar ? $row->bahan_bakar : '-' }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Daya Angkut Orang</td>
+                                                <td width="1%">:</td>
+                                                <td>{{ format_rupiah($row->daya_angkut_orang) }} Orang</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Daya Angkut Barang</td>
+                                                <td width="1%">:</td>
+                                                <td>{{ format_rupiah($row->daya_angkut_barang) }} Kg</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tahun Pembuatan</td>
+                                                <td width="1%">:</td>
+                                                <td>{{ $row->thn_pembuatan }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <hr>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Nomor Faktur Jual Beli</td>
+                                                <td width="1%">:</td>
+                                                <td>
+                                                    {{ $row->nmr_faktur_jual_beli ? $row->nmr_faktur_jual_beli : '-' }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tanggal Faktur</td>
+                                                <td width="1%">:</td>
+                                                <td>{{ $row->tgl_faktur_jual_beli ? cek_date_ddmmyyyy_his_v2($row->tgl_faktur_jual_beli) : '-' }}
+                                                </td>
+                                            </tr>
                                         </body>
                                     </table>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                     <div class="col-md-6">
                         <div class="card box-shadow-0 border-blue">
@@ -160,6 +189,121 @@
                             <div class="card-content collapse show">
                                 <div class="card-body">
                                     <div id="dataKartuPengawas"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card box-shadow-0 border-blue box-sm">
+                            <div class="card-header card-head-inverse bg-secondary">
+                                <h4 class="card-title"><i class="fa fa-download"></i> Download Dokumen Upload</h4>
+                            </div>
+                            <div class="card-content  ">
+                                <div class="card-body">
+                                    <table style="vertical-align: top;" class="table-striped table-responsive">
+
+                                        <body>
+                                            <tr>
+                                                <th colspan="4"><i class="fa fa-file"></i> Dokumen Perusahaan</th>
+                                            </tr>
+                                            <tr>
+                                                <th width="35%">NIB</th>
+                                                <td width="1%">:</td>
+                                                <td>
+                                                    @if (isset($dok1->file_dokumen))
+                                                        <a target="_blank"
+                                                            href="{{ asset('upload/copy_file_permohonan/file_biodata/' . $dok1->file_dokumen) }}"
+                                                            class="btn btn-outline-primary btn-sm">
+                                                            <i class="fa fa-download"></i> Download
+                                                        </a>
+                                                    @else
+                                                        <span class="badge bg-danger">Kosong</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>KTP</th>
+                                                <td>:</td>
+                                                <td>
+                                                    @if (isset($dok2->file_dokumen))
+                                                        <a target="_blank"
+                                                            href="{{ asset('upload/copy_file_permohonan/file_biodata/' . $dok2->file_dokumen) }}"
+                                                            class="btn btn-outline-primary btn-sm">
+                                                            <i class="fa fa-download"></i> Download
+                                                        </a>
+                                                    @else
+                                                        <span class="badge bg-danger">Kosong</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>AKTE PENDIRIAN</th>
+                                                <td>:</td>
+                                                <td>
+                                                    @if (isset($dok3->file_dokumen))
+                                                        <a target="_blank"
+                                                            href="{{ asset('upload/copy_file_permohonan/file_biodata/' . $dok3->file_dokumen) }}"
+                                                            class="btn btn-outline-primary btn-sm">
+                                                            <i class="fa fa-download"></i> Download
+                                                        </a>
+                                                    @else
+                                                        <span class="badge bg-danger">Kosong</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>NPWP</th>
+                                                <td>:</td>
+                                                <td>
+                                                    @if (isset($dok4->file_dokumen))
+                                                        <a target="_blank"
+                                                            href="{{ asset('upload/copy_file_permohonan/file_biodata/' . $dok4->file_dokumen) }}"
+                                                            class="btn btn-outline-primary btn-sm">
+                                                            <i class="fa fa-download"></i> Download
+                                                        </a>
+                                                    @else
+                                                        <span class="badge bg-danger">Kosong</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        </body>
+                                    </table>
+                                    <hr>
+                                    <table style="vertical-align: top;" class="table-striped table-responsive">
+                                        <tr>
+                                            <th colspan="3"><i class="fa fa-car"></i> Dokumen Kendaraan</th>
+                                        </tr>
+                                        <tr>
+                                            <th width="35%">KIR</th>
+                                            <td width="1%">:</td>
+                                            <td>
+                                                @if (isset($kendaraan->file_kir))
+                                                    <a target="_blank"
+                                                        href="{{ asset('upload/copy_file_permohonan/file_kendaraan/' . $kendaraan->file_kir) }}"
+                                                        class="btn btn-outline-success btn-sm">
+                                                        <i class="fa fa-download"></i> Download
+                                                    </a>
+                                                @else
+                                                    <span class="badge bg-danger">Kosong</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>STNK</th>
+                                            <td>:</td>
+                                            <td>
+                                                @if (isset($kendaraan->file_stnk))
+                                                    <a target="_blank"
+                                                        href="{{ asset('upload/copy_file_permohonan/file_kendaraan/' . $kendaraan->file_stnk) }}"
+                                                        class="btn btn-outline-success btn-sm">
+                                                        <i class="fa fa-download"></i> Download
+                                                    </a>
+                                                @else
+                                                    <span class="badge bg-danger">Kosong</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    </table>
+
                                 </div>
                             </div>
                         </div>

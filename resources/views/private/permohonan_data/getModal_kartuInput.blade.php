@@ -16,49 +16,92 @@
                         <div class="row">
                             <div class="col-md-6">
 
-                                <div class="form-body">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label  border-bottom">Nomor Kartu
-                                            Pengawas</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" name="no_kartu_pengawas"
-                                                value="{{ $row->no_kartu_pengawas }}" maxlength="50">
-                                        </div>
+
+
+                                <div class="card border-secondary">
+                                    <div class="card-header text-white bg-info">
+                                        PENERBITAN TANDA NOMOR KENDARAAN
                                     </div>
-                                </div>
-                                <div class="form-body">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label  border-bottom">Tanggal SK</label>
-                                        <div class="col-md-6">
-                                            <input type="date" class="form-control" name="tgl_sk"
-                                                value="{{ $row->tgl_sk }}">
+                                    <div class="card-body" style="margin-top: -15px;">
+                                        <div class="form-body">
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label  border-bottom">
+                                                    Nomor Kartu Pengawas<span class="text-danger">*</span>
+                                                </label>
+                                                <div class="col-md-8">
+                                                    <input type="text" class="form-control" name="no_kartu_pengawas"
+                                                        value="{{ $row->no_kartu_pengawas }}" maxlength="34">
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="form-body">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label  border-bottom">Nomor SK</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control " name="no_sk"
-                                                value="{{ $row->no_sk }}" maxlength="50">
+                                        <div class="form-body">
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label  border-bottom">
+                                                    Tanggal SK
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <div class="col-md-8">
+                                                    <div class="input-group date" id="datepicker1">
+                                                        <input type="text" class="form-control" autocomplete="off"
+                                                            name="tgl_sk"
+                                                            value="{{ $row->tgl_sk ? \Carbon\Carbon::parse($row->tgl_sk)->format('d-m-Y') : '' }}">
+                                                        <span class="input-group-append input-group-text">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="form-body">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label  border-bottom">Tanggal Awal</label>
-                                        <div class="col-md-6">
-                                            <input type="date" class="form-control" name="tgl_awal"
-                                                value="{{ $row->tgl_awal }}">
+
+
+
+                                        <div class="form-body">
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label  border-bottom">
+                                                    Nomor SK
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <div class="col-md-8">
+                                                    <input type="text" class="form-control " name="no_sk"
+                                                        value="{{ $row->no_sk }}" maxlength="50">
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="form-body">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label  border-bottom">Tanggal Akhir</label>
-                                        <div class="col-md-6">
-                                            <input type="date" class="form-control" name="tgl_akhir"
-                                                value="{{ $row->tgl_akhir }}">
+                                        <div class="form-body">
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label  border-bottom">
+                                                    Tanggal Awal
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <div class="col-md-8">
+                                                    <div class="input-group date" id="datepicker_awal">
+                                                        <input type="text" class="form-control" autocomplete="off"
+                                                            name="tgl_awal"
+                                                            value="{{ $row->tgl_sk ? \Carbon\Carbon::parse($row->tgl_awal)->format('d-m-Y') : '' }}">
+                                                        <span class="input-group-append input-group-text">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-body">
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label  border-bottom">
+                                                    Tanggal Akhir
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <div class="col-md-8">
+                                                    <div class="input-group date" id="datepicker_akhir">
+                                                        <input type="text" class="form-control" autocomplete="off"
+                                                            name="tgl_akhir"
+                                                            value="{{ $row->tgl_sk ? \Carbon\Carbon::parse($row->tgl_akhir)->format('d-m-Y') : '' }}">
+                                                        <span class="input-group-append input-group-text">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -74,9 +117,17 @@
                                                 <label class="col-sm-3 col-form-label  border-bottom">Tanggal
                                                     Awal</label>
                                                 <div class="col-md-5">
-                                                    <input type="date" class="form-control" name="tgl_kir_awal"
-                                                        id="tgl_kir_awal" value="{{ $row->tgl_kir_awal }}"
-                                                        {{ $row->ck_tgl_kir_awal_clear == '0' ? 'disabled' : '' }}>
+                                                    <div class="input-group date" id="datepicker_kir_awal">
+                                                        <input type="text" class="form-control" autocomplete="off"
+                                                            name="tgl_kir_awal" id="tgl_kir_awal"
+                                                            {{ $row->ck_tgl_kir_awal_clear == '0' ? 'disabled' : '' }}
+                                                            value="{{ !empty($row->tgl_kir_awal) ? \Carbon\Carbon::parse($row->tgl_kir_awal)->format('d-m-Y') : '0' }}">
+                                                        <span class="input-group-append input-group-text">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                                    </div>
+
+
                                                 </div>
                                                 <label class="col-sm-4 col-form-label  border-bottom">
                                                     <input type="checkbox" name="ck_tgl_kir_awal_clear"
@@ -92,10 +143,15 @@
                                                 <label class="col-sm-3 col-form-label  border-bottom">Tanggal
                                                     Akhir</label>
                                                 <div class="col-md-5">
-                                                    <input type="date" class="form-control" name="tgl_kir_akhir"
-                                                        value="{{ $row->tgl_kir_akhir }}"
-                                                        {{ $row->ck_tgl_kir_akhir_clear == '0' ? 'disabled' : '' }}
-                                                        id="tgl_kir_akhir">
+                                                    <div class="input-group date" id="datepicker_kir_akhir">
+                                                        <input type="text" class="form-control" autocomplete="off"
+                                                            name="tgl_kir_akhir" id="tgl_kir_akhir"
+                                                            {{ $row->ck_tgl_kir_akhir_clear == '0' ? 'disabled' : '' }}
+                                                            value="{{ !empty($row->tgl_kir_akhir) ? \Carbon\Carbon::parse($row->tgl_kir_akhir)->format('d-m-Y') : '0' }}">
+                                                        <span class="input-group-append input-group-text">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                                 <label class="col-sm-4 col-form-label  border-bottom">
                                                     <input type="checkbox" name="ck_tgl_kir_akhir_clear"
@@ -104,6 +160,81 @@
                                                         onchange="handleCheckboxChangeAkhir()"> Clear Date = 0
                                                 </label>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--  TAMBAHAN  -->
+
+
+                                <div id="accordionWrap1" role="tablist" aria-multiselectable="true"
+                                    style="margin-bottom:-16px;">
+                                    <div class="card accordion collapse-icon accordion-icon-rotate">
+                                        <div id="heading11" class="  collapsed font-weight-bold text-white px-1 py-1"
+                                            data-toggle="collapse" href="#accordion11" aria-expanded="false"
+                                            aria-controls="accordion11"
+                                            style="background-color:#8b8d91; border-radius: 10px 10px 0px 0px; cursor: pointer;">
+                                            INFORMASI TAMBAHAN DATA KENDARAAN
+                                        </div>
+
+                                        <div id="accordion11" role="tabpanel" data-parent="#accordionWrap1"
+                                            aria-labelledby="heading11" class="collapse border-secondary">
+
+
+                                            <div class="card ">
+                                                <div class="card-body" style="margin-top: -15px;">
+                                                    <div class="form-body">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label  border-bottom">
+                                                                Nomor Uji Kendaraan
+                                                            </label>
+                                                            <div class="col-md-8">
+                                                                <input type="text" class="form-control"
+                                                                    name="nomor_uji"
+                                                                    value="{{ $row->JPermohonan->nomor_uji }}"
+                                                                    maxlength="255">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-body">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label  border-bottom">
+                                                                Kombinasi yang diperbolehkan
+                                                            </label>
+                                                            <div class="col-md-8">
+                                                                <input type="text" class="form-control"
+                                                                    name="kombinasi_yg_diperoleh"
+                                                                    value="{{ $row->JPermohonan->kombinasi_yg_diperoleh }}"
+                                                                    maxlength="255">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-body">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label  border-bottom">
+                                                                SK Register Uji Type
+                                                            </label>
+                                                            <div class="col-md-8">
+                                                                <input type="text" class="form-control"
+                                                                    name="sk_reg_uji_type"
+                                                                    value="{{ $row->JPermohonan->sk_reg_uji_type }}"
+                                                                    maxlength="255">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-body">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label  border-bottom">
+                                                                Keterangan Lain-lain
+                                                            </label>
+                                                            <div class="col-md-8">
+                                                                <textarea name="ket_lain" class="form-control">{{ $row->JPermohonan->ket_lain }}</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -138,7 +269,7 @@
             dateInput.disabled = true;
             dateInput.value = nilai;
         } else {
-            dateInput.value = "{{ $row->tgl_kir_awal }}";
+            dateInput.value = "{{ \Carbon\Carbon::parse($row->tgl_kir_awal)->format('d-m-Y') }}";
             dateInput.disabled = false;
         }
     }
@@ -152,8 +283,56 @@
             dateInput.disabled = true;
             dateInput.value = nilai;
         } else {
-            dateInput.value = "{{ $row->tgl_kir_akhir }}";
+            dateInput.value = "{{ \Carbon\Carbon::parse($row->tgl_kir_akhir)->format('d-m-Y') }}";
             dateInput.disabled = false;
         }
     }
+
+    $(function() {
+        $('#datepicker1').datepicker({
+            format: 'dd-mm-yyyy',
+            todayBtn: 'linked',
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+            container: 'body',
+            language: 'id'
+        });
+        $('#datepicker_awal').datepicker({
+            format: 'dd-mm-yyyy',
+            todayBtn: 'linked',
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+            container: 'body',
+            language: 'id'
+        });
+        $('#datepicker_akhir').datepicker({
+            format: 'dd-mm-yyyy',
+            todayBtn: 'linked',
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+            container: 'body',
+            language: 'id'
+        });
+        $('#datepicker_kir_awal').datepicker({
+            format: 'dd-mm-yyyy',
+            todayBtn: 'linked',
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+            container: 'body',
+            language: 'id'
+        });
+        $('#datepicker_kir_akhir').datepicker({
+            format: 'dd-mm-yyyy',
+            todayBtn: 'linked',
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+            container: 'body',
+            language: 'id'
+        });
+    });
 </script>

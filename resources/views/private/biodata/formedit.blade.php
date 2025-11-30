@@ -1,13 +1,13 @@
 <div class="modal fade" id="getModalForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel5" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel5"><b>{{$title_form}}</b></h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header  bg-secondary   text-white">
+                <h4 class="modal-title" id="myModalLabel5"><b>{{ $title_form }}</b></h4>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('cparKendaraanMerek.update',$id) }}" class="formData" method="POST">
+            <form action="{{ route('cparKendaraanMerek.update', $id) }}" class="formData" method="POST">
                 @csrf
                 <input type="hidden" name="_method" value="PUT">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -16,7 +16,8 @@
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label border-bottom">Nama Merek</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="nm_merek_kendaraan" value="{{$row->nm_merek_kendaraan}}" maxlength="100">
+                                <input type="text" class="form-control" name="nm_merek_kendaraan"
+                                    value="{{ $row->nm_merek_kendaraan }}" maxlength="100">
                             </div>
                         </div>
                     </div>

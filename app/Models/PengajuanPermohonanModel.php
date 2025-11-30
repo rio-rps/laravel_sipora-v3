@@ -38,8 +38,21 @@ class PengajuanPermohonanModel extends Model
         'file_stnk',
         'id_kendaraan_history',
         'kode_provinsi',
-        'kode_kabkota'
+        'kode_kabkota',
+        'nomor_uji',
+        'warna_tnkb',
+        'bahan_bakar',
+        'kombinasi_yg_diperoleh',
+        'sk_reg_uji_type',
+        'nmr_faktur_jual_beli',
+        'tgl_faktur_jual_beli',
+        'ket_lain'
     ];
+
+    public function JPermohonanValidasi()
+    {
+        return $this->belongsTo(ValidasiPermohonanModel::class, 'id_permohonan_izin', 'id_permohonan_izin');
+    }
 
     public function JkendaraanMerek()
     {

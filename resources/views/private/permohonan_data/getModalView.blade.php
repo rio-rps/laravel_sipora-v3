@@ -1,9 +1,10 @@
  <div class="modal fade" id="getModalForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel5" aria-hidden="true">
-     <div class="modal-dialog" role="document">
+     <div class="modal-dialog modal-lg" role="document">
          <div class="modal-content">
-             <div class="modal-header">
-                 <h4 class="modal-title" id="myModalLabel5"><b>{{ $title_form }}</b></h4>
-                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+             <div class="modal-header bg-secondary   text-white">
+                 <h5 class="modal-title" id="getModalFormLabel"><strong>
+                         <i class="fa a fa-wpforms"></i> {{ $title_form }}</strong></h5>
+                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                      <span aria-hidden="true">&times;</span>
                  </button>
              </div>
@@ -15,6 +16,11 @@
                              <td>Tanggal Kirim Permohonan</td>
                              <td>:</td>
                              <td>{{ cek_date_ddmmyyyy_his_v1($row->tgl_kirim_permohonan) }}</td>
+                         </tr>
+                         <tr>
+                             <td>Kirim ke PIC</td>
+                             <td>:</td>
+                             <td>{{ $kabkota }}</td>
                          </tr>
                          <tr>
                              <td colspan="3">
@@ -103,21 +109,6 @@
                              <td>{{ $row->plat_no_kendaraan }}</td>
                          </tr>
                          <tr>
-                             <td>Daya Angkut Orang</td>
-                             <td width="1%">:</td>
-                             <td>{{ $row->daya_angkut_orang }}</td>
-                         </tr>
-                         <tr>
-                             <td>Daya Angkut Barang</td>
-                             <td width="1%">:</td>
-                             <td>{{ $row->daya_angkut_barang }}</td>
-                         </tr>
-                         <tr>
-                             <td>Tahun Pembuatan</td>
-                             <td width="1%">:</td>
-                             <td>{{ $row->thn_pembuatan }}</td>
-                         </tr>
-                         <tr>
                              <td>Nomor Rangka</td>
                              <td width="1%">:</td>
                              <td>{{ $row->no_rangka }}</td>
@@ -126,6 +117,49 @@
                              <td>Nomor Mesin</td>
                              <td width="1%">:</td>
                              <td>{{ $row->no_mesin }}</td>
+                         </tr>
+                         <tr>
+                             <td>Warna TNKB</td>
+                             <td width="1%">:</td>
+                             <td>{{ $row->warna_tnkb }} </td>
+                         </tr>
+                         <tr>
+                             <td>Bahan Bakar</td>
+                             <td width="1%">:</td>
+                             <td>{{ $row->bahan_bakar }} </td>
+                         </tr>
+                         <tr>
+                             <td>Daya Angkut Orang</td>
+                             <td width="1%">:</td>
+                             <td>{{ $row->daya_angkut_orang }} Orang</td>
+                         </tr>
+                         <tr>
+                             <td>Daya Angkut Barang</td>
+                             <td width="1%">:</td>
+                             <td>{{ format_rupiah($row->daya_angkut_barang) }} Kg</td>
+                         </tr>
+                         <tr>
+                             <td>Tahun Pembuatan</td>
+                             <td width="1%">:</td>
+                             <td>{{ $row->thn_pembuatan }}</td>
+                         </tr>
+                         <tr>
+                             <td colspan="3">
+                                 <hr>
+                             </td>
+                         </tr>
+                         <tr>
+                             <td>Nomor Faktur Jual Beli</td>
+                             <td width="1%">:</td>
+                             <td>
+                                 {{ $row->nmr_faktur_jual_beli ? $row->nmr_faktur_jual_beli : '-' }}
+                             </td>
+                         </tr>
+                         <tr>
+                             <td>Tanggal Faktur</td>
+                             <td width="1%">:</td>
+                             <td>{{ $row->tgl_faktur_jual_beli ? cek_date_ddmmyyyy_his_v2($row->tgl_faktur_jual_beli) : '-' }}
+                             </td>
                          </tr>
                      </body>
                  </table>

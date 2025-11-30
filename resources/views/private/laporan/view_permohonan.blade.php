@@ -161,11 +161,22 @@
     <input type="hidden" id="id_kabkotaV">
     <input type="hidden" id="datesFilterV">
     <script>
+        const today = moment();
+        const startOfYear = moment().startOf('year');
+
         $('input[name="datesFilter"]').daterangepicker({
+            startDate: startOfYear, // tanggal awal = 1 Januari
+            endDate: today, // tanggal akhir = hari ini
             locale: {
-                format: 'YYYY-MM-DD' // Format as yyyy-mm-dd
+                format: 'YYYY-MM-DD', // Format tampilannya
+                applyLabel: "Apply",
+                cancelLabel: "Cancel",
             }
         });
+
+
+
+
         // Saat ukuran font berubah
         $('#font_size').on('input', function() {
             var fontSize = $(this).val();
@@ -242,6 +253,123 @@
                         alert(xhr.status + '\n' + throwError);
                     }
                 });
+            }
+        }
+
+        async function openPrintFromURL() {
+            // Tampilkan SweetAlert loading tanpa tombol
+            Swal.fire({
+                title: 'Memproses...',
+                text: 'Sedang menyiapkan data untuk dicetak.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            try {
+                // Ambil nilai dari input pengaturan
+                const font_size = document.getElementById('font_size').value || 12;
+                const font_family = document.getElementById('font_family').value || 'Inter, Sans-Serif';
+
+                // Ambil filter data dari input hidden
+                const id_jenis_permohonanV = document.getElementById('id_jenis_permohonanV').value;
+                const status_permohonanV = document.getElementById('status_permohonanV').value;
+                const id_kabkotaV = document.getElementById('id_kabkotaV').value;
+                const datesFilterV = document.getElementById('datesFilterV').value;
+
+                const params = new URLSearchParams({
+                    jenisPermohonan: id_jenis_permohonanV,
+                    sttsPermohonan: status_permohonanV,
+                    id_kabkotaFilter: id_kabkotaV,
+                    tglFilter: datesFilterV,
+                    font_size: font_size,
+                    font_family: font_family
+                });
+
+                const url = "{{ url('/laporan/cetakPermohonanFilter') }}?" + params.toString();
+
+                const response = await fetch(url);
+
+                if (!response.ok) throw new Error("Gagal memuat data cetak");
+
+                const html = await response.text();
+
+                const printFrame = document.getElementById("printFrame");
+                const doc = printFrame.contentWindow.document;
+
+                doc.open();
+                doc.write(html);
+                doc.close();
+
+                printFrame.onload = function() {
+                    Swal.close(); // Tutup loading saat frame siap
+                    printFrame.contentWindow.focus();
+                    printFrame.contentWindow.print();
+                };
+
+            } catch (err) {
+                Swal.close(); // Tutup loading jika error
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Gagal mencetak: ' + err.message,
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
+        }
+
+        async function downloadExcel() {
+            Swal.fire({
+                title: 'Menyiapkan File Excel...',
+                text: 'Mohon tunggu sebentar.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Ambil nilai filter dari elemen HTML
+            const jenisPermohonan = document.getElementById('id_jenis_permohonanV').value;
+            const sttsPermohonan = document.getElementById('status_permohonanV').value;
+            const id_kabkotaFilter = document.getElementById('id_kabkotaV').value;
+            const tglFilter = document.getElementById('datesFilterV').value;
+
+            const params = new URLSearchParams({
+                jenisPermohonan,
+                sttsPermohonan,
+                id_kabkotaFilter,
+                tglFilter
+            });
+
+            const url = "{{ url('/laporan/exportPermohonanFilter') }}?" + params.toString();
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET'
+                });
+
+                if (!response.ok) throw new Error("Gagal mengunduh file Excel.");
+
+                const blob = await response.blob();
+                const fileURL = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+
+                link.href = fileURL;
+                link.download = "permohonan_filter.xlsx"; // Ganti sesuai nama file
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                window.URL.revokeObjectURL(fileURL);
+                Swal.close();
+            } catch (error) {
+                Swal.fire("Gagal", error.message, "error");
             }
         }
     </script>

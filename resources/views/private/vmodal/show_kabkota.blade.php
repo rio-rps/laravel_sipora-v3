@@ -1,9 +1,9 @@
 <div class="modal fade" id="getModalForm2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel5" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog " role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel5"><b>{{ $title_form }}</b></h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header bg-secondary text-white">
+                <h4 class="modal-title " id="myModalLabel5"><b>{{ $title_form }}</b></h4>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -24,23 +24,44 @@
                                 $no = 0;
                             @endphp
                             @if ($act == 'lap_permohonan')
-                                @php
-                                    $no = 1;
-                                @endphp
-                                <tr>
-                                    <td align="center">{{ $no }}</td>
-                                    <td>SEMUA</td>
-                                    <td>
-                                        <center>
-                                            <div class="btn-icon-list btn-list">
-                                                <a class="btn btn-sm btn-primary" href="#"
-                                                    onclick="pilih('{{ $act }}','SEMUA','SEMUA')"
-                                                    title="Pilih Kab/ Kota">Pilih
-                                                </a>
-                                            </div>
-                                        </center>
-                                    </td>
-                                </tr>
+                                @if (getLevel() == 1)
+                                    @php
+                                        $no = 1;
+                                    @endphp
+                                    <tr>
+                                        <td align="center">{{ $no }}</td>
+                                        <td>SEMUA</td>
+                                        <td>
+                                            <center>
+                                                <div class="btn-icon-list btn-list">
+                                                    <a class="btn btn-sm btn-primary text-white" href="#"
+                                                        onclick="pilih('{{ $act }}','SEMUA','SEMUA')"
+                                                        title="Pilih Kab/ Kota">Pilih
+                                                    </a>
+                                                </div>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                @elseif (getLevel() == 2 and count($countAksesKabKota) == 18)
+                                    @php
+                                        $no = 1;
+                                    @endphp
+                                    <tr>
+                                        <td align="center">{{ $no }}</td>
+                                        <td>SEMUA</td>
+                                        <td>
+                                            <center>
+                                                <div class="btn-icon-list btn-list">
+                                                    <a class="btn btn-sm btn-primary text-white" href="#"
+                                                        onclick="pilih('{{ $act }}','SEMUA','SEMUA')"
+                                                        title="Pilih Kab/ Kota">Pilih
+                                                    </a>
+                                                </div>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                @endif
+
                             @endif
                             @foreach ($result as $dkabkota)
                                 <tr>
@@ -49,7 +70,7 @@
                                     <td>
                                         <center>
                                             <div class="btn-icon-list btn-list">
-                                                <a class="btn btn-sm btn-primary" href="#"
+                                                <a class="btn btn-sm btn-primary text-white"
                                                     onclick="pilih('{{ $act }}',{{ $dkabkota->id_kabkota }},'{{ $dkabkota->nm_kabkota }}')"
                                                     title="Pilih Kab/ Kota">Pilih
                                                 </a>
@@ -61,7 +82,9 @@
                         </tbody>
                     </table>
                 </div>
-
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">TUTUP</button>
             </div>
         </div>
     </div>
@@ -72,6 +95,14 @@
         if (act == 'lap_permohonan') {
             $('#getModalForm2').modal('hide');
             $('.kabkota-name').html(nama);
+            $('#id_kabkota').val(id);
+        } else if (act == 'pengajuan_permohonan') {
+            $('#getModalForm2').modal('hide');
+            $('#kabkota-name').val(nama);
+            $('#id_kabkota').val(id);
+        } else if (act == 'cekdata_mutasiPIC') {
+            $('#getModalForm2').modal('hide');
+            $('#kabkota-name').val(nama);
             $('#id_kabkota').val(id);
         }
     }

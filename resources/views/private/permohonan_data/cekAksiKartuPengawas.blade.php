@@ -36,22 +36,37 @@
                             </form>
                         @endif
 
-                    @endif
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" title="Dokumen Upload" id="tombolModalForm"
+
+                        <div class="dropdown-divider"></div>
+                        {{--  <a class="dropdown-item" title="Dokumen Upload" id="tombolModalForm"
                         data-url="{{ route('datapermohonan.dokumenUpload', $rows->id_permohonan_izin) }}"><i
-                            class="fa fa-desktop"></i> Dokumen Upload</a>
-                    <!-- <a class="dropdown-item" href="#" data-url="" title="Cetak Kartu"><i class="fa fa-print"></i> Cetak Permohonan</a> -->
-                    <a class="dropdown-item" target="_blank"
-                        href="{{ route('laporan.cetakKartuPengawas', Crypt::encrypt($rows->id_permohonan_izin)) }}"
-                        title="Cetak Surat Kartu Pengawas"><i class="fa fa-print"></i> Cetak Surat Kartu Pengawas</a>
-                    <a class="dropdown-item" target="_blank"
+                            class="fa fa-desktop"></i> Dokumen Upload</a>  --}}
+                        <!-- <a class="dropdown-item" href="#" data-url="" title="Cetak Kartu"><i class="fa fa-print"></i> Cetak Permohonan</a> -->
+                        <a class="dropdown-item" target="_blank"
+                            href="{{ route('laporan.cetakKartuPengawas', Crypt::encrypt($rows->id_permohonan_izin)) }}"
+                            title="Cetak Surat Kartu Pengawas"><i class="fa fa-print"></i> Cetak Surat Kartu
+                            Pengawas</a>
+                        <a class="dropdown-item" target="_blank"
+                            href="{{ route('laporan.cetakSuratRekomendasiKepala', Crypt::encrypt($rows->id_permohonan_izin)) }}"
+                            title="Cetak Surat Kartu Pengawas"><i class="fa fa-print"></i> Cetak Surat Rekomendasi</a>
+                        {{--  <a class="dropdown-item" target="_blank"
                         href="{{ route('laporan.cetakKartuPengawasElektronik', Crypt::encrypt($rows->id_permohonan_izin)) }}"
                         title="Cetak Kartu Pengawas Elektronik"><i class="fa fa-print"></i> Cetak Kartu Pengawas
-                        Elektronik</a>
+                        Elektronik</a>  --}}
+                        <a class="dropdown-item" target="_blank"
+                            href="{{ route('laporan.cetakKartuPengawasElektronikV2', Crypt::encrypt($rows->id_permohonan_izin)) }}"
+                            title="Cetak Kartu Pengawas Elektronik"><i class="fa fa-print"></i> Cetak Kartu Pengawas
+                            Elektronik</a>
+                        <a class="dropdown-item" target="_blank"
+                            href="{{ route('laporan.cetakQRcode', Crypt::encrypt($rows->id_permohonan_izin)) }}"
+                            title="Cetak Qrcode"><i class="fa fa-qrcode"></i> Cetak Qrcode
+                        </a>
+                    @endif
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" target="_blank"
-                        href="{{ route('laporan.cetakQRcode', Crypt::encrypt($rows->id_permohonan_izin)) }}"
-                        title="Cetak Qrcode"><i class="fa fa-qrcode"></i> Cetak Qrcode</a>
+                        href="{{ route('kartucek.QRcode', Crypt::encrypt($rows->id_permohonan_izin)) }}"
+                        title="Cetak Qrcode"><i class="fa fa-link"></i> Info Kartu Pengawas
+                    </a>
 
                 </div>
             </div>

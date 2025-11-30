@@ -6,6 +6,7 @@ use App\Models\AksesKabKotaModel;
 use App\Models\DataUserModel;
 use App\Models\MyModel;
 use App\Models\UserDataAksesKabKotaModel;
+use App\Models\UserLogModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -112,6 +113,9 @@ class DataUserPetugasController extends Controller
                         return '<span class="badge badge-danger">Belum ada Akses</span>';
                     }
                 })
+                ->addColumn('stts', function ($row) {
+                    return stts_user($row->stts_user);
+                })
                 ->rawColumns(['kabkota', 'action'])
                 ->make(true);
         } else {
@@ -217,8 +221,16 @@ class DataUserPetugasController extends Controller
     {
         if (request()->ajax()) {
             $post = DataUserModel::where('id', $id)->update([
-                'password'  => bcrypt('123456'),
+                'password'  => bcrypt('sipora01#@!A'),
+                'stts_user'  => 1,
             ]);
+
+            $ids =  $id;
+            UserLogModel::create([
+                'id_user' => $ids,
+                'aktivitas' => 'Reset Password (By Admin).',
+            ]);
+
             return response()->json(['success' => 'Password Berhasil direset']);
         } else {
             exit('Maaf Tidak Dapat diproses...');

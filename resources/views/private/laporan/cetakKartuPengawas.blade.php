@@ -1,6 +1,6 @@
 <head>
     <meta charset="UTF-8">
-    <title>Kartu Pengawas</title>
+    <title>SURAT KARTU PENGAWAS</title>
     <style type="text/css">
         /* .fontds {
             font-size: 12px
@@ -53,15 +53,17 @@
         }
 
         /*table {
-      border-bottom: 8px solid #000; padding:2px; 
+      border-bottom: 8px solid #000; padding:2px;
       }*/
     </style>
 </head>
 
 <body>
     <div class="rangka_surat">
-        @if($row->status_validasi !=5)
-        <div class="bordererd" style="width: 100px;text-align:center;right:0px;top:-15px;position: absolute;  border: 2px solid #000;">DRAFT</div>
+        @if ($row->status_validasi != 5)
+            <div class="bordererd"
+                style="width: 100px;text-align:center;right:0px;top:-15px;position: absolute;  border: 2px solid #000;">
+                DRAFT</div>
         @endif
         <table width="100%" style="color:#000000;">
             <tr>
@@ -69,7 +71,8 @@
                 <td class="centere">
                     <div style="font-size:20px; font-weight: bold;">PEMERINTAH PROVINSI SUMATERA SELATAN</div>
                     <div style="font-size:22px; font-weight: bold; padding-top:2px;">DINAS PERHUBUNGAN</div>
-                    <div style="font-size:12px; font-weight: bold; padding-top:2px;">Jl. Kapt. A. Rivai No. 51 Palembang Kotak Pos No. 1132 Telp. 352005 / 363125</div>
+                    <div style="font-size:12px; font-weight: bold; padding-top:2px;">Jl. Kapt. A. Rivai No. 51 Palembang
+                        Kotak Pos No. 1132 Telp. 352005 / 363125</div>
                     <div style="font-size:12px; font-weight: bold; padding-top:2px;">Kode Pos : 30129</div>
                 </td>
                 <td><img src="{{ public_path('images/logo/logo_dishub.png') }}" width="70px;"></td>
@@ -86,12 +89,15 @@
         Untuk Mengangkut Penumpang dengan Mobil Penumpang
     </div>
     <div class="rangka_surat justify">
-        Berdasarkan SK Gubernur Sumatera Selatan tanggal {{ cek_ddmmyy_v2($row->tgl_sk) }} Nomor : {{$row->no_sk}} oleh Kepala Dinas Perhubungan Provinsi Sumatera Selatan diberikan Kartu
-        Pengawasan kepada {{ $row->JPermohonan->nm_perusahaan_personal }} yang dipimpin oleh {{ $row->JPermohonan->nm_pimpinan_pemilik }}
-        dari tanggal {{ cek_ddmmyy_v2($row->tgl_awal) }} sampai dengan tanggal {{ cek_ddmmyy_v2($row->tgl_akhir) }} dengan menggunakan Mobil
+        Berdasarkan SK Gubernur Sumatera Selatan tanggal {{ cek_ddmmyy_v2($row->tgl_sk) }} Nomor : {{ $row->no_sk }}
+        oleh Kepala Dinas Perhubungan Provinsi Sumatera Selatan diberikan Kartu
+        Pengawasan kepada {{ $row->JPermohonan->nm_perusahaan_personal }} yang dipimpin oleh
+        {{ $row->JPermohonan->nm_pimpinan_pemilik }}
+        dari tanggal {{ cek_ddmmyy_v2($row->tgl_awal) }} sampai dengan tanggal {{ cek_ddmmyy_v2($row->tgl_akhir) }}
+        dengan menggunakan Mobil
         Penumpang untuk mengangkut penumpang pada trayek :
         <br>
-        {{($row->JPermohonan->id_trayek==0)?'-':$trayek->nm_trayek}}
+        {{ $row->JPermohonan->id_trayek == 0 ? '-' : $trayek->nm_trayek }}
     </div>
     <div class="rangka_surat justify">
         Diberikan di Palembang Tanggal Awal {{ cek_ddmmyy_v2($row->tgl_awal) }}

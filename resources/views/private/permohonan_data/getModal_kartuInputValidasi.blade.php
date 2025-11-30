@@ -2,24 +2,27 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel5"><b>{{$title_form}}</b></h4>
+                <h4 class="modal-title" id="myModalLabel5"><b>{{ $title_form }}</b></h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="POST" action="{{ route('datapermohonan.validasiSelesai', $rows->id_permohonan_izin) }}" class="formData" style="cursor: context-menu;">
+            <form method="POST" action="{{ route('datapermohonan.validasiSelesai', $rows->id_permohonan_izin) }}"
+                class="formData" style="cursor: context-menu;">
 
                 <input type="hidden" name="_method" value="PUT">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <div class="modal-body">
-                    <div class="form-body">
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label  border-bottom">Tanggal Validasi</label>
-                            <div class="col-md-6">
-                                <input type="date" class="form-control" name="tgl_validasi_selesai">
-                            </div>
+                    <div class="form-group">
+                        <label>Tanggal Validasi</label>
+                        <div class="input-group date" id="datepicker1">
+                            <input type="text" class="form-control" autocomplete="off" name="tgl_validasi_selesai">
+                            <span class="input-group-append input-group-text">
+                                <i class="fa fa-calendar"></i>
+                            </span>
                         </div>
                     </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">TUTUP</button>
@@ -31,4 +34,18 @@
         </div>
     </div>
 </div>
-<script src="{{asset('private/js/myscriptpost.js')}}"></script>
+<script>
+    $(function() {
+        $('#datepicker1').datepicker({
+            format: 'dd-mm-yyyy',
+            todayBtn: 'linked',
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+            container: 'body',
+            language: 'id'
+        });
+    });
+</script>
+
+<script <script src="{{ asset('private/js/myscriptpost.js') }}"></script>

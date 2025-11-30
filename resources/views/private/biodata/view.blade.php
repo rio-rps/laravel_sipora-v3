@@ -1,41 +1,48 @@
 @extends('private.layout.main')
 @section('isi')
     <div class="content-body">
-        <div class="card">
-            <div class="card-header">
-                @php
-                    $level = Auth::user()->level;
-                @endphp
+        <div class="card shadow-sm border-0">
+            <div class="card-header  bg-secondary text-white d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">
+                    <i class="fa fa-id-card mr-2 text-primary"></i><strong>{{ $title }}</strong>
+                </h4>
+
+                @php $level = Auth::user()->level; @endphp
                 @if ($level == 3)
-                    <button class="btn btn-sm btn-primary pull-right" id="tombolModalForm"
-                        data-url="{{ route('biodata.create', ['id_user' => $id_user]) }}" title="Edit Data"><i
-                            class="fa fa-edit"></i> Edit</button>
+                    <button class="btn btn-sm btn-primary" id="tombolModalForm"
+                        data-url="{{ route('biodata.create', ['id_user' => $id_user]) }}">
+                        <i class="fa fa-edit mr-1"></i> Edit Biodata
+                    </button>
                 @endif
-                <h4 class="card-title"><b>{{ $title }}</b></h4>
-                <hr class="border-secondary">
             </div>
-            <div class="card-body" style="margin-top: -45px;">
-                <div class="row biodata"></div>
-            </div>
-            <div class="card-footer">
 
-                <div class="card box-shadow-0 border-blue box-sm">
-                    <div class="card-header card-head-inverse bg-secondary">
-                        <h4 class="card-title"><i class="fa fa-upload"></i> DOKUMEN WAJIB UPLOAD</h4>
-                    </div>
-
-                    <div class="card-content collapse show">
-                        <div class="card-body">
-                            <div class="upload"></div>
-                        </div>
-                    </div>
+            <div class="card-body">
+                <div class="biodata">
                 </div>
             </div>
-
-
         </div>
+
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="fa fa-upload mr-2"></i><strong>DOKUMEN WAJIB UPLOAD</strong>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="upload">
+                </div>
+            </div>
+        </div>
+
+        <div id="loading-spinner" class="text-center mt-3 d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Memuat...</span>
+            </div>
+        </div>
+
+        <div class="viewModal" style="display:none;"></div>
     </div>
-    <div class="viewModal" style="display:none;"></div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             show();
@@ -43,7 +50,7 @@
         });
 
         function show() {
-            myTable = $.ajax({
+            $.ajax({
                 type: 'GET',
                 url: "{{ route('biodata.show', $id_user) }}",
                 headers: {
@@ -58,14 +65,14 @@
                 success: function(response) {
                     $('.biodata').html(response).show();
                 },
-                error: function(xhr, ajaxOptons, throwError) {
-                    alert(xhr.status + '\n' + throwError);
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status + '\n' + thrownError);
                 }
             });
         }
 
         function upload() {
-            myTable = $.ajax({
+            $.ajax({
                 type: 'GET',
                 url: "{{ route('upload.showUploadDokumenBiodata', $id_user) }}",
                 headers: {
@@ -80,8 +87,8 @@
                 success: function(response) {
                     $('.upload').html(response).show();
                 },
-                error: function(xhr, ajaxOptons, throwError) {
-                    alert(xhr.status + '\n' + throwError);
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status + '\n' + thrownError);
                 }
             });
         }

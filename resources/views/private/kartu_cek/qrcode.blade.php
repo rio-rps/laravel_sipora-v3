@@ -1,26 +1,49 @@
+<style>
+    @media print {
+        .bg-primary {
+            background-color: #0d6efd !important;
+            color: white !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .text-white {
+            color: white !important;
+        }
+
+        .fw-bold {
+            font-weight: bold !important;
+        }
+    }
+</style>
+
+<script>
+    //window.print();
+</script>
+<title>INFORMASI KARTU PENGAWAS</title>
 <link rel="stylesheet" type="text/css" href="{{ asset('private/css/bootstrap.css') }}">
 
 <link rel="stylesheet" type="text/css" href="{{ asset('private/css/bootstrap-extended.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ asset('private/css/colors.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ asset('private/css/core/colors/palette-gradient.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="apple-touch-icon" href="{{ asset('images/logo/logo_prov.png') }}">
+<link rel="shortcut icon" type="image/x-icon" href="{{ asset('images/logo/logo_prov.png') }}">
 <!-- BEGIN: Content-->
 <div class="content-body">
-    <div class="col-12 d-flex align-items-center justify-content-center">
+    <div class="col-12 d-flex align-items-center justify-content-center mt-2">
         <div class="col-lg-6 col-md-12 col-12 box-shadow-2 p-0">
             <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title"><b>{{ $title }}</b></h4>
-                    <hr class="border-secondary">
+                <div class="card-header bg-info">
+                    <h4 class="card-title font-weight-bold">{{ $title }}</h4>
                 </div>
 
 
-                <div class="card-body" style="margin-top: -45px;">
+                <div class="card-body">
                     <div class="card">
                         <table style="vertical-align: top;" class="table-striped  " style="width:100%;">
 
                             <body>
                                 <tr>
-                                    <td style="vertical-align: top;">Tanggal Kirim Permohonan</td>
+                                    <td style="vertical-align: top;" width="40%">Tanggal Kirim Permohonan</td>
                                     <td style="vertical-align: top;"> :</td>
                                     <td style="vertical-align: top;">
                                         {{ cek_date_ddmmyyyy_his_v1($row->tgl_kirim_permohonan) }}</td>
@@ -33,10 +56,15 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Tanggal DIsetujui</td>
+                                    <td>Tanggal Disetujui</td>
                                     <td>:</td>
                                     <td>{{ isset($row_validasi->tgl_validasi_selesai) ? cek_ddmmyy_v1($row_validasi->tgl_validasi_selesai) : '-' }}
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td>PIC Validasi Data</td>
+                                    <td>:</td>
+                                    <td>{{ $row->nm_kabkota }}</td>
                                 </tr>
                                 <tr>
                                     <td>Status</td>
@@ -48,6 +76,10 @@
                                         <hr>
                                     </td>
                                 </tr>
+                                <td colspan="3" class="bg-info font-weight-bold">
+                                    &nbsp; <i class="fa fa-edit"></i>
+                                    BADAN USAHA
+                                </td>
                                 <tr>
                                     <td>Badan Usaha</td>
                                     <td width="1%">:</td>
@@ -83,6 +115,10 @@
                                         <hr>
                                     </td>
                                 </tr>
+                                <td colspan="3" class="bg-info font-weight-bold">
+                                    &nbsp; <i class="fa fa-edit"></i>
+                                    PERMOHONAN
+                                </td>
                                 <tr>
                                     <td style="vertical-align: top;">Jenis Permohonan</td>
                                     <td width="1%" style="vertical-align: top;">:</td>
@@ -113,6 +149,10 @@
                                         <hr>
                                     </td>
                                 </tr>
+                                <td colspan="3" class="bg-info font-weight-bold">
+                                    &nbsp; <i class="fa fa-edit"></i>
+                                    DATA KENDARAAN
+                                </td>
                                 <tr>
                                     <td>Merek / Type kendaraan</td>
                                     <td width="1%">:</td>
@@ -130,21 +170,6 @@
                                     <td>{{ $row->plat_no_kendaraan }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Daya Angkut Orang</td>
-                                    <td width="1%">:</td>
-                                    <td>{{ $row->daya_angkut_orang }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Daya Angkut Barang</td>
-                                    <td width="1%">:</td>
-                                    <td>{{ $row->daya_angkut_barang }} kg</td>
-                                </tr>
-                                <tr>
-                                    <td>Tahun Pembuatan</td>
-                                    <td width="1%">:</td>
-                                    <td>{{ $row->thn_pembuatan }}</td>
-                                </tr>
-                                <tr>
                                     <td>Nomor Rangka</td>
                                     <td width="1%">:</td>
                                     <td>{{ $row->no_rangka }}</td>
@@ -155,16 +180,61 @@
                                     <td>{{ $row->no_mesin }}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3">
-                                        <hr>
+                                    <td>Warna TNKB</td>
+                                    <td width="1%">:</td>
+                                    <td>
+                                        {{ $row->warna_tnkb ? $row->warna_tnkb : '-' }}
                                     </td>
                                 </tr>
-
+                                <tr>
+                                    <td>Bahan Bakar</td>
+                                    <td width="1%">:</td>
+                                    <td>
+                                        {{ $row->bahan_bakar ? $row->bahan_bakar : '-' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Daya Angkut Orang</td>
+                                    <td width="1%">:</td>
+                                    <td>{{ format_rupiah($row->daya_angkut_orang) }} Orang</td>
+                                </tr>
+                                <tr>
+                                    <td>Daya Angkut Barang</td>
+                                    <td width="1%">:</td>
+                                    <td>{{ format_rupiah($row->daya_angkut_barang) }} kg</td>
+                                </tr>
+                                <tr>
+                                    <td>Tahun Pembuatan</td>
+                                    <td width="1%">:</td>
+                                    <td>{{ $row->thn_pembuatan }}</td>
+                                </tr>
                                 <tr>
                                     <td colspan="3">
                                         <hr>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>Nomor Faktur Jual Beli</td>
+                                    <td width="1%">:</td>
+                                    <td>
+                                        {{ $row->nmr_faktur_jual_beli ? $row->nmr_faktur_jual_beli : '-' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Tanggal Faktur</td>
+                                    <td width="1%">:</td>
+                                    <td>{{ $row->tgl_faktur_jual_beli ? cek_date_ddmmyyyy_his_v2($row->tgl_faktur_jual_beli) : '-' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <hr>
+                                    </td>
+                                </tr>
+                                <td colspan="3" class="bg-info font-weight-bold">
+                                    &nbsp; <i class="fa fa-edit"></i>
+                                    KARTU PENGAWAS
+                                </td>
                                 <tr>
                                     <td style="vertical-align: top;">Nomor Kartu Pengawas</td>
                                     <td width="1%" style="vertical-align: top;">:</td>
@@ -198,12 +268,39 @@
                                         <hr>
                                     </td>
                                 </tr>
-                                <tr class="alert alert-secondary">
-                                    <td colspan="3">
-                                        <span style="color:#FFFFFF;"> &nbsp;&nbsp; <i class=" fa fa-edit"></i>
-                                            KIR</span>
+                                <tr>
+                                    <td style="vertical-align: top;">Nomor Uji Kendaraan</td>
+                                    <td style="vertical-align: top;">:</td>
+                                    <td>{{ $row->nomor_uji ? $row->nomor_uji : '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top;">Kombinasi yang diperbolehkan</td>
+                                    <td style="vertical-align: top;">:</td>
+                                    <td style="vertical-align: top;">
+                                        {{ $row->kombinasi_yg_diperoleh ? $row->kombinasi_yg_diperoleh : '-' }}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td style="vertical-align: top;">SK Register Uji Type</td>
+                                    <td style="vertical-align: top;">:</td>
+                                    <td>{{ $row->sk_reg_uji_type ? $row->sk_reg_uji_type : '-' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top;">Keterangan Lain-lain</td>
+                                    <td style="vertical-align: top;">:</td>
+                                    <td style="vertical-align: top;">{{ $row->ket_lain ? $row->ket_lain : '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <hr>
+                                    </td>
+                                </tr>
+
+                                <td colspan="3" class="bg-info font-weight-bold">
+                                    &nbsp; <i class="fa fa-edit"></i>
+                                    K I R
+                                </td>
 
                                 <tr>
                                     <td style="vertical-align: top;">Tanggal Awal</td>
@@ -217,6 +314,43 @@
                                     <td>{{ isset($row_validasi->tgl_kir_akhir) ? cek_ddmmyy_v1($row_validasi->tgl_kir_akhir) : '-' }}
                                     </td>
                                 </tr>
+                                {{--  @if (getLevel() == 1 || getLevel() == 2)
+                                    <tr>
+                                        <td colspan="3" class="text-center">
+                                            @php
+                                                $id = Crypt::encrypt($row->id_permohonan_izin);
+                                            @endphp
+                                            <a href="{{ route('laporan.cetakSuratRekomendasiKepala', $id) }}"
+                                                class="btn btn-secondary mt-2" target="_blank">
+                                                <i class="fa fa-print"></i> CETAK
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endif  --}}
+
+                                @if (Auth::check() && getLevel())
+                                    @if (in_array(getLevel(), [1, 2]))
+                                        <tr>
+                                            <td colspan="3" class="text-center">
+                                                @php
+                                                    $id = Crypt::encrypt($row->id_permohonan_izin);
+                                                @endphp
+                                                <a href="{{ route('laporan.cetakSuratRekomendasiKepala', $id) }}"
+                                                    class="btn btn-secondary mt-2" target="_blank">
+                                                    <i class="fa fa-print"></i> CETAK
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @else
+                                    {{--  <tr>
+                                        <td colspan="3" class="text-center text-muted">
+                                            <em>Silakan login untuk mencetak.</em>
+                                        </td>
+                                    </tr>  --}}
+                                @endif
+
+
                             </body>
                         </table>
 
@@ -225,5 +359,4 @@
             </div>
         </div>
     </div>
-</div>
 </div>

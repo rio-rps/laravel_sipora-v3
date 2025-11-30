@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CparPermohonanModel;
 use App\Models\CparTrayekModel;
 use App\Models\MyModel;
+use App\Models\PengajuanPermohonanModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
 use Illuminate\Support\Str;
@@ -15,12 +16,22 @@ class CparTrayekController extends Controller
 {
 
 
-    public function createSlug($title)
+
+
+    public function createSlug($title, $id_trayek = null)
     {
         $slug = Str::slug($title);
-        $count = CparTrayekModel::whereRaw("slug_trayek  RLIKE '^{$slug}(-[0-9]+)?$'")->count();
+
+        // Cek apakah post yang diedit memiliki slug yang sama dengan post lain di database
+        $query = CparTrayekModel::where('slug_trayek', $slug);
+        if ($id_trayek) {
+            $query->where('id_trayek', '<>', $id_trayek);
+        }
+        $count = $query->count();
+
         return ($count > 0) ? "{$slug}-{$count}" : $slug;
     }
+
 
 
     public function index()
@@ -37,7 +48,7 @@ class CparTrayekController extends Controller
         if (request()->ajax()) {
             $data = [
                 'title_form' => 'FORM INPUT DATA BARU',
-                'result' => CparPermohonanModel::whereIn('id_par_permohonan', ['3', '4', '5'])->get()
+                'result' => CparPermohonanModel::whereIn('id_par_permohonan', ['3', '4', '5', '8'])->get()
             ];
             return view('private.trayek.formadd', $data);
         } else {
@@ -71,10 +82,11 @@ class CparTrayekController extends Controller
                 $errors = $validator->errors();
                 return response()->json(['errors' => $errors], 422);
             } else {
+                $slug_trayek = $this->createSlug($r->nm_trayek);
                 $post = CparTrayekModel::create([
                     'id_par_permohonan'  => $r->id_par_permohonan,
                     'nm_trayek'  => $r->nm_trayek,
-                    'slug_trayek' => $this->createSlug($r->slug_trayek),
+                    'slug_trayek' => $slug_trayek,
                     'status_actived'  => '1',
                 ]);
                 return response()->json(['success' => 'Data berhasil disimpan']);
@@ -147,9 +159,11 @@ class CparTrayekController extends Controller
                 $errors = $validator->errors();
                 return response()->json(['errors' => $errors], 422);
             } else {
+                $slug_trayek = $this->createSlug($r->nm_trayek, $id);
+
                 $post = CparTrayekModel::where('id_trayek', $id)->update([
                     'nm_trayek'  => $r->nm_trayek,
-                    'slug_trayek'  => $this->createSlug($r->nm_trayek),
+                    'slug_trayek'  => $slug_trayek,
                 ]);
                 return response()->json(['success' => 'Data berhasil diedit']);
             }
@@ -162,6 +176,10 @@ class CparTrayekController extends Controller
     public function destroy($id)
     {
         if (request()->ajax()) {
+            $cek = PengajuanPermohonanModel::where('id_trayek', $id)->count();
+            if ($cek > 0) {
+                return response()->json(['errors' => 'Tidak bisa dihapus sudah duganakan, hubungi admin'], 423);
+            }
             CparTrayekModel::where('id_trayek', $id)->delete();
             return response()->json([
                 'success' => 'Data berhasil dihapus',

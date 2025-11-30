@@ -15,14 +15,14 @@
             <hr>
             <div class="col-md-12">
                 <div class="table-responsive">
-                    <table id="myTable" class="table table-striped table-bordered zero-configuration" style="width:100%">
-                        <thead>
+                    <table id="myTable" class="table table-striped  table-hover" style="width:100%;  ">
+                        <thead class="thead-dark ">
                             <tr>
-                                <th width=" 1%">No</th>
-                                <th>Nama</th>
-                                <th>Email</th>
-                                <th>Level</th>
-                                <th width="10%" align="center">Action</th>
+                                <th width=" 1%"><i class="fa fa-hashtag"></i> No</th>
+                                <th><i class="fa fa-id-card"></i> Nama</th>
+                                <th><i class="fa fa-envelope"></i> Email</th>
+                                <th><i class="fa fa-toggle-on"></i> Status User</th>
+                                <th width="10%" align="center"><i class="fa fa-cogs"></i> Action</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -64,8 +64,9 @@
                         name: 'email'
                     },
                     {
-                        data: 'level',
-                        name: 'level'
+                        className: 'text-center',
+                        data: 'stts',
+                        name: 'stts'
                     },
                     {
                         data: 'action',

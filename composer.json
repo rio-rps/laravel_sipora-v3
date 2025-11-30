@@ -9,13 +9,16 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "anhskohbo/no-captcha": "^3.7",
         "barryvdh/laravel-dompdf": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
+        "intervention/image": "^3.11",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "maatwebsite/excel": "^3.1",
         "simplesoftwareio/simple-qrcode": "~4",
+        "vinkla/hashids": "^10.0",
         "yajra/laravel-datatables": "^9.0"
     },
     "require-dev": {

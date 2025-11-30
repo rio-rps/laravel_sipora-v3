@@ -23,13 +23,33 @@ class PengaturanAkunController extends Controller
         if (request()->ajax()) {
             $validator = Validator::make($r->all(), [
                 'password_old' => 'required',
-                'password_new' => 'required|min:6|confirmed',
+                'password_new' => 'required|min:8|confirmed',
             ], [
-                'password_old.required' => 'Password Lama tidak boleh kosong.',
-                'password_new.required' => 'Password Baru tidak boleh kosong.',
-                'password_new.min' => 'Password Minimal 6 Karakter',
-                'password_new.confirmed' => 'Password baru dan confirm tidak sama.',
+                'password_old.required' => 'Password lama tidak boleh kosong.',
+                'password_new.required' => 'Password baru tidak boleh kosong.',
+                'password_new.min' => 'Password baru minimal 8 karakter.',
+                'password_new.confirmed' => 'Konfirmasi password baru tidak sama.',
             ]);
+
+            $validator->after(function ($validator) use ($r) {
+                $password = $r->password_new;
+
+                if (!preg_match('/[A-Z]/', $password)) {
+                    $validator->errors()->add('password_new', 'Password harus mengandung setidaknya satu huruf besar.');
+                }
+
+                if (!preg_match('/[a-z]/', $password)) {
+                    $validator->errors()->add('password_new', 'Password harus mengandung setidaknya satu huruf kecil.');
+                }
+
+                if (!preg_match('/\d/', $password)) {
+                    $validator->errors()->add('password_new', 'Password harus mengandung setidaknya satu angka.');
+                }
+
+                if (!preg_match('/[@$!%*#?&.,:;^_\-]/', $password)) {
+                    $validator->errors()->add('password_new', 'Password harus mengandung setidaknya satu simbol.');
+                }
+            });
 
             if ($validator->fails()) {
                 $errors = $validator->errors();
@@ -41,6 +61,7 @@ class PengaturanAkunController extends Controller
                 if (Auth::attempt(['email' => $userdata->email, 'password' => $r->password_old])) {
                     PengaturanAkunModel::where('id', $id)->update([
                         'password' => bcrypt($r->password_new),
+                        'stts_user' => 1,
                     ]);
                     return response()->json(['success' => 'Password Berhasil diubah', 'route' => route('logout'), 'myReload' => 'ReloadPassword']);
                 } else {

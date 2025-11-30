@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\PermohonanFilterExport;
 use App\Models\AccesUrlModel;
+use App\Models\BparColorCardModel;
 use App\Models\BparKabKotaModel;
 use App\Models\CparJenisPermohonanModel;
 use App\Models\CparPermohonanModel;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 use PDF;
 use SimpleSoftwareIO\QrCode\Generator;
 use Maatwebsite\Excel\Facades\Excel;
-
+use Vinkla\Hashids\Facades\Hashids;
 
 class LaporanController extends Controller
 {
@@ -254,6 +255,21 @@ class LaporanController extends Controller
     public function cetakKartuPengawas($id)
     {
         set_time_limit(3000);
+        // $decoded = Hashids::decode($id);
+
+        // if (!empty($decoded)) {
+        //     $id_permohonan_izin = $decoded[0];
+        // } else {
+        //     try {
+        //         // Jika gagal, coba decrypt pakai Crypt
+        //         $id_permohonan_izin = Crypt::decrypt($id);
+        //     } catch (\Exception $e) {
+        //         // Jika Crypt juga gagal, bisa redirect atau abort
+        //         return abort(404, 'ID tidak valid.');
+        //     }
+        // }
+
+
         $id_permohonan_izin = Crypt::decrypt($id);
 
         $count = ValidasiPermohonanModel::where('id_permohonan_izin', $id_permohonan_izin);
@@ -262,14 +278,14 @@ class LaporanController extends Controller
         } else if ($count->first()->status_validasi != '5') {
             return  "Belum di validasi";
         }
-
+        $hashID = Hashids::encode($id_permohonan_izin);
 
         $cek = AccesUrlModel::where('access', 'qrcode')->first();
 
         if ($cek->status_actived == 1) {
-            $url = $cek->url . 'kartucek/QRcode/' . $id;
+            $url = $cek->url . 'kartucek/QRcode/' . $hashID;
         } else {
-            $url = route('kartucek.QRcode', $id);
+            $url = route('kartucek.QRcode', $hashID);
         }
 
 
@@ -293,9 +309,24 @@ class LaporanController extends Controller
         //     return view('private.laporan.cetakKartuPengawas', $data);
     }
 
-    public function cetakKartuPengawasElektronik($id)
+    public function cetakKartuPengawasElektronik($id) //  fitur non aktif
     {
         set_time_limit(3000);
+        // $decoded = Hashids::decode($id);
+
+        // if (!empty($decoded)) {
+        //     $id_permohonan_izin = $decoded[0];
+        // } else {
+        //     try {
+        //         // Jika gagal, coba decrypt pakai Crypt
+        //         $id_permohonan_izin = Crypt::decrypt($id);
+        //     } catch (\Exception $e) {
+        //         // Jika Crypt juga gagal, bisa redirect atau abort
+        //         return abort(404, 'ID tidak valid.');
+        //     }
+        // }
+
+
         $id_permohonan_izin = Crypt::decrypt($id);
         $count = ValidasiPermohonanModel::where('id_permohonan_izin', $id_permohonan_izin);
         if ($count->count() == 0) {
@@ -304,13 +335,14 @@ class LaporanController extends Controller
             return  "Belum di validasi";
         }
 
+        $hashID = Hashids::encode($id_permohonan_izin);
 
         $cek = AccesUrlModel::where('access', 'qrcode')->first();
 
         if ($cek->status_actived == 1) {
-            $url = $cek->url . 'kartucek/QRcode/' . $id;
+            $url = $cek->url . 'kartucek/QRcode/' . $hashID;
         } else {
-            $url = route('kartucek.QRcode', $id);
+            $url = route('kartucek.QRcode', $hashID);
         }
 
 
@@ -335,11 +367,8 @@ class LaporanController extends Controller
         //return view('private.laporan.cetakKartuPengawasElektronik', $data);
     }
 
-    public function cetakQRcode($id)
+    public function cetakKartuPengawasElektronikV2($id)
     {
-
-        set_time_limit(3000);
-
         $id_permohonan_izin = Crypt::decrypt($id);
         $count = ValidasiPermohonanModel::where('id_permohonan_izin', $id_permohonan_izin);
         if ($count->count() == 0) {
@@ -348,15 +377,69 @@ class LaporanController extends Controller
             return  "Belum di validasi";
         }
 
+        $hashID = Hashids::encode($id_permohonan_izin);
+
+        $cek = AccesUrlModel::where('access', 'qrcode')->first();
+
+        if ($cek->status_actived == 1) {
+            $url = $cek->url . 'kartucek/QRcode/' . $hashID;
+        } else {
+            $url = route('kartucek.QRcode', $hashID);
+        }
+
+
+        $row = ValidasiPermohonanModel::where('id_permohonan_izin', $id_permohonan_izin)->first();
+        $data = [
+            'row' => $row,
+            // 'trayek' => CparTrayekModel::where('id_trayek', $row->JPermohonan->id_trayek)->first(),
+            //'ttd' => TTDDokumenModel::where('kode_jabatan', '1')->first(),
+            'QRcode' => $url,
+            'bgCard' => BparColorCardModel::where('id_par_permohonan', $row->JPermohonan->id_par_permohonan)->first()->color_card
+        ];
+        return view('private.laporan.kartuPengawas', $data);
+    }
+
+
+    public function cetakQRcode($id)
+    {
+
+        set_time_limit(3000);
+
+        // $decoded = Hashids::decode($id);
+
+        // if (!empty($decoded)) {
+        //     $id_permohonan_izin = $decoded[0];
+        // } else {
+        //     try {
+        //         // Jika gagal, coba decrypt pakai Crypt
+        //         $id_permohonan_izin = Crypt::decrypt($id);
+        //     } catch (\Exception $e) {
+        //         // Jika Crypt juga gagal, bisa redirect atau abort
+        //         return abort(404, 'ID tidak valid.');
+        //     }
+        // }
+
+
+        $id_permohonan_izin = Crypt::decrypt($id);
+        //$rowID = PengajuanPermohonanModel::where('id_permohonan_izin', $id_permohonan_izin)->first();
+
+
+        $count = ValidasiPermohonanModel::where('id_permohonan_izin', $id_permohonan_izin);
+        if ($count->count() == 0) {
+            return  "Belum di validasi";
+        } else if ($count->first()->status_validasi != '5') {
+            return  "Belum di validasi";
+        }
+        $hashID = Hashids::encode($id_permohonan_izin);
 
 
 
         $cek = AccesUrlModel::where('access', 'qrcode')->first();
 
         if ($cek->status_actived == 1) {
-            $url = $cek->url . 'kartucek/QRcode/' . $id;
+            $url = $cek->url . 'kartucek/QRcode/' . $hashID;
         } else {
-            $url = route('kartucek.QRcode', $id);
+            $url = route('kartucek.QRcode', $hashID);
         }
 
 
@@ -378,5 +461,70 @@ class LaporanController extends Controller
         return $pdf->stream('QRcode.pdf');
 
         //return view('private.laporan.cetakKartuPengawas', $data);
+    }
+
+
+    // v2
+    public function cetakSuratRekomendasiKepala($id)
+    {
+        set_time_limit(3000);
+        // $decoded = Hashids::decode($id);
+
+        // if (!empty($decoded)) {
+        //     $id_permohonan_izin = $decoded[0];
+        // } else {
+        //     try {
+        //         // Jika gagal, coba decrypt pakai Crypt
+        //         $id_permohonan_izin = Crypt::decrypt($id);
+        //     } catch (\Exception $e) {
+        //         // Jika Crypt juga gagal, bisa redirect atau abort
+        //         return abort(404, 'ID tidak valid.');
+        //     }
+        // }
+
+
+        $id_permohonan_izin = Crypt::decrypt($id);
+
+        $count = ValidasiPermohonanModel::where('id_permohonan_izin', $id_permohonan_izin);
+        if ($count->count() == 0) {
+            return  "Belum di validasi";
+        } else if ($count->first()->status_validasi != '5') {
+            return  "Belum di validasi";
+        }
+        $hashID = Hashids::encode($id_permohonan_izin);
+
+        $cek = AccesUrlModel::where('access', 'qrcode')->first();
+
+        if ($cek->status_actived == 1) {
+            $url = $cek->url . 'kartucek/QRcode/' . $hashID;
+        } else {
+            $url = route('kartucek.QRcode', $hashID);
+        }
+
+
+        $row = ValidasiPermohonanModel::where('id_permohonan_izin', $id_permohonan_izin)->first();
+        $data = [
+            'row' => $row,
+            'permohonan' => PengajuanPermohonanModel::where('id_permohonan_izin', $id_permohonan_izin)->first(),
+            'trayek' => CparTrayekModel::where('id_trayek', $row->JPermohonan->id_trayek)->first(),
+            'ttd' => TTDDokumenModel::where('kode_jabatan', '1')->first(),
+            'QRcode' => $url
+        ];
+        $pdf = PDF::setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'enable_remote' => true,
+            'defaultFont' => 'sans-serif',
+            'chroot' => public_path('images/logo')
+        ])->loadview('private.laporan.cetakSuratRekomendasiKepala', $data)->setpaper('folio', 'potrait');
+
+        return $pdf->stream('Surat_Rekomendasi_kepala.pdf');
+
+        //     return view('private.laporan.cetakKartuPengawas', $data);
+    }
+
+    public function cetak_info_QRcode($id)
+    {
+        dd('oke');
     }
 }

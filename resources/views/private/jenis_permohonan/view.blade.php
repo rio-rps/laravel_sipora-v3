@@ -29,7 +29,17 @@
                                     <div class="card-body">
                                         <ul class="list-group list-group-flush">
                                             @foreach ($dt->RelasiPermohonan as $item)
-                                                <li class="list-group-item">{{ $item->nm_par_permohonan }}</li>
+                                                <li class="list-group-item">{{ $item->nm_par_permohonan }}
+
+                                                    <span class="float-right">
+                                                        <a id="tombolModalForm"
+                                                            data-url="{{ route('vmodal.bgCard', $item->id_par_permohonan) }}"
+                                                            title="Lihat Background Kartu"
+                                                            class="btn btn-primary btn-sm text-white">
+                                                            <i class="fa fa-picture-o"></i> Lihat
+                                                        </a>
+                                                    </span>
+                                                </li>
                                             @endforeach
                                         </ul>
                                     </div>

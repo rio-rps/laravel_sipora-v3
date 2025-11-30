@@ -15,6 +15,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-8">
+
                             <ul class="list-group mb-1">
                                 <li class="list-group-item bg-default white bg-blue-grey">
                                     AKUN LOGIN E-MAIL
@@ -169,57 +170,81 @@
 
             $('.formDataPengaturanAkun').submit(function(e) {
                 e.preventDefault();
-                $.ajax({
-                    type: $(this).attr('method'),
-                    url: $(this).attr('action'),
-                    data: $(this).serialize(),
-                    dataType: "json",
-                    beforeSend: function() {
-                        $('#' + tmbol).prop('disabled', true);
-                        $('#' + tmbol).html("<i class='fa fa-spin fa-spinner'></i>");
-                    },
-                    complete: function() {
-                        $('#' + tmbol).prop('disabled', false);
-                        $('#' + tmbol).html(
-                            "<i class='feather icon-play mr-25'></i> <span class='d-sm-inline'>GANTI " +
-                            label + "</span>");
 
-                    },
-                    success: function(response) {
 
-                        if (response.success) {
-                            Swal.fire('Berhasil', response.success, 'success').then((
-                                result) => {
-                                $('#email').val('');
-                                $('#idemail').html(response.email);
-                                if (response.myReload == 'ReloadPassword') {
-                                    window.location.href = response.route
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    text: 'Apakah Anda yakin ingin melanjutkan?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, pilih'
+                }).then((result) => {
+                    if (result.value) {
+
+
+                        $.ajax({
+                            type: $(this).attr('method'),
+                            url: $(this).attr('action'),
+                            data: $(this).serialize(),
+                            dataType: "json",
+                            beforeSend: function() {
+                                $('#' + tmbol).prop('disabled', true);
+                                $('#' + tmbol).html(
+                                    "<i class='fa fa-spin fa-spinner'></i>");
+                            },
+                            complete: function() {
+                                $('#' + tmbol).prop('disabled', false);
+                                $('#' + tmbol).html(
+                                    "<i class='feather icon-play mr-25'></i> <span class='d-sm-inline'>GANTI " +
+                                    label + "</span>");
+
+                            },
+                            success: function(response) {
+
+                                if (response.success) {
+                                    Swal.fire('Berhasil', response.success, 'success')
+                                        .then((
+                                            result) => {
+                                            $('#email').val('');
+                                            $('#idemail').html(response.email);
+                                            if (response.myReload ==
+                                                'ReloadPassword') {
+                                                window.location.href = response
+                                                    .route
+                                            }
+                                        })
                                 }
-                            })
-                        }
 
-                    },
-                    error: function(xhr, ajaxOptons, throwError) {
-                        if (xhr.status >= 500) {
-                            // alert(xhr.status + '\n' + throwError);
-                            Swal.fire('Error', xhr.status + '\n' + throwError, 'error');
-                        }
+                            },
+                            error: function(xhr, ajaxOptons, throwError) {
+                                if (xhr.status >= 500) {
+                                    // alert(xhr.status + '\n' + throwError);
+                                    Swal.fire('Error', xhr.status + '\n' + throwError,
+                                        'error');
+                                }
 
-                        if (xhr.status == 422) {
-                            var errors = xhr.responseJSON.errors;
-                            var errorList = '';
-                            for (var key in errors) {
-                                if (errors.hasOwnProperty(key)) {
-                                    errorList += '\n - ' + errors[key] + '</br>';
+                                if (xhr.status == 422) {
+                                    var errors = xhr.responseJSON.errors;
+                                    var errorList = '';
+                                    for (var key in errors) {
+                                        if (errors.hasOwnProperty(key)) {
+                                            errorList += '\n - ' + errors[key] +
+                                                '</br>';
+                                        }
+                                    }
+                                    Swal.fire('Gagal', errorList, 'warning');
+                                    $('#email').val('');
                                 }
                             }
-                            Swal.fire('Gagal', errorList, 'warning');
-                            $('#email').val('');
-                        }
+                        });
+                        return false;
                     }
                 });
-                return false;
+
             });
+
         });
     </script>
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CparJenisAngkutanModel;
 use App\Models\CparMengangkutModel;
 use App\Models\MappingMengangkutModel;
+use App\Models\PengajuanPermohonanModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
 use Illuminate\Support\Str;
@@ -221,6 +222,12 @@ class CparMengangkutController extends Controller
             if (count($cek) > 0) {
                 return response()->json(['error' => 'Tidak Dapat di Hapus, Ada data Mapping terhubung / Hubungi Admin']);
             }
+
+            $cek = PengajuanPermohonanModel::where('id_mengangkut', $id)->count();
+            if ($cek > 0) {
+                return response()->json(['errors' => 'Tidak bisa dihapus sudah duganakan, hubungi admin'], 423);
+            }
+
             CparMengangkutModel::where('id_mengangkut', $id)->delete();
             return response()->json([
                 'success' => 'Data berhasil dihapus',

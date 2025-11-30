@@ -1,0 +1,39 @@
+PENAMBAHAN TABLE
+1. bpar_002_kabkota
+2. hhh_pic
+3. failed_jobs
+4. migrations
+5. password_resets
+6. users_akses_kabkota
+7. bpar_color_card
+ 
+
+
+
+PENAMBAHAN FIELD
+1. TABLE ddd_data_kendaraan
+  warna_tnkb       varchar 255
+  bahan_bakar      varchar 255
+  nmr_faktur_jual_beli   varchar  255
+  tgl_faktur_jual_beli   DATE
+
+2. TABLE tr_permohonan
+   kode_provinsi	int	0
+   kode_kabkota	int	0
+   nomor_uji	varchar	255
+   warna_tnkb	varchar	255
+   bahan_bakar	varchar	255
+   kombinasi_yg_diperoleh	varchar	255
+   sk_reg_uji_type	varchar	255
+   nmr_faktur_jual_beli	varchar	255
+   tgl_faktur_jual_beli	date	0
+   ket_lain	text	0
+
+3. cpar_permohonan_002_permohonan
+	alias varchar	100
+
+4. users
+	alias stts_user	1,2,3
+1 = aktif
+2 = non aktif
+3 = password lemah

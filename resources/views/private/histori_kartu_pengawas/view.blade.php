@@ -4,219 +4,141 @@
         <div class="card">
             <div class="card-header">
                 <h4 class="card-title"><b>{{ $title }}</b></h4>
-                <hr class="border-secondary">
             </div>
-
+            <hr>
             <div class="col-md-12">
-                <div id="accordionWrap1" role="tablist" aria-multiselectable="true">
-                    <div class="card accordion collapse-icon accordion-icon-rotate">
-                        <div id="heading11" class="card-header primary collapsed" data-toggle="collapse" href="#accordion11"
-                            aria-expanded="false" aria-controls="accordion11">
-                            <a class="card-title lead" href="#">FILTER</a>
-                        </div>
-                        <div id="accordion11" role="tabpanel" data-parent="#accordionWrap1" aria-labelledby="heading11"
-                            class="collapse" style="">
-                            <div class="card-content card border-teal border-lighten-2 mr-1 ml-1">
-                                <div class="card-body ">
-                                    <div class="modal-body">
-                                        <div class="form-body">
-                                            <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label border-bottom">Jenis
-                                                    Permohonan</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" class="form-control" name="name"
-                                                        maxlength="225">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label border-bottom">Permohonan</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" class="form-control" name="email"
-                                                        maxlength="225">
-                                                </div>
-                                            </div>
+                <div class="form-group">
+                    <div style="margin-bottom:-16px;">
+                        <div class="card">
+                            <div class="font-weight-bold text-white px-1 py-1"
+                                style="background-color:#8b8d91; border-radius: 10px 10px 0px 0px; cursor: pointer;">
+                                Cari Data
+                            </div>
 
-                                            <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label border-bottom">Trayek</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" class="form-control" name="email"
-                                                        maxlength="225">
-                                                </div>
+                            <div style="margin-bottom:-16px;">
+                                <div class="card-content card border-secondary" style="border-radius: 0px 0px 10px 10px; ">
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <label>Cari Berdasarkan Kreteria</label>
+                                                <select class="form-control" id="cari_field">
+                                                    <option value="" selected>-- Pilih --</option>
+                                                    <option value="plat_no_kendaraan">No Plat Kendaraan</option>
+                                                    <option value="no_rangka">No Rangka</option>
+                                                    <option value="no_mesin">No Mesin</option>
+                                                    <option value="no_kartu_pengawas">No Kartu Pengawas</option>
+                                                    <option value="nm_perusahaan_personal">Nama Perusahaan</option>
+                                                </select>
                                             </div>
-                                            <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label border-bottom">Jenis Angkutan</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" class="form-control" name="email"
-                                                        maxlength="225">
-                                                </div>
+                                            <div class="col-md-4">
+                                                <label>Masukkan Data</label>
+                                                <input type="text" id="cari_data" class="form-control">
                                             </div>
-                                            <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label border-bottom">Mengangkut</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" class="form-control" name="email"
-                                                        maxlength="225">
-                                                </div>
+                                            <div class="col-md-4">
+                                                <label>.</label><br>
+                                                <button type="button" class="btn  btn-primary" onclick="tombolProses()">
+                                                    <i class='bx bx-save mr-25'></i> Tampilkan
+                                                </button>
                                             </div>
-                                            <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label border-bottom">Kab/Kota</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" class="form-control" name="email"
-                                                        maxlength="225">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-md-9">
-                                                    <button type="submit" class="btn-send btn btn-primary btn-glow"
-                                                        id="tombolSave">
-                                                        <i class='feather icon-play mr-25'></i> <span
-                                                            class="d-sm-inline">Cari</span>
-                                                    </button>
-                                                </div>
+                                            @php
+                                                //echo count($kabkota);
+                                            @endphp
+                                            <div class="card-body text-whitex font-weight-bold">
+
+                                                @if (getLevel() == 1)
+                                                    <span class="badge badge-pill badge-secondary">
+                                                        Semua Prov/Kab/Kota
+                                                    </span>
+                                                @elseif (getLevel() == 2)
+                                                    @if (!empty($kabkota))
+                                                        @if (count($kabkota) == 18)
+                                                            {{ count($kabkota) }} |
+                                                            <span class="badge badge-pill badge-secondary">
+                                                                Semua Prov/Kab/Kota
+                                                            </span>
+                                                        @else
+                                                            {{ count($kabkota) }} |
+                                                            @foreach ($kabkota as $kabkotaAll)
+                                                                <span
+                                                                    class="badge badge-pill badge-secondary">{{ $kabkotaAll->nm_kabkota }}
+                                                                </span>
+                                                            @endforeach
+                                                        @endif
+                                                    @else
+                                                        <span class="badge badge-pill badge-danger">
+                                                            Tidak ditemukan
+                                                        </span>
+                                                    @endif
+                                                @endif
+
+
                                             </div>
                                         </div>
+
+                                    </div>
+
+                                    <hr>
+                                    <div class="card-body">
+                                        <div class="viewData" style="display:none;width:100%"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-            </div>
-
-            <div class="col-md-12">
-                <div class="table-responsive">
-                    <table id="myTable" class="table table-striped table-bordered zero-configuration two-columns"
-                        style="width:100%; font-size:12px;">
-                        <thead>
-                            <tr>
-                                <th width=" 1%">No</th>
-                                <th>Tgl </th>
-                                <th>Nomor</th>
-                                <th>Perusahaan</th>
-                                <th>Pimpinan</th>
-                                <th>Tgl Mulai</th>
-                                <th>Tgl Akhir</th>
-                                <th>Nama Kendaraan </th>
-                                <th>Jenis Permohonan </th>
-                                <th>Jenis Angkutan </th>
-                                <th>Trayek</th>
-                                <th>Mengangkut</th>
-                                <th>No Kendaraan</th>
-                                <th>KabKota</th>
-                                <th width="1%" align="center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
             </div>
         </div>
     </div>
     <div class="viewModal" style="display:none;"></div>
+    <br>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function tombolProses() {
+            var cari_field = $('#cari_field').val();
+            var cari_data = $('#cari_data').val();
 
-            var status = '{{ $status }}';
-            myTable = $('#myTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ url('datapermohonan/showProses') }}",
+
+            if (cari_field == '') {
+                Swal.fire('Informasi', 'Silakan di pilih Kreteria !', 'warning');
+            } else if (cari_data == '') {
+                Swal.fire('Informasi', 'Silakan Masukkan data yang dicari !', 'warning');
+            } else {
+
+                myTable = $.ajax({
+                    type: 'GET',
+                    url: "{{ url('historikartupengawas/show') }}",
                     data: {
-                        status: status
+                        cari_field: cari_field,
+                        cari_data: cari_data,
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    beforeSend: function() {
+                        // $('#loading-spinner').removeClass('d-none');
+                        Swal.fire({
+                            title: 'Mengambil Data...',
+                            text: 'Mohon tunggu sebentar.',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                    },
+                    complete: function() {
+                        //$('#loading-spinner').addClass('d-none');
+                        Swal.close();
+                    },
+                    success: function(response) {
+                        $('.viewData').html(response).show();
+                    },
+                    error: function(xhr, ajaxOptons, throwError) {
+                        alert(xhr.status + '\n' + throwError);
                     }
-                },
-                // "data": null,
-                // "class": "align-top",
-                // "orderable": false,
-                // "searchable": false,
-                columns: [{
-                        // "class": "align-top",
-                        "orderable": false,
-                        "searchable": false,
-                        "data": "no",
-                        className: 'text-center',
-                        "render": function(data, type, row, meta) {
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        }
-                    },
-                    {
-                        data: 'tgl',
-                        name: 'tgl'
-                    },
-                    {
-                        data: 'nomor',
-                        name: 'nomor',
-                        className: 'text-center',
-                        render: function(data, type, row, meta) {
-                            return (row.statusText != 5) ? myTable.column(meta.col).visible(false) :
-                                row.nomor;
-                        },
-                    },
-                    {
-                        data: 'perusahaan',
-                        name: 'perusahaan'
-                    },
-                    {
-                        data: 'pimpinan',
-                        name: 'pimpinan'
-                    },
-                    {
-                        data: 'tglMulai',
-                        name: 'tglMulai',
-                        className: 'text-center',
-                        render: function(data, type, row, meta) {
-                            return (row.statusText != 5) ? myTable.column(meta.col).visible(false) :
-                                row.tglMulai;
-                        },
-                    },
-                    {
-                        data: 'tglAkhir',
-                        name: 'tglAkhir',
-                        className: 'text-center',
-                        render: function(data, type, row, meta) {
-                            return (row.statusText != 5) ? myTable.column(meta.col).visible(false) :
-                                row.tglAkhir;
-                        },
-                    },
-
-                    {
-                        data: 'merekType',
-                        name: 'merekType',
-                    },
-                    {
-                        data: 'jenisPermohonan',
-                        name: 'jenisPermohonan'
-                    },
-                    {
-                        data: 'jenisAngkutan',
-                        name: 'jenisAngkutan'
-                    },
-                    {
-                        data: 'trayek',
-                        name: 'trayek'
-                    },
-                    {
-                        className: 'text-center',
-                        data: 'mengangkut',
-                        name: 'mengangkut'
-                    },
-                    {
-                        className: 'text-center',
-                        data: 'plat_no_kendaraan',
-                        name: 'plat_no_kendaraan'
-                    },
-                    {
-                        className: 'text-center',
-                        data: 'KabKota',
-                        name: 'KabKota'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                    }
-                ]
-            });
-        });
+                });
+            }
+        };
     </script>
 @endsection

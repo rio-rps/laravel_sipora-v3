@@ -2,8 +2,13 @@
 
 use App\Models\BiodataModel;
 use App\Models\UserAktivasiAkunModel;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+
 
 if (!function_exists('getIdUser')) {
     function getIdUser()
@@ -27,6 +32,12 @@ if (!function_exists('getIdBiodata')) {
     }
 }
 
+if (!function_exists('getSttsUser')) {
+    function getSttsUser()
+    {
+        return Auth::user()->stts_user;
+    }
+}
 
 
 function cek_date_ddmmyyyy_his_v1($date)
@@ -199,6 +210,20 @@ function level($angka)
     return $isi;
 }
 
+function stts_user($angka)
+{
+    if ($angka == 1) {
+        $isi = "Aktif";
+    } elseif ($angka == 2) {
+        $isi = "Blokir";
+    } elseif ($angka == 3) {
+        $isi = "Amankan Password";
+    } elseif ($angka == 4) {
+        $isi = "Password Lemah";
+    }
+    return $isi;
+}
+
 function uploadFile($angka)
 {
     if ($angka == 1) {
@@ -227,12 +252,33 @@ function status_permohonan($angka)
     } elseif ($angka == 3) {
         $isi = '<span class="badge badge-danger">Ditolak</span>';
     } elseif ($angka == 4) {
-        $isi = '<span class="badge badge-green">Diproses</span>';
+        $isi = '<span class="badge badge-warning">Diproses</span>';
     } elseif ($angka == 5) {
         $isi = '<span class="badge badge-success">Disetujui</span>';
+    } else {
+        $isi = '<span class="badge badge-danger">Not Found</span>';
     }
     return $isi;
 }
+
+function status_permohonan_vb5($angka)
+{
+    if ($angka == 1) {
+        $isi = '<span class="badge rounded-pill bg-warning">Draft</span>';
+    } elseif ($angka == 2) {
+        $isi = '<span class="badge rounded-pill bg-primary">Mengirim</span>';
+    } elseif ($angka == 3) {
+        $isi = '<span class="badge rounded-pill bg-danger">Ditolak</span>';
+    } elseif ($angka == 4) {
+        $isi = '<span class="badge rounded-pill bg-warning">Diproses</span>';
+    } elseif ($angka == 5) {
+        $isi = '<span class="badge rounded-pill bg-success">Disetujui</span>';
+    } else {
+        $isi = '<span class="badge rounded-pill bg-danger">Not Found</span>';
+    }
+    return $isi;
+}
+
 
 function act($act)
 {
@@ -245,7 +291,7 @@ function act($act)
     } elseif ($act == 'Proses') {
         $isi = 'DATA PENGAJUAN PERMOHONAN (PROSES)';
     } elseif ($act == 'HistoriPengawas') {
-        $isi = 'DATA KARTU PENGAWAS (TELAH DIPROSES / FINAL)';
+        $isi = 'DATA KARTU PENGAWAS (TELAH DIPROSES/SELESAI/FINAL)';
     }
     return $isi;
 }
@@ -274,4 +320,87 @@ function cek_status_permohonan($angka)
         $isi = "SELESAI";
     }
     return $isi;
+}
+
+
+
+function base64url_encode($data)
+{
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+
+function base64url_decode($data)
+{
+    return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
+}
+
+
+// v2
+function cek_hariIndo($date)
+{
+    $carbon = Carbon::parse($date);
+
+    $hari = [
+        'Sunday'    => 'Minggu',
+        'Monday'    => 'Senin',
+        'Tuesday'   => 'Selasa',
+        'Wednesday' => 'Rabu',
+        'Thursday'  => 'Kamis',
+        'Friday'    => 'Jumat',
+        'Saturday'  => 'Sabtu',
+    ];
+
+    $namaHari  = $hari[$carbon->format('l')];
+    return $namaHari;
+}
+
+// function generateStrongPassword(int $length = 10): string
+// {
+//     $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+//     $symbols = '!@#'; // Simbol yang diizinkan
+
+//     $password = '';
+
+//     // Pastikan ada setidaknya satu huruf kecil
+//     $password .= Str::random(1, 'abcdefghijklmnopqrstuvwxyz');
+//     // Pastikan ada setidaknya satu huruf besar
+//     $password .= Str::random(1, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+//     // Pastikan ada setidaknya satu angka
+//     $password .= Str::random(1, '0123456789');
+//     // Pastikan ada setidaknya satu simbol
+//     $password .= $symbols[array_rand(str_split($symbols))];
+
+//     // Isi sisanya sampai panjang yang diinginkan
+//     $remainingLength = $length - strlen($password);
+//     if ($remainingLength > 0) {
+//         $password .= Str::random($remainingLength, $characters . $symbols);
+//     }
+
+//     // Acak ulang string password agar karakternya tidak berurutan
+//     return str_shuffle($password);
+// }
+
+function generateStrongPassword($length = 8)
+{
+    $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    $numbers = '0123456789';
+    $symbols = '!@#$?';
+
+    $password = [
+        $uppercase[random_int(0, strlen($uppercase) - 1)],
+        $lowercase[random_int(0, strlen($lowercase) - 1)],
+        $numbers[random_int(0, strlen($numbers) - 1)],
+        $symbols[random_int(0, strlen($symbols) - 1)]
+    ];
+
+    $allCharacters = $uppercase . $lowercase . $numbers . $symbols;
+
+    for ($i = 4; $i < $length; $i++) {
+        $password[] = $allCharacters[random_int(0, strlen($allCharacters) - 1)];
+    }
+
+    shuffle($password);
+
+    return implode('', $password);
 }

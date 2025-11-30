@@ -29,4 +29,13 @@ class MyModel extends Model
             ->where('kode_kabkota', $kode_kabkota);
         return $data;
     }
+
+    public function countPermohonanByStatus($status_permohonan, $id_biodata)
+    {
+        $data = DB::table('tr_permohonan')
+            ->where('status_permohonan', $status_permohonan)
+            ->where('id_biodata', $id_biodata)
+            ->count();
+        return $data;
+    }
 }

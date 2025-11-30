@@ -1,9 +1,9 @@
 <div class="modal fade" id="getModalForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel5" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel5"><b>{{$title_form}}</b></h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header  bg-secondary text-white">
+                <h4 class="modal-title" id="myModalLabel5"><b>{{ $title_form }}</b></h4>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -28,7 +28,7 @@
     function upload() {
         myTable = $.ajax({
             type: 'GET',
-            url: "{{ route('datakendaraan.showUploadDokumenKendaraan',$row->id_kendaraan) }}",
+            url: "{{ route('datakendaraan.showUploadDokumenKendaraan', $row->id_kendaraan) }}",
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },

@@ -114,7 +114,7 @@
                 <td align="center">{{ cek_date_ddmmyyyy_his_v2($resultPermohonanAll->tgl_kirim_permohonan) }}</td>
                 @if ($status_permohonan == 5)
                     <td class="single-line">
-                        {{ $resultPermohonanAll->tgl_validasi_proses ? cek_date_ddmmyyyy_his_v2($resultPermohonanAll->tgl_validasi_proses) : '-' }}
+                        {{ $resultPermohonanAll->tgl_validasi_selesai ? cek_date_ddmmyyyy_his_v2($resultPermohonanAll->tgl_validasi_selesai) : '-' }}
                     </td>
                     <td>
                         {{ $resultPermohonanAll->no_kartu_pengawas }}

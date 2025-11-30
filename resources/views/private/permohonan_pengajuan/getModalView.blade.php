@@ -15,7 +15,7 @@
                             <tr>
                                 <th width=" 1%">No</th>
                                 <th>Nama Kendaraan</th>
-                                <th>Plat No. Kendaraan</th>
+                                <th> No. Plat Kendaraan</th>
                                 <th>No. Ranngka</th>
                                 <th>No. Mesin</th>
                                 <th width="1%" align="center">Action</th>

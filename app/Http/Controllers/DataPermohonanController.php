@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\BiodataModel;
+use App\Models\BparKabKotaModel;
+use App\Models\DataKendaraanModel;
 use App\Models\HistoriDataPermohonanModel;
 use App\Models\MyModel;
 use App\Models\PengajuanPermohonanModel;
 use App\Models\PermohonanUploadBiodataModel;
+use App\Models\UserDataAksesKabKotaModel;
+use App\Models\UserLogModel;
 use App\Models\ValidasiPermohonanModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
@@ -21,6 +25,10 @@ class DataPermohonanController extends Controller
             $biodata = BiodataModel::where('id_user', getIdUser())->first();
             if (empty($biodata)) {
                 return redirect()->to('biodata');
+            }
+
+            if (in_array(getSttsUser(), ['2', '3', '4'])) {
+                return redirect()->to('panel');
             }
         }
 
@@ -50,6 +58,13 @@ class DataPermohonanController extends Controller
             }
 
             $query = PengajuanPermohonanModel::where('id_biodata', getIdBiodata());
+
+
+            // $kabkota = BparKabKotaModel::where('kode_provinsi', $query->first()->kode_provinsi)
+            //     ->where('kode_kabkota', $query->first()->kode_kabkota)->first();
+
+            // dd($kabkota->nm_kabkota);
+
             $dt($query);
 
             return DataTables::of($query->orderBy('tgl_kirim_permohonan', 'DESC')->get())
@@ -58,7 +73,10 @@ class DataPermohonanController extends Controller
                     return cek_date_ddmmyyyy_his_v1($row->tgl_kirim_permohonan);
                 })
                 ->addColumn('merekType', function ($row) {
-                    return $row->JkendaraanMerek->nm_merek_kendaraan . " / " . $row->JkendaraanType->nm_type_kendaraan . " / " . $row->nm_kendaraan . ' (' . $row->thn_pembuatan . ') ';
+                    return $row->JkendaraanMerek->nm_merek_kendaraan . " / " . $row->JkendaraanType->nm_type_kendaraan;
+                })
+                ->addColumn('nmKendaraan', function ($row) {
+                    return   $row->nm_kendaraan . ' (' . $row->thn_pembuatan . ') ';
                 })
                 ->addColumn('jenisPermohonan', function ($row) {
                     return $row->JjenisPermohonan->nm_jenis_permohonan . " (" . $row->JPermohonan->nm_par_permohonan . ')';
@@ -80,6 +98,11 @@ class DataPermohonanController extends Controller
                 ->addColumn('status', function ($row) {
                     return status_permohonan($row->status_permohonan);
                 })
+                ->addColumn('kabkota', function ($row) {
+                    $kabkota = BparKabKotaModel::where('kode_provinsi', $row->kode_provinsi)
+                        ->where('kode_kabkota', $row->kode_kabkota)->first();
+                    return $kabkota->nm_kabkota;
+                })
                 ->rawColumns(['status', 'action'])
                 ->make(true);
         } else {
@@ -90,10 +113,64 @@ class DataPermohonanController extends Controller
     public function destroy($id)
     {
         if (request()->ajax()) {
-            PengajuanPermohonanModel::where('id_permohonan_izin', $id)->delete();
-            return response()->json([
-                'success' => 'Data berhasil dihapus',
-            ]);
+            $id_permohonan_izin = $id;
+
+            $row = PengajuanPermohonanModel::where('id_permohonan_izin', $id_permohonan_izin)->first();
+
+            if ($row) {
+                // Hapus file KIR jika tidak null/kosong
+                if (!empty($row->file_kir)) {
+                    $imagePath1 = public_path('upload/copy_file_permohonan/file_kendaraan') . '/' . $row->file_kir;
+                    if (file_exists($imagePath1)) {
+                        @unlink($imagePath1); // gunakan @unlink untuk suppress error jika terjadi race condition
+                    }
+                }
+
+                // Hapus file STNK jika tidak null/kosong
+                if (!empty($row->file_stnk)) {
+                    $imagePath2 = public_path('upload/copy_file_permohonan/file_kendaraan') . '/' . $row->file_stnk;
+                    if (file_exists($imagePath2)) {
+                        @unlink($imagePath2);
+                    }
+                }
+
+                $ids =  getIdUser();
+                UserLogModel::create([
+                    'id_user' => $ids,
+                    'aktivitas' => 'Hapus Permohonan KIR Berhasil ' . $row->plat_no_kendaraan . '/' . $row->nm_kendaraan . ' (Destroy).',
+                ]);
+
+                // Hapus data utama permohonan
+                $post = PengajuanPermohonanModel::where('id_permohonan_izin', $id_permohonan_izin)->delete();
+
+                if ($post) {
+                    // Ambil semua data upload berdasarkan id_permohonan_izin
+                    $uploads = PermohonanUploadBiodataModel::where('id_permohonan_izin', $id_permohonan_izin)->get();
+
+                    foreach ($uploads as $upload) {
+                        if (!empty($upload->file_dokumen)) {
+                            $imagePath = public_path('upload/copy_file_permohonan/file_biodata') . '/' . $upload->file_dokumen;
+                            if (file_exists($imagePath)) {
+                                @unlink($imagePath);
+                            }
+                        }
+                    }
+
+
+
+
+                    // Hapus data dari database
+                    PermohonanUploadBiodataModel::where('id_permohonan_izin', $id_permohonan_izin)->delete();
+
+                    return response()->json([
+                        'success' => 'Data berhasil dihapus',
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'error' => 'Data tidak ditemukan',
+                ], 404);
+            }
         } else {
             exit('Maaf Tidak Dapat diproses...');
         }
@@ -104,9 +181,14 @@ class DataPermohonanController extends Controller
     public function detailView($id)
     {
         if (request()->ajax()) {
+            $row = PengajuanPermohonanModel::where('id_permohonan_izin', $id)->first();
+            $kabkota = BparKabKotaModel::where('kode_provinsi', $row->kode_provinsi)
+                ->where('kode_kabkota', $row->kode_kabkota)
+                ->first();
             $data = [
-                'title_form' => 'LIHAT DATA',
-                'row' => PengajuanPermohonanModel::where('id_permohonan_izin', $id)->first()
+                'title_form' => 'LIHAT DATA PERMOHONAN',
+                'row' => $row,
+                'kabkota' => $kabkota->nm_kabkota,
             ];
             return view('private.permohonan_data.getModalView', $data);
         } else {
@@ -127,9 +209,9 @@ class DataPermohonanController extends Controller
             $status = '4';
             $label  = 'Proses';
         } else if ($r->act == "HistoriPengawas") {
-            $title = act($r->act);
-            $status = '5';
-            $label  = 'Disetujui';
+            // $title = act($r->act);
+            // $status = '5';
+            // $label  = 'Disetujui';
         }
 
         $data = [
@@ -143,10 +225,30 @@ class DataPermohonanController extends Controller
     public function showProses(Request $r)
     {
         if (request()->ajax()) {
-
             $status = $r->status;
 
+            if (getLevel() == 2) {
+                $user = getIdUser();
+                $aksesKabkota = UserDataAksesKabKotaModel::where('id_user', $user)->get();
+                // $kabkota = BparKabKotaModel::whereIn('kode_provinsi', $aksesKabkota->pluck('kode_provinsi'))
+                //     ->whereIn('kode_kabkota', $aksesKabkota->pluck('kode_kabkota'))
+                //     ->orderBy('kode_kabkota', 'ASC')
+                //     ->get();
+            } else {
+                $aksesKabkota = null;
+            }
+
+
             return  DataTables::of(PengajuanPermohonanModel::where('status_permohonan', $status)
+                ->when(getLevel() == 2, function ($query) use ($aksesKabkota) {
+                    $query->whereIn(
+                        'kode_provinsi',
+                        $aksesKabkota->pluck('kode_provinsi')->toArray()
+                    )->whereIn(
+                        'kode_kabkota',
+                        $aksesKabkota->pluck('kode_kabkota')->toArray()
+                    );
+                })
                 ->orderBy('tgl_kirim_permohonan', 'DESC')
                 ->get())
                 ->addColumn('action', 'private.permohonan_data.action')
@@ -164,6 +266,14 @@ class DataPermohonanController extends Controller
                     }
                 })
 
+                ->addColumn('no_kartu_pengawas', function ($row) use ($status) {
+                    if ($status == '4') {
+                        $validasi = ValidasiPermohonanModel::where('id_permohonan_izin', $row->id_permohonan_izin)->first();
+                        return $validasi->no_kartu_pengawas;
+                    } else {
+                        return '-';
+                    }
+                })
                 ->addColumn('nomor', function ($row) use ($status) {
                     if ($status != '5') {
                         return "-";
@@ -174,7 +284,7 @@ class DataPermohonanController extends Controller
                 })
 
                 ->addColumn('perusahaan', function ($row) {
-                    return $row->nm_perusahaan_personal;
+                    return $row->nm_perusahaan_personal . ' (' . $row->BadanUsaha->nm_badan_usaha . ')';
                 })
 
                 ->addColumn('pimpinan', function ($row) {
@@ -198,7 +308,10 @@ class DataPermohonanController extends Controller
                     }
                 })
                 ->addColumn('merekType', function ($row) {
-                    return $row->JkendaraanMerek->nm_merek_kendaraan . " / " . $row->JkendaraanType->nm_type_kendaraan . " / " . $row->nm_kendaraan . ' (' . $row->thn_pembuatan . ') ';
+                    return $row->JkendaraanMerek->nm_merek_kendaraan . " / " . $row->JkendaraanType->nm_type_kendaraan;
+                })
+                ->addColumn('nm_kendaraan', function ($row) {
+                    return  $row->nm_kendaraan . ' (' . $row->thn_pembuatan . ') ';
                 })
                 ->addColumn('jenisPermohonan', function ($row) {
                     return $row->JjenisPermohonan->nm_jenis_permohonan . " (" . $row->JPermohonan->nm_par_permohonan . ')';
@@ -275,7 +388,12 @@ class DataPermohonanController extends Controller
                 $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')
                     ->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
             })
-                ->where('id_permohonan_izin', $id)->first()
+                ->where('id_permohonan_izin', $id)->first(),
+            'dok1' => PermohonanUploadBiodataModel::where('id_permohonan_izin', $id)->where('jenis_dok', '1')->first(),
+            'dok2' => PermohonanUploadBiodataModel::where('id_permohonan_izin', $id)->where('jenis_dok', '2')->first(),
+            'dok3' => PermohonanUploadBiodataModel::where('id_permohonan_izin', $id)->where('jenis_dok', '3')->first(),
+            'dok4' => PermohonanUploadBiodataModel::where('id_permohonan_izin', $id)->where('jenis_dok', '4')->first(),
+            'kendaraan' => PengajuanPermohonanModel::where('id_permohonan_izin', $id)->first()
 
         ];
         return view('private/permohonan_data/kartuInput')->with($data);
@@ -357,21 +475,49 @@ class DataPermohonanController extends Controller
                 $errors = $validator->errors();
                 return response()->json(['errors' => $errors], 422);
             } else {
+                $tgl_sk = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_sk)->format('Y-m-d');
+                $tgl_awal = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_awal)->format('Y-m-d');
+                $tgl_akhir = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_akhir)->format('Y-m-d');
+
+                if ($r->tgl_kir_awal) {
+                    $tgl_kir_awal = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_kir_awal)->format('Y-m-d');
+                } else {
+                    $tgl_kir_awal = null;
+                }
+
+                if ($r->tgl_kir_akhir) {
+                    $tgl_kir_akhir = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_kir_akhir)->format('Y-m-d');
+                } else {
+                    $tgl_kir_akhir = null;
+                }
+
+                //dd($r);
+
+                $row = ValidasiPermohonanModel::where('id_validasi_permohonan', $id)->first();
                 $post = ValidasiPermohonanModel::where('id_validasi_permohonan', $id)->update([
                     'no_kartu_pengawas'  => $r->no_kartu_pengawas,
-                    'tgl_sk'  => $r->tgl_sk,
+                    'tgl_sk'  => $tgl_sk,
                     'no_sk'  => $r->no_sk,
-                    'tgl_awal'  => $r->tgl_awal,
-                    'tgl_akhir'  => $r->tgl_akhir,
-                    'tgl_kir_awal'  =>  $r->input('ck_tgl_kir_awal_clear') == '' ? $r->tgl_kir_awal : null,
-                    'tgl_kir_akhir'  =>  $r->input('ck_tgl_kir_akhir_clear') == '' ? $r->tgl_kir_akhir : null,
+                    'tgl_awal'  => $tgl_awal,
+                    'tgl_akhir'  => $tgl_akhir,
+                    'tgl_kir_awal'  => $tgl_kir_awal,
+                    'tgl_kir_akhir'  =>  $tgl_kir_akhir,
                     'ck_tgl_kir_awal_clear' => $r->input('ck_tgl_kir_awal_clear') == '' ? '1' : '0',
-                    'ck_tgl_kir_akhir_clear' => $r->input('ck_tgl_kir_akhir_clear') == '' ? '1' : '0'
+                    'ck_tgl_kir_akhir_clear' => $r->input('ck_tgl_kir_akhir_clear') == '' ? '1' : '0',
                 ]);
-                return response()->json([
-                    'success' => 'Data berhasil disimpan',
-                    'action' => 'storeInputKartu_dataPermohonan'
-                ]);
+                if ($post) {
+                    $post = PengajuanPermohonanModel::where('id_permohonan_izin', $row->id_permohonan_izin)->update([
+                        'nomor_uji'  =>  $r->nomor_uji,
+                        'kombinasi_yg_diperoleh'  =>  $r->kombinasi_yg_diperoleh,
+                        'sk_reg_uji_type'  =>  $r->sk_reg_uji_type,
+                        'ket_lain'  =>  $r->ket_lain,
+                    ]);
+
+                    return response()->json([
+                        'success' => 'Data berhasil disimpan',
+                        'action' => 'storeInputKartu_dataPermohonan'
+                    ]);
+                }
             }
         } else {
             exit('Maaf Tidak Dapat diproses...');
@@ -394,6 +540,10 @@ class DataPermohonanController extends Controller
     public function validasiSelesai(Request $r, $id)
     {
         if (request()->ajax()) {
+            $tanggal = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_validasi_selesai)
+                ->format('Y-m-d');
+
+
             $cek = ValidasiPermohonanModel::where('id_permohonan_izin', $id)->first();
             // echo $cek->id_validasi_permohonan;
             // echo "<br>";
@@ -412,7 +562,7 @@ class DataPermohonanController extends Controller
             } else {
                 ValidasiPermohonanModel::where('id_validasi_permohonan', $cek->id_validasi_permohonan)->update([
                     'status_validasi'  => '5',
-                    'tgl_validasi_selesai'  => $r->tgl_validasi_selesai,
+                    'tgl_validasi_selesai'  => $tanggal,
                 ]);
 
                 PengajuanPermohonanModel::where('id_permohonan_izin', $id)->update([
@@ -497,7 +647,10 @@ class DataPermohonanController extends Controller
         if (request()->ajax()) {
             $data = [
                 'title_form' => 'DOKUMEN UPLOAD',
-                'biodata' => PermohonanUploadBiodataModel::where('id_permohonan_izin', $id)->orderBy('jenis_dok', 'asc')->get(),
+                'dok1' => PermohonanUploadBiodataModel::where('id_permohonan_izin', $id)->where('jenis_dok', '1')->first(),
+                'dok2' => PermohonanUploadBiodataModel::where('id_permohonan_izin', $id)->where('jenis_dok', '2')->first(),
+                'dok3' => PermohonanUploadBiodataModel::where('id_permohonan_izin', $id)->where('jenis_dok', '3')->first(),
+                'dok4' => PermohonanUploadBiodataModel::where('id_permohonan_izin', $id)->where('jenis_dok', '4')->first(),
                 'kendaraan' => PengajuanPermohonanModel::where('id_permohonan_izin', $id)->first()
             ];
             return view('private.permohonan_data.getModal_dokumenUpload', $data);

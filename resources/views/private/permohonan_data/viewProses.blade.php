@@ -8,37 +8,44 @@
             window.location = "/";
         </script>
     @endif
+    <!-- {{ url('/datapermohonan/viewProses/Masuk') }}-->
+    <!--  {{ request()->url() }}  -->
+
     <div class="content-body">
         <div class="card">
             <div class="card-header">
                 <h4 class="card-title"><b>{{ $title }}</b></h4>
                 <hr class="border-secondary">
             </div>
-            <!-- {{ url('/datapermohonan/viewProses/Masuk') }}<br>
-                                                {{ request()->url() }} -->
 
             <div class="col-md-12">
                 <div class="table-responsive">
-                    <table id="myTable" class="table table-striped table-bordered zero-configuration two-columns"
-                        style="width:100%; font-size:12px;">
-                        <thead>
+                    <table id="myTable" class="table table-striped  table-hover" style="width:100%; font-size: 8px;">
+                        <thead class="thead-dark text-center">
                             <tr>
-                                <th width=" 1%">No</th>
-                                <th>Tgl {{ $label }} </th>
-                                <th>Nomor</th>
-                                <th>Perusahaan</th>
-                                <th>Pimpinan</th>
-                                <th>Tgl Mulai</th>
-                                <th>Tgl Akhir</th>
-                                <th>Nama Kendaraan </th>
-                                <th>Jenis Permohonan </th>
-                                <th>Jenis Angkutan </th>
-                                <th>Trayek</th>
-                                <th>Mengangkut</th>
-                                <th>No Kendaraan</th>
-                                <th>KabKota</th>
-                                <th width="1%" align="center">Action</th>
+                                <th width="1%">#No</th>
+                                <th><i class="fa fa-calendar"></i> Tgl {{ $label }}</th>
+                                <th><i class="fa fa-building"></i> No Kartu Pengawas </th>
+                                <th><i class="fa fa-building"></i> Perusahaan</th>
+                                <th><i class="fa fa-user-tie"></i> Pimpinan</th>
+
+                                <th><i class="fa fa-clipboard-list"></i> Jenis Permohonan</th>
+                                <th><i class="fa fa-bus"></i> Jenis Angkutan</th>
+                                <th><i class="fa fa-road"></i> Trayek</th>
+                                <th><i class="fa fa-box"></i> Mengangkut</th>
+
+                                <th><i class="fa fa-calendar-plus"></i> Tgl Mulai</th>
+                                <th><i class="fa fa-calendar-minus"></i> Tgl Akhir</th>
+                                <th><i class="fa fa-industry"></i> Merek / Tipe</th>
+                                <th><i class="fa fa-truck"></i> Nama Kendaraan</th>
+
+                                <th><i class="fa fa-car"></i> No Plat</th>
+                                <th><i class="fa fa-car"></i> No Rangka</th>
+                                <th><i class="fa fa-car"></i> No Mesin</th>
+                                <th><i class="fa fa-map-marker-alt"></i> KabKota</th>
+                                <th width="1%" align="center"><i class="fa fa-cog"></i> Action</th>
                             </tr>
+
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -79,12 +86,11 @@
                         name: 'tgl'
                     },
                     {
-                        data: 'nomor',
-                        name: 'nomor',
-                        className: 'text-center',
+                        data: 'no_kartu_pengawas',
+                        name: 'no_kartu_pengawas',
                         render: function(data, type, row, meta) {
-                            return (row.statusText != 5) ? myTable.column(meta.col).visible(false) :
-                                row.nomor;
+                            return (row.statusText != 4) ? myTable.column(meta.col).visible(false) :
+                                row.no_kartu_pengawas;
                         },
                     },
                     {
@@ -94,6 +100,23 @@
                     {
                         data: 'pimpinan',
                         name: 'pimpinan'
+                    },
+                    {
+                        data: 'jenisPermohonan',
+                        name: 'jenisPermohonan'
+                    },
+                    {
+                        data: 'jenisAngkutan',
+                        name: 'jenisAngkutan'
+                    },
+                    {
+                        data: 'trayek',
+                        name: 'trayek'
+                    },
+                    {
+                        className: 'text-center',
+                        data: 'mengangkut',
+                        name: 'mengangkut'
                     },
                     {
                         data: 'tglMulai',
@@ -119,26 +142,24 @@
                         name: 'merekType',
                     },
                     {
-                        data: 'jenisPermohonan',
-                        name: 'jenisPermohonan'
+                        data: 'nm_kendaraan',
+                        name: 'nm_kendaraan',
                     },
-                    {
-                        data: 'jenisAngkutan',
-                        name: 'jenisAngkutan'
-                    },
-                    {
-                        data: 'trayek',
-                        name: 'trayek'
-                    },
-                    {
-                        className: 'text-center',
-                        data: 'mengangkut',
-                        name: 'mengangkut'
-                    },
+
                     {
                         className: 'text-center',
                         data: 'plat_no_kendaraan',
                         name: 'plat_no_kendaraan'
+                    },
+                    {
+                        className: 'text-center',
+                        data: 'no_rangka',
+                        name: 'no_rangka'
+                    },
+                    {
+                        className: 'text-center',
+                        data: 'no_mesin',
+                        name: 'no_mesin'
                     },
                     {
                         className: 'text-center',

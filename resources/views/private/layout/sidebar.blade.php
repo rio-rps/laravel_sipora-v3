@@ -23,7 +23,7 @@
                         <li
                             class="nav-item {{ request()->url() == url('/datapermohonan/viewProses/Masuk') ? 'active' : '' }}">
                             <a href=" {{ route('datapermohonan.viewProses', ['act' => 'Masuk']) }}">
-                                <i class="fa fa-file-text-o"></i>
+                                <i class="fa fa-file-text"></i>
                                 <span class="menu-title" data-i18n="Masuk">Masuk</span>
                             </a>
                         </li>
@@ -37,13 +37,6 @@
 
                     </ul>
                 </li>
-                {{--  <li class="nav-item {{ request()->url() == url('/datapermohonan/viewProses/HistoriPengawas') ? 'active' : '' }}"
-style="font-size: 13px;">
-<a href="{{ route('datapermohonan.viewProses', ['act' => 'HistoriPengawas']) }}">
-<i class="fa fa-clone"></i>
-<span class="menu-title" data-i18n="Histori Kartu Pengawas">Histori Kartu Pengawas</span>
-</a>
-</li>  --}}
 
 
                 <li class="nav-item ">
@@ -52,8 +45,14 @@ style="font-size: 13px;">
                         <span class="menu-title" data-i18n="Histori Kartu Pengawas">Histori Kartu Pengawas</span>
                     </a>
                 </li>
-
-
+                @if (Auth::user()->level == 2)
+                    <li class="nav-item {{ request()->url() == url('/PIC') ? 'active' : '' }}">
+                        <a href="{{ route('PIC.index') }}">
+                            <i class="fa fa-phone"></i>
+                            <span class="menu-title" data-i18n="PIC Kab/Kota">PIC Kab/Kota</span>
+                        </a>
+                    </li>
+                @endif
                 <li class="nav-item">
                     <a href="#">
                         <i class="fa fa-print"></i>
@@ -68,10 +67,29 @@ style="font-size: 13px;">
                         </li>
                     </ul>
                 </li>
-
-
-
-
+            @endif
+            @if (Auth::user()->level == 2)
+                {{--  <li class="navigation-header">
+                    <span>GLOBAL</span>
+                    <i class="feather icon-minus" data-toggle="tooltip" data-placement="right"
+                        data-original-title="Global"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <i class="fa fa-search"></i>
+                        <span class="menu-title" data-i18n="Cek Data">Cek Data</span>
+                    </a>
+                    <ul class="menu-content">
+                        <li class="nav-item {{ request()->url() == url('/qrcode') ? 'active' : '' }} ">
+                            <a href="{{ route('qrcode.index') }}">
+                                <i class="fa fa-qrcode"></i>
+                                <span class="menu-title" data-i18n="QRCODE">QR CODE</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>  --}}
+            @endif
+            @if (Auth::user()->level == 1)
                 <li class="nav-item">
                     <a href="#">
                         <i class="fa fa-cog"></i>
@@ -80,15 +98,53 @@ style="font-size: 13px;">
                     <ul class="menu-content">
                         <li class="nav-item" style="font-size:11px;">
                             <a href="{{ route('tools.ubahStatusKartuPengawas') }}">
-                                <i class="fa fa-file-text-o"></i>
+                                <i class="fa fa-file-text"></i>
                                 <span class="menu-title" data-i18n="Ubah Status Kartu Pengawas"
                                     title="Ubah Status Kartu Pengawas">Ubah Status Kartu Pengawas</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-            @endif
-            @if (Auth::user()->level == 1)
+
+                <li class="navigation-header">
+                    <span>GLOBAL</span>
+                    <i class="feather icon-minus" data-toggle="tooltip" data-placement="right"
+                        data-original-title="Global"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <i class="fa fa-search"></i>
+                        <span class="menu-title" data-i18n="Cek Data">Cek Data</span>
+                    </a>
+                    <ul class="menu-content">
+                        <li class="nav-item {{ request()->url() == url('/badanUsaha') ? 'active' : '' }}">
+                            <a href="{{ route('badanUsaha') }}">
+                                <i class="fa fa-file-text"></i>
+                                <span class="menu-title" data-i18n="Badan Usaha">Badan Usaha</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ request()->url() == url('/kendaraan') ? 'active' : '' }}">
+                            <a href="{{ route('kendaraan') }}">
+                                <i class="fa fa-car"></i>
+                                <span class="menu-title" data-i18n="Kendaraan">Kendaraan</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ request()->url() == url('/mutasiPIC') ? 'active' : '' }} ">
+                            <a href="{{ route('mutasiPIC.index') }}">
+                                <i class="fa fa-random "></i>
+                                <span class="menu-title" data-i18n="Mutasi PIC">Mutasi PIC</span>
+                            </a>
+                        </li>
+                        {{--  <li class="nav-item {{ request()->url() == url('/qrcode') ? 'active' : '' }} ">
+                            <a href="{{ route('qrcode.index') }}">
+                                <i class="fa fa-qrcode"></i>
+                                <span class="menu-title" data-i18n="QRCODE">QR CODE</span>
+                            </a>
+                        </li>  --}}
+                    </ul>
+                </li>
+
+
                 <li class="navigation-header">
                     <span>Parameter</span>
                     <i class="feather icon-minus" data-toggle="tooltip" data-placement="right"
@@ -96,13 +152,13 @@ style="font-size: 13px;">
                 </li>
                 <li class="nav-item {{ request()->url() == url('/ttddokumen') ? 'active' : '' }}">
                     <a href="{{ route('ttddokumen.index') }}">
-                        <i class="fa fa-file-text-o"></i>
+                        <i class="fa fa-file-text"></i>
                         <span class="menu-title" data-i18n="TTD Dokumen">TTD Dokumen</span>
                     </a>
                 </li>
                 <li class="nav-item {{ request()->url() == url('/cparJenisPermohonan') ? 'active' : '' }}">
                     <a href="{{ route('cparJenisPermohonan.index') }}">
-                        <i class="fa fa-file-text-o"></i>
+                        <i class="fa fa-file-text"></i>
                         <span class="menu-title" data-i18n="Jenis Permohonan">Jenis Permohonan</span>
                     </a>
                 </li>
@@ -114,13 +170,13 @@ style="font-size: 13px;">
                     <ul class="menu-content">
                         <li class="nav-item {{ request()->url() == url('/cparKendaraanMerek') ? 'active' : '' }}">
                             <a href="{{ route('cparKendaraanMerek.index') }}">
-                                <i class="fa fa-file-text-o"></i>
+                                <i class="fa fa-file-text"></i>
                                 <span class="menu-title" data-i18n="Merek">Merek</span>
                             </a>
                         </li>
                         <li class="nav-item {{ request()->url() == url('/cparKendaraanType') ? 'active' : '' }}">
                             <a href="{{ route('cparKendaraanType.index') }}">
-                                <i class="fa fa-file-text-o"></i>
+                                <i class="fa fa-file-text"></i>
                                 <span class="menu-title" data-i18n="Type">Type</span>
                             </a>
                         </li>
@@ -136,6 +192,12 @@ style="font-size: 13px;">
                     <a href="{{ route('cparMengangkut.index') }}">
                         <i class="fa fa-th-large"></i>
                         <span class="menu-title" data-i18n="Mengangkut">Mengangkut</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ request()->url() == url('/PIC') ? 'active' : '' }}">
+                    <a href="{{ route('PIC.index') }}">
+                        <i class="fa fa-phone"></i>
+                        <span class="menu-title" data-i18n="PIC Kab/Kota">PIC Kab/Kota</span>
                     </a>
                 </li>
                 <li class="navigation-header">
@@ -156,64 +218,68 @@ style="font-size: 13px;">
                     </a>
                 </li>
             @elseif (Auth::user()->level == 3)
-                <li class="nav-item">
-                    <a href="#">
-                        <i class="fa fa-random"></i>
-                        <span class="menu-title" data-i18n="Pengajuan Permohonan" style="font-size: 12px;">Pengajuan
-                            Permohonan</span>
-                    </a>
-                    <ul class="menu-content">
-                        <li class="nav-item {{ request()->url() == url('/pengajuanpermohonan') ? 'active' : '' }}">
-                            <a href="{{ route('pengajuanpermohonan.index') }}">
-                                <i class="fa fa-file-text-o"></i>
-                                <span class="menu-title" data-i18n="Isi Form">Isi Form</span>
-                            </a>
-                        </li>
-                        <li class="nav-item {{ URL::full() == url('/datapermohonan?act=Input') ? 'active' : '' }}">
-                            <a href="{{ route('datapermohonan.index', ['act' => 'Input']) }}">
-                                <i class="fa fa-file-text-o"></i>
-                                <span class="menu-title" data-i18n="Data Permohonan">Data Permohonan</span>
-                            </a>
-                        </li>
+                @if (in_array(getSttsUser(), ['2', '3', '4']))
+                    <li class="nav-item  {{ URL::full() == url('/cekpassword/password') ? 'active' : '' }}">
+                        <a href="{{ route('cekpassword.password') }}">
+                            <i class="fa fa-info-circle"></i>
+                            <span class="menu-title" data-i18n="Info Penting">Info Penting </span>
+                        </a>
+                    </li>
+                @endif
+                @if (getSttsUser() == 1)
+                    <li class="nav-item">
+                        <a href="#">
+                            <i class="fa fa-random"></i>
+                            <span class="menu-title" data-i18n="Pengajuan Permohonan"
+                                style="font-size: 12px;">Pengajuan
+                                Permohonan</span>
+                        </a>
+                        <ul class="menu-content">
+                            <li
+                                class="nav-item {{ request()->url() == url('/pengajuanpermohonan') ? 'active' : '' }}">
+                                <a href="{{ route('pengajuanpermohonan.index') }}">
+                                    <i class="fa fa-file-text-o"></i>
+                                    <span class="menu-title" data-i18n="Isi Form">Isi Form</span>
+                                </a>
+                            </li>
+                            <li
+                                class="nav-item {{ URL::full() == url('/datapermohonan?act=Input') ? 'active' : '' }}">
+                                <a href="{{ route('datapermohonan.index', ['act' => 'Input']) }}">
+                                    <i class="fa fa-file-text-o"></i>
+                                    <span class="menu-title" data-i18n="Data Permohonan">Data Permohonan</span>
+                                </a>
+                            </li>
 
-                    </ul>
-                </li>
-                <li
-                    class="nav-item {{ URL::full() == url('/datapermohonan?act=Histori') ? 'active' : '' }} || {{ Request::is('datapermohonan/kartuInput*') ? 'active' : '' }}">
-                    <a href="{{ route('datapermohonan.index', ['act' => 'Histori']) }}">
-                        <i class="fa fa-clone"></i>
-                        <span class="menu-title" data-i18n="Histori Permohonan">Histori Permohonan</span>
-                    </a>
-                </li>
+                        </ul>
+                    </li>
+                    <li
+                        class="nav-item {{ URL::full() == url('/datapermohonan?act=Histori') ? 'active' : '' }} || {{ Request::is('datapermohonan/kartuInput*') ? 'active' : '' }}">
+                        <a href="{{ route('datapermohonan.index', ['act' => 'Histori']) }}">
+                            <i class="fa fa-clone"></i>
+                            <span class="menu-title" data-i18n="Histori Permohonan">Histori Permohonan</span>
+                        </a>
+                    </li>
 
 
-                <li class="navigation-header">
-                    <span>Global</span>
-                    <i class="feather icon-minus" data-toggle="tooltip" data-placement="right"
-                        data-original-title="Global"></i>
-                </li>
-                <li class="nav-item {{ URL::full() == url('/biodata') ? 'active' : '' }}">
-                    <a href="{{ route('biodata.index') }}">
-                        &nbsp; <i class="fa fa-user"></i>
-                        <span class="menu-title" data-i18n="Biodata">Biodata</span>
-                    </a>
-                </li>
-                <li class="nav-item  {{ URL::full() == url('/datakendaraan') ? 'active' : '' }}">
-                    <a href="{{ route('datakendaraan.index') }}">
-                        <i class="fa fa-car"></i>
-                        <span class="menu-title" data-i18n="Data Kendaraan">Data Kendaraan</span>
-                    </a>
-                </li>
+                    <li class="navigation-header">
+                        <span>Global</span>
+                        <i class="feather icon-minus" data-toggle="tooltip" data-placement="right"
+                            data-original-title="Global"></i>
+                    </li>
+                    <li class="nav-item {{ URL::full() == url('/biodata') ? 'active' : '' }}">
+                        <a href="{{ route('biodata.index') }}">
+                            &nbsp; <i class="fa fa-user"></i>
+                            <span class="menu-title" data-i18n="Biodata">Biodata</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  {{ URL::full() == url('/datakendaraan') ? 'active' : '' }}">
+                        <a href="{{ route('datakendaraan.index') }}">
+                            <i class="fa fa-car"></i>
+                            <span class="menu-title" data-i18n="Data Kendaraan">Data Kendaraan</span>
+                        </a>
+                    </li>
+                @endif
             @endif
-            <!--
-                <li class="nav-item">
-                <a href="{{ route('kartucek.NomorKartu') }}">
-                <i class="fa fa-file-text-o"></i>
-                <span class="menu-title" data-i18n="Cek Manual Kartu Pengawas" title="Cek Manual Kartu Pengawas" style="font-size:12px;">Cek Manual Kartu Pengawas</span>
-                </a>
-                </li>
-            -->
-
         </ul>
     </div>
 </div>

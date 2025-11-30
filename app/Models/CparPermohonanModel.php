@@ -11,7 +11,10 @@ class CparPermohonanModel extends Model
     public $table = "cpar_permohonan_002_permohonan";
     protected $primarykey = "id_par_permohonan";
     protected $fillable = [
-        'nm_par_permohonan', 'id_jenis_permohonan', 'status_actived'
+        'nm_par_permohonan',
+        'alias',
+        'id_jenis_permohonan',
+        'status_actived'
     ];
 
     public function JCparJenisPermohonan()

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CparKendaraanMerekModel;
 use App\Models\CparKendaraanTypeModel;
+use App\Models\PengajuanPermohonanModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
 use Illuminate\Support\Str;
@@ -161,15 +162,15 @@ class CparKendaraanTypeController extends Controller
     public function destroy($id)
     {
         if (request()->ajax()) {
-            //$cek = MappingNPDDokumenModel::where('id_dok', $r->id)->get(); 
-            //if (count($cek) > 0) {
-            //   return response()->json(['error' => 'Tidak Dapat di Hapus, Data Sudah dipakai / Hubungi Admin']);
-            // } else {
-            CparKendaraanTypeModel::where('id_type_kendaraan', $id)->delete();
-            return response()->json([
-                'success' => 'Data berhasil dihapus',
-            ]);
-            //}
+            $cek = PengajuanPermohonanModel::where('id_type_kendaraan', $id)->count();
+            if ($cek > 0) {
+                return response()->json(['error' => 'Tidak Dapat di Hapus, Data Sudah dipakai / Hubungi Admin']);
+            } else {
+                CparKendaraanTypeModel::where('id_type_kendaraan', $id)->delete();
+                return response()->json([
+                    'success' => 'Data berhasil dihapus',
+                ]);
+            }
         } else {
             exit('Maaf Tidak Dapat diproses...');
         }

@@ -67,5 +67,45 @@
             <td style="vertical-align: top;">:</td>
             <td>{{ isset($row->tgl_kir_akhir) ? cek_ddmmyy_v1($row->tgl_kir_akhir) : '-' }}</td>
         </tr>
+        <tr>
+            <td colspan="3">
+                <hr>
+            </td>
+        </tr>
+        <tr class="alert alert-secondary">
+            <td colspan="3">
+                <span style="color:#FFFFFF;"> &nbsp;&nbsp; <i class=" fa fa-edit"></i>
+                    INFORMASI TAMBAHAN DATA KENDARAAN</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="vertical-align: top;">Nomor Uji Kendaraan
+            </td>
+            <td style="vertical-align: top;">:</td>
+            <td>{{ $row->JPermohonan->nomor_uji ? $row->JPermohonan->nomor_uji : '-' }}</td>
+        </tr>
+
+        <tr>
+            <td style="vertical-align: top;">Kombinasi yang diperbolehkan
+            </td>
+            <td style="vertical-align: top;">:</td>
+            <td>{{ $row->JPermohonan->kombinasi_yg_diperoleh ? $row->JPermohonan->kombinasi_yg_diperoleh : '-' }}</td>
+        </tr>
+
+        <tr>
+            <td style="vertical-align: top;">SK Register Uji Type
+
+            </td>
+            <td style="vertical-align: top;">:</td>
+            <td>{{ $row->JPermohonan->sk_reg_uji_type ? $row->JPermohonan->sk_reg_uji_type : '-' }}</td>
+        </tr>
+
+        <tr>
+            <td style="vertical-align: top;">Keterangan Lain-lain
+            </td>
+            <td style="vertical-align: top;">:</td>
+            <td>{{ $row->JPermohonan->ket_lain ? $row->JPermohonan->ket_lain : '-' }}</td>
+        </tr>
     </body>
 </table>

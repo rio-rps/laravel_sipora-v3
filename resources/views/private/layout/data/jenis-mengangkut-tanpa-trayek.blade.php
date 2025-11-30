@@ -11,6 +11,7 @@
               ->where('id_jenis_permohonan', $jenis->id_jenis_permohonan)
               ->where('id_par_permohonan', $permohonan->id_par_permohonan)
               ->where('id_trayek', $kdTrayek)
+              ->whereYear('tgl_kirim_permohonan', $tahunFilter)
               ->groupBy('id_jenis_angkutan')
               ->orderBy('id_jenis_angkutan', 'ASC')
               ->get();
@@ -54,6 +55,7 @@
                   ->where('id_par_permohonan', $permohonan->id_par_permohonan)
                   ->where('id_trayek', $kdTrayek)
                   ->where('id_jenis_angkutan', $angkutantanpatrayek->id_jenis_angkutan)
+                  ->whereYear('tgl_kirim_permohonan', $tahunFilter)
                   ->groupBy('id_mengangkut')
                   ->orderBy('id_mengangkut', 'ASC')
                   ->get();

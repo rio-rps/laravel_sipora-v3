@@ -49,8 +49,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert(xhr.status + '\n' + throwError);
             }
         });
+ 
     });
 
+
+    
+    $(document).on('click', '#tombol-act-modal', function(e) {
+        e.preventDefault();
+        var url = $(this).data('url');
+        Swal.fire({
+            title: 'Load Data...',
+            html: '<div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div></div>',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                Swal.close();   
+                $('.viewModal').html(response).show();
+                $('#getModalForm').modal('show'); 
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                Swal.close();   
+                // Optional: sembunyikan atau kosongkan konten modal jika error
+                $('.viewModal').html('').hide();
+                
+                // Pastikan modal tertutup jika sempat terbuka
+                $('#getModalForm').modal('hide');
+        
+                // Tampilkan alert atau SweetAlert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan',
+                    text: xhr.status + ' - ' + thrownError
+                });
+            }
+        });
+    });
 
     // PILIH
 
@@ -72,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 $('#getModalForm').modal('hide');
 
                 //document.getElementById("id_kendaraan").value = response.id_kendaraan;
+                getDataKendaraanUpload(response.id_kendaraan);
                 document.getElementById("id_kendaraan").value = response.id_kendaraan;
                 document.getElementById("id_merek_kendaraan").value = response.id_merek_kendaraan;
                 document.getElementById("nm_merek_kendaraan").value =response.nm_merek_kendaraan;
@@ -86,6 +131,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById("no_mesin").value = response.no_mesin;
                 document.getElementById("file_kir").value = response.file_kir;
                 document.getElementById("file_stnk").value = response.file_stnk;
+                document.getElementById("warna_tnkb").value = response.warna_tnkb;
+                document.getElementById("bahan_bakar").value = response.bahan_bakar;
+                document.getElementById("nmr_faktur_jual_beli").value = response.nmr_faktur_jual_beli;
+                document.getElementById("tgl_faktur_jual_beli").value = response.tgl_faktur_jual_beli;
                // document.getElementById("id_biodata").value = response.id_biodata;
 
             },
@@ -94,6 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
 
 
 
@@ -154,8 +204,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     },
                     error: function(xhr, ajaxOptons, throwError) {
+                    if (xhr.status == 423) {
+                        var errors = xhr.responseJSON.errors;
+                        var errorList = ''; 
+                        Swal.fire('Gagal', errors, 'warning');
+                    } else {
                         alert(xhr.status + '\n' + throwError);
                     }
+                 }
                 });
             }
         });
@@ -326,3 +382,4 @@ $(document).on('click', '#tombol-hapus', function(e) {
     
 });
   
+

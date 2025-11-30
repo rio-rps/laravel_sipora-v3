@@ -6,6 +6,7 @@ use App\Models\BiodataModel;
 use App\Models\DataUserModel;
 use App\Models\UnitBidangModel;
 use App\Models\UserDataModel;
+use App\Models\UserLogModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
@@ -40,7 +41,6 @@ class DataUserController extends Controller
     public function store(Request $r)
     {
         if (request()->ajax()) {
-
             $validator = Validator::make($r->all(), [
                 'name' => 'required',
                 'email' => [
@@ -70,7 +70,7 @@ class DataUserController extends Controller
                 $post = DataUserModel::create([
                     'name' => $r->name,
                     'email '  => $r->email,
-                    'password'  => bcrypt('123456'),
+                    'password'  => bcrypt('sipora01#@!A'),
                     'level' => $r->level,
                 ]);
                 return response()->json(['success' => 'Data berhasil disimpan']);
@@ -86,6 +86,9 @@ class DataUserController extends Controller
                 ->addColumn('action', 'private.data_user.action')
                 ->addColumn('level', function ($row) {
                     return level($row->level);
+                })
+                ->addColumn('stts', function ($row) {
+                    return stts_user($row->stts_user);
                 })
                 ->make(true);
         } else {
@@ -113,8 +116,17 @@ class DataUserController extends Controller
     {
         if (request()->ajax()) {
             $post = DataUserModel::where('id', $id)->update([
-                'password'  => bcrypt('123456'),
+                'password'  => bcrypt('sipora01#@!A'),
+                'stts_user'  => 1,
             ]);
+
+            $ids =  $id;
+            UserLogModel::create([
+                'id_user' => $ids,
+                'aktivitas' => 'Reset Password (By Admin).',
+            ]);
+
+
             return response()->json(['success' => 'Password Berhasil direset']);
         } else {
             exit('Maaf Tidak Dapat diproses...');
@@ -153,6 +165,13 @@ class DataUserController extends Controller
                 $errors = $validator->errors();
                 return response()->json(['errors' => $errors], 422);
             } else {
+
+
+
+                BiodataModel::where('id_user', $r->id)->update([
+                    'email'  => $r->email,
+                ]);
+
                 DataUserModel::where('id', $r->id)->update([
                     'email'  => $r->email,
                 ]);
@@ -172,6 +191,7 @@ class DataUserController extends Controller
         ];
         return view('private/data_user/biodata')->with($data);
     }
+
 
 
     // public function viewBiodata($id)
