@@ -40,6 +40,28 @@ if (!function_exists('getSttsUser')) {
 }
 
 
+if (!function_exists('isAdmin')) {
+    function isAdmin()
+    {
+        return  Auth::user()->level === '1';
+    }
+}
+
+if (!function_exists('isPerusahaan')) {
+    function isPerusahaan()
+    {
+        return Auth::user()->level === '3';
+    }
+}
+
+if (!function_exists('isKabkota')) {
+    function isKabkota()
+    {
+        return   Auth::user()->level === '2';
+    }
+}
+
+
 function cek_date_ddmmyyyy_his_v1($date)
 {
     $timestamp = $date;
@@ -114,30 +136,33 @@ function cek_month_v1($month)
 
 function cek_ddmmyy_v1($date)
 {
+    if (empty($date)) {
+        return '-';
+    }
+
     $str = explode('-', $date);
-    $bulan = array(
-        '00' => '00',
-        '01' => '01',
-        '02' => '02',
-        '03' => '03',
-        '04' => '04',
-        '05' => '05',
-        '06' => '06',
-        '07' => '07',
-        '08' => '08',
-        '09' => '09',
-        '10' => '10',
-        '11' => '11',
-        '12' => '12'
-    );
-    return $str['2'] . "-" . $bulan[$str[1]] . "-" . $str[0];
+
+    if (count($str) !== 3) {
+        return '-';
+    }
+
+    return $str[2] . '-' . $str[1] . '-' . $str[0];
 }
+
 
 function cek_ddmmyy_v2($date)
 {
+    if (empty($date)) {
+        return '-';
+    }
+
     $str = explode('-', $date);
-    $bulan = array(
-        '00' => '00',
+
+    if (count($str) !== 3) {
+        return '-';
+    }
+
+    $bulan = [
         '01' => 'Januari',
         '02' => 'Februari',
         '03' => 'Maret',
@@ -150,16 +175,25 @@ function cek_ddmmyy_v2($date)
         '10' => 'Oktober',
         '11' => 'November',
         '12' => 'Desember'
-    );
-    return $str['2'] . " " . $bulan[$str[1]] . " " . $str[0];
+    ];
+
+    return $str[2] . ' ' . ($bulan[$str[1]] ?? '-') . ' ' . $str[0];
 }
 
 
 function cek_ddmmyy_v4($date)
 {
+    if (empty($date)) {
+        return '-';
+    }
+
     $str = explode('-', $date);
-    $bulan = array(
-        '00' => '00',
+
+    if (count($str) !== 3) {
+        return '-';
+    }
+
+    $bulan = [
         '01' => 'JANUARI',
         '02' => 'FEBRUARI',
         '03' => 'MARET',
@@ -172,9 +206,11 @@ function cek_ddmmyy_v4($date)
         '10' => 'OKTOBER',
         '11' => 'NOVEMBER',
         '12' => 'DESEMBER'
-    );
-    return   $bulan[$str[1]] . " " . $str[0];
+    ];
+
+    return ($bulan[$str[1]] ?? '-') . ' ' . $str[0];
 }
+
 
 function cek_ddmmyy_v3($tanggal)
 {

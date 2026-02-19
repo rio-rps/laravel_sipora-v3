@@ -12,11 +12,13 @@ class MutasiPICController extends Controller
 {
     public function index()
     {
-
-        $data = [
-            'title' => 'DATA KENDARAAN',
-        ];
-        return view('private.mutasi_pic.view')->with($data);
+        if (isAdmin()) {
+            $data = [
+                'title' => 'DATA KENDARAAN',
+            ];
+            return view('private.mutasi_pic.view')->with($data);
+        }
+        abort(404);
     }
 
     public function show(Request $r)

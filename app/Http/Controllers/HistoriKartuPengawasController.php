@@ -12,23 +12,26 @@ class HistoriKartuPengawasController extends Controller
 
     public function index()
     {
-        if (getLevel() == 2) {
-            $user = getIdUser();
-            $aksesKabkota = UserDataAksesKabKotaModel::where('id_user', $user)->get();
-            $kabkota = BparKabKotaModel::whereIn('kode_provinsi', $aksesKabkota->pluck('kode_provinsi'))
-                ->whereIn('kode_kabkota', $aksesKabkota->pluck('kode_kabkota'))
-                ->orderBy('kode_kabkota', 'ASC')
-                ->get();
-        } else {
-            $kabkota = null;
-        }
+        if (isAdmin() or isKabkota()) {
+            if (getLevel() == 2) {
+                $user = getIdUser();
+                $aksesKabkota = UserDataAksesKabKotaModel::where('id_user', $user)->get();
+                $kabkota = BparKabKotaModel::whereIn('kode_provinsi', $aksesKabkota->pluck('kode_provinsi'))
+                    ->whereIn('kode_kabkota', $aksesKabkota->pluck('kode_kabkota'))
+                    ->orderBy('kode_kabkota', 'ASC')
+                    ->get();
+            } else {
+                $kabkota = null;
+            }
 
-        $data = [
-            'title' => act('HistoriPengawas'),
-            'status' => 5,
-            'kabkota' => $kabkota
-        ];
-        return view('private/histori_kartu_pengawas/view')->with($data);
+            $data = [
+                'title' => act('HistoriPengawas'),
+                'status' => 5,
+                'kabkota' => $kabkota
+            ];
+            return view('private/histori_kartu_pengawas/view')->with($data);
+        }
+        abort(404);
     }
 
     /**

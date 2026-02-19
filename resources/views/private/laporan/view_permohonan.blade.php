@@ -75,7 +75,7 @@
                     </div>
                     <div class="btn-group btn-group-sm " role="group" aria-label="Basic example">
                         <button onclick="openPrintFromURL()" class="btn btn-outline-success mr-1">
-                            <i class="fa fa-file-pdf-o"></i> CETAK DOKUMEN
+                            <i class="fa fa-file-pdf-o"></i> CETAK DOKUMEN PDF
                         </button>
                         <button type="button" onclick="downloadExcel()" class="btn btn-outline-primary">
                             <i class="fa fa-file-excel-o"></i> EXCEL

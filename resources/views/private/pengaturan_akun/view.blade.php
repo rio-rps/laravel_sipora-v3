@@ -126,9 +126,10 @@
                                 <li class="list-group-item" style=" text-align: justify;">
                                     Untuk Keamanan Akun, pergantian password setidaknya harus memiliki persyaratan sebagai
                                     berikut :<br>
-                                    > Minimal 6 karakter.<br>
+                                    > Minimal 8 karakter.<br>
                                     > Menggunakan kombinasi antara huruf besar dan huruf kecil.<br>
-                                    > Menggunakan simbol atau angka.
+                                    > Menggunakan simbol @$!%*#?&.,:;^_\- <br>
+                                    > Menggunakan Angka.
                                 </li>
                             </ul>
                         </div>

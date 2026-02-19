@@ -43,14 +43,14 @@ class RegisterController extends Controller
                         }
                     }
                 ],
-                'g-recaptcha-response' => 'required|captcha',
+                // 'g-recaptcha-response' => 'required|captcha',
             ], [
                 'name.required' => 'Nama tidak boleh kosong',
                 'email.required' => 'Email tidak boleh kosong.',
                 'email.email' => 'Format email tidak valid.',
                 'email.unique' => 'Email sudah digunakan.',
-                'g-recaptcha-response.required' => 'Captcha harus diisi!',
-                'g-recaptcha-response.captcha' => 'Captcha tidak valid!',
+                // 'g-recaptcha-response.required' => 'Captcha harus diisi!',
+                // 'g-recaptcha-response.captcha' => 'Captcha tidak valid!',
             ]);
 
             if ($validator->fails()) {
@@ -122,7 +122,7 @@ class RegisterController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Register Akun Berhasil',
-                    'route' => route('register_success', ['name' => $name, 'email' => $email, 'passwordPlain' => $passwordPlain]),
+                    'route' => route('register_success', ['name' => $name, 'email' => $email, 'passwordPlain' => 0]),
                     'action' => 'register_success',
                 ]);
             }

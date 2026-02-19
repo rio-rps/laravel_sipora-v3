@@ -257,12 +257,59 @@
                                     <td>{{ isset($row_validasi->tgl_awal) ? cek_ddmmyy_v1($row_validasi->tgl_awal) : '-' }}
                                     </td>
                                 </tr>
+                                @php
+                                    use Carbon\Carbon;
+                                @endphp
+
                                 <tr>
                                     <td style="vertical-align: top;">Tanggal Akhir</td>
                                     <td style="vertical-align: top;">:</td>
-                                    <td>{{ isset($row_validasi->tgl_akhir) ? cek_ddmmyy_v1($row_validasi->tgl_akhir) : '-' }}
+                                    <td>
+                                        @if (!empty($row_validasi->tgl_akhir))
+                                            @php
+                                                $tglAkhir = Carbon::parse($row_validasi->tgl_akhir);
+                                            @endphp
+
+                                            <span style="color: {{ $tglAkhir->isPast() ? 'red' : 'inherit' }};">
+                                                {{ cek_ddmmyy_v1($row_validasi->tgl_akhir) }}
+                                            </span>
+                                        @else
+                                            -
+                                        @endif
                                     </td>
                                 </tr>
+
+
+                                <tr>
+                                    <td style="vertical-align: top;">Status</td>
+                                    <td style="vertical-align: top;">:</td>
+                                    <td>
+                                        @if ($row->id_par_permohonan != 7)
+                                            @if (!empty($row_validasi->tgl_akhir))
+                                                @php
+                                                    $tglAkhir = \Carbon\Carbon::parse($row_validasi->tgl_akhir);
+                                                @endphp
+
+                                                @if ($tglAkhir->isPast())
+                                                    <span style="color: red; font-weight: bold;">
+                                                        Masa Kartu Pengawas Sudah Habis, Silakan Hubungi Admin
+                                                    </span>
+                                                @else
+                                                    <span style="color: green;">
+                                                        Masih Berlaku
+                                                    </span>
+                                                @endif
+                                            @else
+                                                -
+                                            @endif
+                                        @else
+                                            -
+                                        @endif
+
+                                    </td>
+                                </tr>
+
+
                                 <tr>
                                     <td colspan="3">
                                         <hr>

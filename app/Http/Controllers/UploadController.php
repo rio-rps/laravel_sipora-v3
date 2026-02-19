@@ -61,10 +61,10 @@ class UploadController extends Controller
     {
         if ($request->ajax()) {
             $request->validate([
-                'file_dokumen' => 'required|file|max:500|mimes:pdf,docx,xlsx,pptx',
+                'file_dokumen' => 'required|file|max:500|mimes:pdf',
             ], [
                 'file_dokumen.required' => 'File Dokumen Tidak Boleh Kosong',
-                'file_dokumen.mimes' => 'File Hanya di perbolehkan ekstensi pdf,docx,xlsx,pptx',
+                'file_dokumen.mimes' => 'File Hanya di perbolehkan ekstensi pdf',
             ]);
 
 

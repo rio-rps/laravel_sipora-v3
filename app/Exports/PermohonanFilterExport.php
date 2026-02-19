@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\BparKabKotaModel;
 use App\Models\CparJenisPermohonanModel;
 use App\Models\PengajuanPermohonanModel;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -56,8 +57,14 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
                 $join->on('bpar_badan_usaha.id_badan_usaha', '=', 'tr_permohonan.id_badan_usaha');
             })
             ->where('status_permohonan', $status_permohonan)
+            // ->when($tgl_awal && $tgl_akhir, function ($query) use ($tgl_awal, $tgl_akhir) {
+            //     $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [$tgl_awal, $tgl_akhir]);
+            // })
             ->when($tgl_awal && $tgl_akhir, function ($query) use ($tgl_awal, $tgl_akhir) {
-                $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [$tgl_awal, $tgl_akhir]);
+                $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [
+                    Carbon::parse($tgl_awal)->startOfDay(),
+                    Carbon::parse($tgl_akhir)->endOfDay()
+                ]);
             })
             ->orderBy('tr_permohonan.tgl_kirim_permohonan', 'ASC');
 
@@ -132,6 +139,8 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
         $data[] = $row->daya_angkut_orang ?? '-';
         $data[] = $row->daya_angkut_barang ?? '-';
         $data[] = "'" . $row->plat_no_kendaraan ?? '-';
+        $data[] = "'" . $row->warna_tnkb ?? '-';
+        $data[] = "'" . $row->bahan_bakar ?? '-';
         $data[] = $row->nm_kabkota ?? '-';
 
         return $data;
@@ -184,6 +193,8 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
             'Daya Angkut Orang',
             'Daya Angkut Barang / Kg',
             'No Plat Kendaraan',
+            'Warna TNKB',
+            'Bahan Bakar',
             'Kab/Kota',
         ]);
 

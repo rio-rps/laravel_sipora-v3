@@ -28,7 +28,7 @@
                             </div>
                             <div class="col-12 col-xl-6">
                                 <input type="text" class="form-control border-1 fs-5 py-2  w-100 " id="cari_data"
-                                    placeholder="Ketikan Pencarian ..." value="BG 7424 AO">
+                                    placeholder="Ketikan Pencarian ...">
                                 {{--  <small class="text-danger">nn</small>  --}}
                             </div>
                             <div class="col-12 col-xl-2">

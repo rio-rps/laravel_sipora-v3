@@ -17,10 +17,13 @@ class ToolsController extends Controller
 {
     public function ubahStatusKartuPengawas()
     {
-        $data = [
-            'title' => 'DATA KARTU PENGAWAS',
-        ];
-        return view('private/tools/status_kartu_pengawas/view')->with($data);
+        if (isAdmin() || isKabkota()) {
+            $data = [
+                'title' => 'DATA KARTU PENGAWAS',
+            ];
+            return view('private/tools/status_kartu_pengawas/view')->with($data);
+        }
+        abort(404);
     }
 
     function showKartuPengawas()
@@ -39,6 +42,12 @@ class ToolsController extends Controller
             })
             ->addColumn('status', function ($row) {
                 return status_permohonan($row->status_validasi);
+            })
+            ->addColumn('tgl_proses', function ($row) {
+                return cek_date_ddmmyyyy_his_v1($row->tgl_validasi_proses);
+            })
+            ->addColumn('tgl_disetujui', function ($row) {
+                return cek_ddmmyy_v1($row->tgl_validasi_selesai);
             })
             ->rawColumns(['action', 'status'])
             ->make(true);

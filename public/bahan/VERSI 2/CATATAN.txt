@@ -33,7 +33,9 @@ PENAMBAHAN FIELD
 	alias varchar	100
 
 4. users
-	alias stts_user	1,2,3
+	  stts_user	1,2,3
 1 = aktif
 2 = non aktif
 3 = password lemah
+
+5. users_log

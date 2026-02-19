@@ -34,15 +34,20 @@
                                     <td>:</td>
                                     <td><strong>{{ $email }}</strong></td>
                                 </tr>
-                                <tr>
-                                    <th>Password</th>
-                                    <td>:</td>
-                                    <td><strong>{{ $passwordPlain }}</strong></td>
-                                </tr>
+                                @if ($passwordPlain != 0)
+                                    <tr>
+                                        <th>Password</th>
+                                        <td>:</td>
+                                        <td><strong>{{ $passwordPlain }}</strong></td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     <td colspan="3">
                                         <div class="border-start border-4 border-warning ps-3 py-2 bg-light">
-                                            Kami juga mengirimkan password ke email Anda, Silakan cek kotak masuk/spam email
+                                            @if ($passwordPlain != 0)
+                                                Kami juga mengirimkan password ke email Anda,
+                                            @endif
+                                            Silakan cek kotak masuk/spam email
                                             Anda <strong>{{ $email }}</strong>
                                             untuk
                                             melihat password.<br>

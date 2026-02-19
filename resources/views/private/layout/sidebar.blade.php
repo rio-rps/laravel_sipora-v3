@@ -65,6 +65,12 @@
                                 <span class="menu-title" data-i18n="Lap. Permohonan">Lap. Permohonan</span>
                             </a>
                         </li>
+                        <li class="nav-item ">
+                            <a href="{{ route('laporan.kendaraan') }}">
+                                <i class="fa fa-file-pdf-o"></i>
+                                <span class="menu-title" data-i18n="Lap.Data Kendaraan">Lap. Data kendaraan</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             @endif

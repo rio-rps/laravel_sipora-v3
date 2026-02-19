@@ -152,12 +152,16 @@
                          <tr>
                              <td>Nomor Rangka</td>
                              <td>:</td>
-                             <td>{{ $row->no_rangka }}</td>
+                             <td>
+                                 {{ $row->no_rangka ? Str::mask($row->no_rangka, '*', 4, -4) : '-' }}
+                             </td>
                          </tr>
                          <tr>
                              <td>Nomor Mesin</td>
                              <td>:</td>
-                             <td>{{ $row->no_mesin }}</td>
+                             <td>
+                                 {{ $row->no_mesin ? Str::mask($row->no_mesin, '*', 4, -4) : '-' }}
+                             </td>
                          </tr>
                          <tr>
                              <td colspan="3" class="bg-primary text-white fw-bold">
@@ -192,6 +196,35 @@
                              <td style="vertical-align: top;">Tanggal Akhir</td>
                              <td style="vertical-align: top;">:</td>
                              <td>{{ isset($row->JPermohonanValidasi->tgl_akhir) ? cek_ddmmyy_v1($row->JPermohonanValidasi->tgl_akhir) : '-' }}
+                             </td>
+                         </tr>
+                         @php
+                             use Carbon\Carbon;
+                         @endphp
+
+
+
+                         <tr>
+                             <td style="vertical-align: top;">Status</td>
+                             <td style="vertical-align: top;">:</td>
+                             <td>
+                                 @if (!empty($row->JPermohonanValidasi->tgl_akhir))
+                                     @php
+                                         $tglAkhir = Carbon::parse($row->JPermohonanValidasi->tgl_akhir);
+                                     @endphp
+
+                                     @if ($tglAkhir->isPast())
+                                         <span style="color: red; font-weight: bold;">
+                                             Masa KIR Habis, hubungi admin
+                                         </span>
+                                     @else
+                                         <span style="color: green;">
+                                             Masih Berlaku
+                                         </span>
+                                     @endif
+                                 @else
+                                     -
+                                 @endif
                              </td>
                          </tr>
                          {{--  <tr>

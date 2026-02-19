@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\DataKendaraanExport;
 use App\Exports\PermohonanFilterExport;
 use App\Models\AccesUrlModel;
 use App\Models\BparColorCardModel;
@@ -9,10 +10,12 @@ use App\Models\BparKabKotaModel;
 use App\Models\CparJenisPermohonanModel;
 use App\Models\CparPermohonanModel;
 use App\Models\CparTrayekModel;
+use App\Models\DataKendaraanModel;
 use App\Models\MyModel;
 use App\Models\PengajuanPermohonanModel;
 use App\Models\TTDDokumenModel;
 use App\Models\ValidasiPermohonanModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -28,11 +31,14 @@ class LaporanController extends Controller
 
     public function permohonan()
     {
-        $data = [
-            'title' => "LAPORAN",
-            'resultPermohonan' => CparJenisPermohonanModel::get()
-        ];
-        return view('private.laporan.view_permohonan', $data);
+        if (isAdmin() || isKabkota()) {
+            $data = [
+                'title' => "LAPORAN PERMOHONAN",
+                'resultPermohonan' => CparJenisPermohonanModel::get()
+            ];
+            return view('private.laporan.view_permohonan', $data);
+        }
+        abort(404);
     }
 
     public function getLapPermohonan(Request $r)
@@ -44,7 +50,6 @@ class LaporanController extends Controller
             $id_kabkota = $r->id_kabkota;
             $tgl_awal = $tgl_awal;
             $tgl_akhir = $tgl_akhir;
-
 
             $kabkota = BparKabKotaModel::where('id_kabkota', $id_kabkota)->first();
 
@@ -60,9 +65,17 @@ class LaporanController extends Controller
                     $join->on('bpar_badan_usaha.id_badan_usaha', '=', 'tr_permohonan.id_badan_usaha');
                 })
                 ->where('status_permohonan', $status_permohonan)
+                // ->when($tgl_awal && $tgl_akhir, function ($query) use ($tgl_awal, $tgl_akhir) {
+                //     $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [$tgl_awal, $tgl_akhir]);
+                // }) 
+
                 ->when($tgl_awal && $tgl_akhir, function ($query) use ($tgl_awal, $tgl_akhir) {
-                    $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [$tgl_awal, $tgl_akhir]);
+                    $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [
+                        Carbon::parse($tgl_awal)->startOfDay(),
+                        Carbon::parse($tgl_akhir)->endOfDay()
+                    ]);
                 })
+
                 ->orderBy('tr_permohonan.tgl_kirim_permohonan', 'ASC');
 
             // Cek jika id_jenis_permohonan bukan 'All'
@@ -128,8 +141,14 @@ class LaporanController extends Controller
                 $join->on('bpar_badan_usaha.id_badan_usaha', '=', 'tr_permohonan.id_badan_usaha');
             })
             ->where('status_permohonan', $status_permohonan)
+            // ->when($tgl_awal && $tgl_akhir, function ($query) use ($tgl_awal, $tgl_akhir) {
+            //     $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [$tgl_awal, $tgl_akhir]);
+            // })
             ->when($tgl_awal && $tgl_akhir, function ($query) use ($tgl_awal, $tgl_akhir) {
-                $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [$tgl_awal, $tgl_akhir]);
+                $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [
+                    Carbon::parse($tgl_awal)->startOfDay(),
+                    Carbon::parse($tgl_akhir)->endOfDay()
+                ]);
             })
             ->orderBy('tr_permohonan.tgl_kirim_permohonan', 'ASC');
 
@@ -526,5 +545,70 @@ class LaporanController extends Controller
     public function cetak_info_QRcode($id)
     {
         dd('oke');
+    }
+
+
+    public function kendaraan()
+    {
+        if (isAdmin() || isKabkota()) {
+            $data = [
+                'title' => "LAPORAN KENDARAAN",
+            ];
+            return view('private.laporan.kendaraan.view', $data);
+        }
+        abort(404);
+    }
+
+    public function show_kendaraan(Request $r)
+    {
+        $stts = $r->stts_kendaraan;
+
+        $result = DataKendaraanModel::when($stts != 0, function ($query) use ($stts) {
+            $query->where('status_actived', $stts);
+        })
+            ->get()
+            ->sortBy(fn($item) => $item->JBiodata->nm_perusahaan_personal ?? '');
+
+        $data = [
+            'resultKendaraan' => $result,
+        ];
+        return view('private.laporan.kendaraan.show', $data);
+    }
+
+    public function cetakKendaraanFilterPdf(Request $r)
+    {
+        ini_set('memory_limit', '1024M'); // atau 2048M
+        set_time_limit(3000); // waktu proses 
+        $stts = $r->stts_kendaraan;
+        $result = DataKendaraanModel::when($stts != 0, function ($query) use ($stts) {
+            $query->where('status_actived', $stts);
+        })
+            ->get()
+            ->sortBy(fn($item) => $item->JBiodata->nm_perusahaan_personal ?? '');
+
+        $data = [
+            'stts_kendaraan' => $stts,
+            'resultKendaraan' => $result,
+        ];
+        echo  view('private.laporan.kendaraan.show', $data);
+    }
+
+    public function exportKendaraanFilterExcel(Request $r)
+    {
+        ini_set('memory_limit', '1024M'); // atau 2048M
+        set_time_limit(3000); // waktu proses 
+        $stts = $r->stts_kendaraan;
+        $result = DataKendaraanModel::when($stts != 0, function ($query) use ($stts) {
+            $query->where('status_actived', $stts);
+        })
+            ->get()
+            ->sortBy(fn($item) => $item->JBiodata->nm_perusahaan_personal ?? '');
+
+        $filters = [
+            'stts_kendaraan' => $stts,
+            'resultKendaraan' => $result,
+        ];
+
+        return Excel::download(new DataKendaraanExport($filters), 'data_kendaraan.xlsx');
     }
 }

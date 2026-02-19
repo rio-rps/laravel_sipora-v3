@@ -246,6 +246,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('laporan/cetak_info_QRcode/{id}', [LaporanController::class, 'cetak_info_QRcode'])->name('laporan.cetak_info_QRcode');
 
+    Route::get('laporan/kendaraan', [LaporanController::class, 'kendaraan'])->name('laporan.kendaraan');
+    Route::get('laporan/show_kendaraan', [LaporanController::class, 'show_kendaraan'])->name('laporan.show_kendaraan');
+    Route::get('laporan/cetakKendaraanFilterPdf', [LaporanController::class, 'cetakKendaraanFilterPdf'])->name('laporan.cetakKendaraanFilterPdf');
+    Route::get('laporan/exportKendaraanFilterExcel', [LaporanController::class, 'exportKendaraanFilterExcel'])->name('laporan.exportKendaraanFilterExcel');
+
     // mengangkut 
     Route::get('cparMengangkut/createMapping/{id}', [CparMengangkutController::class, 'createMapping'])->name('cparMengangkut.createMapping');
     Route::get('cparMengangkut/createMappingForm/{id}', [CparMengangkutController::class, 'createMappingForm'])->name('cparMengangkut.createMappingForm');

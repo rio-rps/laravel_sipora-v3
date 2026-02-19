@@ -48,7 +48,7 @@ class CparTrayekController extends Controller
         if (request()->ajax()) {
             $data = [
                 'title_form' => 'FORM INPUT DATA BARU',
-                'result' => CparPermohonanModel::whereIn('id_par_permohonan', ['3', '4', '5', '8'])->get()
+                'result' => CparPermohonanModel::whereIn('id_par_permohonan', ['3', '4', '5', '8', '10'])->get()
             ];
             return view('private.trayek.formadd', $data);
         } else {

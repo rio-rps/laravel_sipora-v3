@@ -129,55 +129,58 @@ class RiwayatController extends Controller
 
         // 3 detik 
         // subquery permohonan: hitung per id_biodata
-        $permSub = DB::table('tr_permohonan')
-            ->select(
-                'id_biodata',
-                DB::raw('SUM(CASE WHEN status_permohonan = 2 THEN 1 ELSE 0 END) AS jml_masuk'),
-                DB::raw('SUM(CASE WHEN status_permohonan = 4 THEN 1 ELSE 0 END) AS jml_proses'),
-                DB::raw('SUM(CASE WHEN status_permohonan = 5 THEN 1 ELSE 0 END) AS jml_selesai'),
-                DB::raw('SUM(CASE WHEN status_permohonan = 3 THEN 1 ELSE 0 END) AS jml_tolak')
-            )
-            ->groupBy('id_biodata');
+        if (isAdmin()) {
+            $permSub = DB::table('tr_permohonan')
+                ->select(
+                    'id_biodata',
+                    DB::raw('SUM(CASE WHEN status_permohonan = 2 THEN 1 ELSE 0 END) AS jml_masuk'),
+                    DB::raw('SUM(CASE WHEN status_permohonan = 4 THEN 1 ELSE 0 END) AS jml_proses'),
+                    DB::raw('SUM(CASE WHEN status_permohonan = 5 THEN 1 ELSE 0 END) AS jml_selesai'),
+                    DB::raw('SUM(CASE WHEN status_permohonan = 3 THEN 1 ELSE 0 END) AS jml_tolak')
+                )
+                ->groupBy('id_biodata');
 
-        // subquery kendaraan: hitung per id_biodata
-        $kendSub = DB::table('ddd_data_kendaraan')
-            ->select('id_biodata', DB::raw('COUNT(*) AS jml_kendaraan'))
-            ->groupBy('id_biodata');
+            // subquery kendaraan: hitung per id_biodata
+            $kendSub = DB::table('ddd_data_kendaraan')
+                ->select('id_biodata', DB::raw('COUNT(*) AS jml_kendaraan'))
+                ->groupBy('id_biodata');
 
-        // query utama
-        $result = DB::table('ddd_biodata as b')
-            ->leftJoinSub($kendSub, 'kd', function ($join) {
-                $join->on('kd.id_biodata', '=', 'b.id_biodata');
-            })
-            ->leftJoinSub($permSub, 'pm', function ($join) {
-                $join->on('pm.id_biodata', '=', 'b.id_biodata');
-            })
-            ->leftJoin('bpar_badan_usaha as bu', 'bu.id_badan_usaha', '=', 'b.id_badan_usaha')
-            ->select(
-                'b.id_biodata',
-                'b.created_at',
-                'b.nm_perusahaan_personal',
-                'b.nm_pimpinan_pemilik',
-                'b.email',
-                'b.no_telp',
-                'b.alamat_biodata',
-                'bu.nm_badan_usaha',
-                DB::raw('COALESCE(kd.jml_kendaraan,0) AS jml_kendaraan'),
-                DB::raw('COALESCE(pm.jml_masuk,0) AS jml_masuk'),
-                DB::raw('COALESCE(pm.jml_proses,0) AS jml_proses'),
-                DB::raw('COALESCE(pm.jml_selesai,0) AS jml_selesai'),
-                DB::raw('COALESCE(pm.jml_tolak,0) AS jml_tolak')
-            )
-            ->orderBy('b.created_at', 'ASC')
-            ->get();
+            // query utama
+            $result = DB::table('ddd_biodata as b')
+                ->leftJoinSub($kendSub, 'kd', function ($join) {
+                    $join->on('kd.id_biodata', '=', 'b.id_biodata');
+                })
+                ->leftJoinSub($permSub, 'pm', function ($join) {
+                    $join->on('pm.id_biodata', '=', 'b.id_biodata');
+                })
+                ->leftJoin('bpar_badan_usaha as bu', 'bu.id_badan_usaha', '=', 'b.id_badan_usaha')
+                ->select(
+                    'b.id_biodata',
+                    'b.created_at',
+                    'b.nm_perusahaan_personal',
+                    'b.nm_pimpinan_pemilik',
+                    'b.email',
+                    'b.no_telp',
+                    'b.alamat_biodata',
+                    'bu.nm_badan_usaha',
+                    DB::raw('COALESCE(kd.jml_kendaraan,0) AS jml_kendaraan'),
+                    DB::raw('COALESCE(pm.jml_masuk,0) AS jml_masuk'),
+                    DB::raw('COALESCE(pm.jml_proses,0) AS jml_proses'),
+                    DB::raw('COALESCE(pm.jml_selesai,0) AS jml_selesai'),
+                    DB::raw('COALESCE(pm.jml_tolak,0) AS jml_tolak')
+                )
+                ->orderBy('b.created_at', 'ASC')
+                ->get();
 
 
 
-        $data = [
-            'title' => 'DAFTAR DATA BADAN USAHA PT/ CV/ KOPERASI/ PERSONAL/ PERORANGAN',
-            'result' => $result
-        ];
-        return view('private.riwayat.badan_usaha.view')->with($data);
+            $data = [
+                'title' => 'DAFTAR DATA BADAN USAHA PT/ CV/ KOPERASI/ PERSONAL/ PERORANGAN',
+                'result' => $result
+            ];
+            return view('private.riwayat.badan_usaha.view')->with($data);
+        }
+        abort(404);
     }
 
     public function badanUsaha_detail($id)
@@ -250,10 +253,13 @@ class RiwayatController extends Controller
 
     public function kendaraan()
     {
-        $data = [
-            'title' => 'CARI DATA KENDARAAN',
-        ];
-        return view('private.riwayat.kendaraan.view')->with($data);
+        if (isAdmin()) {
+            $data = [
+                'title' => 'CARI DATA KENDARAAN',
+            ];
+            return view('private.riwayat.kendaraan.view')->with($data);
+        }
+        abort(404);
     }
 
     public function cek_kendaraan(Request $r)

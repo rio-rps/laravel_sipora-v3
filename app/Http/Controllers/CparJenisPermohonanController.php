@@ -13,12 +13,15 @@ class CparJenisPermohonanController extends Controller
 {
     public function index()
     {
-        $data = [
-            'result' => CparJenisPermohonanModel::all(),
-            //'resultPermohonan' => Permohonan::with('tableB')->get(),
-            'title' => 'DATA JENIS PERMOHONAN',
-        ];
-        return view('private/jenis_permohonan/view')->with($data);
+        if (isAdmin()) {
+            $data = [
+                'result' => CparJenisPermohonanModel::all(),
+                //'resultPermohonan' => Permohonan::with('tableB')->get(),
+                'title' => 'DATA JENIS PERMOHONAN',
+            ];
+            return view('private/jenis_permohonan/view')->with($data);
+        }
+        abort(404);
     }
 
     public function show()

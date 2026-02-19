@@ -1,10 +1,10 @@
 @extends('private.layout.main')
 @section('isi')
-    @if (auth()->check() && in_array(getLevel(), [3]))
+    {{--  @if (auth()->check() && in_array(getLevel(), [3]))
         <script type="text/javascript">
             window.location = "/";
         </script>
-    @endif
+    @endif  --}}
 
     <div class="content-body">
         <div class="card">
@@ -22,6 +22,9 @@
                                 <th>Kartu Pengawas</th>
                                 <th>Nama Perusahaan</th>
                                 <th>Nama Pimpinan</th>
+
+                                <th>Tgl diproses</th>
+                                <th>Tgl disetujui</th>
                                 <th>Status</th>
                                 <th width="1%" align="center">Action</th>
                             </tr>
@@ -59,7 +62,7 @@
                     {
                         data: 'no_kartu_pengawas',
                         name: 'no_kartu_pengawas',
-                        className: 'text-center',
+                        // className: 'text-center',
                     },
                     {
                         data: 'perusahaan',
@@ -71,9 +74,20 @@
                     },
                     {
                         className: 'text-center',
+                        data: 'tgl_proses',
+                        name: 'tgl_proses'
+                    },
+                    {
+                        className: 'text-center',
+                        data: 'tgl_disetujui',
+                        name: 'tgl_disetujui'
+                    },
+                    {
+                        className: 'text-center',
                         data: 'status',
                         name: 'status'
                     },
+
                     {
                         className: 'text-center',
                         data: 'action',

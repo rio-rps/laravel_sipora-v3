@@ -7,6 +7,7 @@ use App\Models\CparKendaraanMerekModel;
 use App\Models\CparKendaraanTypeModel;
 use App\Models\DataKendaraanModel;
 use App\Models\UserLogModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -59,9 +60,16 @@ class DataKendaraanController extends Controller
     public function store(Request $r)
     {
         if (request()->ajax()) {
-            //  'nullable',
 
-            $tgl_faktur_jual_beli = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_faktur_jual_beli)->format('Y-m-d');
+            //  $tgl_faktur_jual_beli = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_faktur_jual_beli)->format('Y-m-d');
+
+
+
+            $tgl_faktur_jual_beli = $r->filled('tgl_faktur_jual_beli')
+                ? Carbon::createFromFormat('d-m-Y', $r->tgl_faktur_jual_beli)->format('Y-m-d')
+                : null;
+
+
 
             $validator = Validator::make($r->all(), [
                 'id_merek_kendaraan' => 'required',
@@ -425,10 +433,10 @@ class DataKendaraanController extends Controller
 
             // Validasi awal Laravel
             $request->validate([
-                'file_dokumen' => 'required|file|max:500|mimes:pdf,docx,xlsx,pptx',
+                'file_dokumen' => 'required|file|max:500|mimes:pdf',
             ], [
                 'file_dokumen.required' => 'File Dokumen tidak boleh kosong.',
-                'file_dokumen.mimes' => 'File hanya diperbolehkan pdf, docx, xlsx, pptx.',
+                'file_dokumen.mimes' => 'File hanya diperbolehkan pdf',
                 'file_dokumen.max' => 'Ukuran file maksimal 500kb.',
             ]);
 

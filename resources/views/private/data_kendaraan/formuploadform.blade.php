@@ -27,7 +27,7 @@
                     <div class="col-md-8">
                         <input type="file" class="form-control" name="file_dokumen"
                             accept=".pdf,.doc,.docx,.xlsx,.pptx">
-                        <span class="badge badge-danger pull-right">pdf, doc, docx, xlsx, pptx | max:500 kb</span>
+                        <span class="badge badge-danger pull-right">pdf| max:500 kb</span>
                     </div>
                 </div>
             </div>

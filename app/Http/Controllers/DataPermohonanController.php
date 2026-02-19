@@ -445,28 +445,41 @@ class DataPermohonanController extends Controller
             $validator = Validator::make($r->all(), [
                 'no_kartu_pengawas' => [
                     'required',
-                    function ($attribute, $value, $fail) use ($id) {
-                        $isUnique = ValidasiPermohonanModel::where('no_kartu_pengawas', $value)
+                    function ($attribute, $value, $fail) use ($id, $r) {
+
+                        // 👉 Jika id_par_permohonan = 7, LEWATI pengecekan unik
+                        if ($r->input('id_par_permohonan') == 7) {
+                            return;
+                        }
+
+                        $exists = ValidasiPermohonanModel::where('no_kartu_pengawas', $value)
                             ->where('id_validasi_permohonan', '!=', $id)
-                            ->count() === 0;
-                        if (!$isUnique) {
+                            ->exists();
+
+                        if ($exists) {
                             $fail('Nomor Kartu Pengawas sudah ada');
                         }
                     }
                 ],
-                'tgl_sk' => 'required',
-                'no_sk' => 'required',
-                'tgl_awal' => 'required',
-                'tgl_akhir' => 'required',
+
+                //'tgl_sk' => 'required',
+                'tgl_sk' => 'required_unless:id_par_permohonan,7',
+                //'no_sk' => 'required',
+                'no_sk' => 'required_unless:id_par_permohonan,7',
+                'tgl_awal' => 'required_unless:id_par_permohonan,7',
+                'tgl_akhir' => 'required_unless:id_par_permohonan,7',
                 'tgl_kir_awal' => $r->input('ck_tgl_kir_awal_clear') !== '0' ? 'required' : '',
                 //'tgl_kir_akhir' => 'required',
                 'tgl_kir_akhir' => $r->input('ck_tgl_kir_akhir_clear') !== '0' ? 'required' : '',
             ], [
                 'no_kartu_pengawas.required' => 'Nomor Kartu Pengawas Tidak Boleh Kosong',
-                'tgl_sk.required' => 'Tanggal SK Tidak Boleh Kosong',
-                'no_sk.required' => 'Nomor SK Tidak Boleh Kosong',
-                'tgl_awal.required' => 'Tanggal Awal Tidak Boleh Kosong',
-                'tgl_akhir.required' => 'Tanggal Akhir Tidak Boleh Kosong',
+                'tgl_sk.required_unless' => 'Tanggal SK Tidak Boleh Kosong',
+                //'no_sk.required' => 'Nomor SK Tidak Boleh Kosong',
+                'no_sk.required_unless' => 'Nomor SK Tidak Boleh Kosong',
+                //'tgl_awal.required' => 'Tanggal Awal Tidak Boleh Kosong',
+                'tgl_awal.required_unless' => 'Tanggal Awal Tidak Boleh Kosong',
+
+                'tgl_akhir.required_unless' => 'Tanggal Akhir Tidak Boleh Kosong',
                 'tgl_kir_awal.required' => 'Tanggal Awal KIR Tidak Boleh Kosong',
                 'tgl_kir_akhir.required' => 'Tanggal Akhir KIR Tidak Boleh Kosong',
             ]);
@@ -475,9 +488,29 @@ class DataPermohonanController extends Controller
                 $errors = $validator->errors();
                 return response()->json(['errors' => $errors], 422);
             } else {
-                $tgl_sk = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_sk)->format('Y-m-d');
-                $tgl_awal = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_awal)->format('Y-m-d');
-                $tgl_akhir = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_akhir)->format('Y-m-d');
+                // $tgl_sk = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_sk)->format('Y-m-d');
+                //$tgl_awal = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_awal)->format('Y-m-d');
+                // $tgl_akhir = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_akhir)->format('Y-m-d');
+
+                if ($r->tgl_sk) {
+                    $tgl_sk = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_sk)->format('Y-m-d');
+                } else {
+                    $tgl_sk = null;
+                }
+
+                if ($r->tgl_awal) {
+                    $tgl_awal = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_awal)->format('Y-m-d');
+                } else {
+                    $tgl_awal = null;
+                }
+
+                if ($r->tgl_akhir) {
+                    $tgl_akhir = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_akhir)->format('Y-m-d');
+                } else {
+                    $tgl_akhir = null;
+                }
+
+
 
                 if ($r->tgl_kir_awal) {
                     $tgl_kir_awal = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_kir_awal)->format('Y-m-d');
@@ -557,7 +590,9 @@ class DataPermohonanController extends Controller
             if ($validator->fails()) {
                 $errors = $validator->errors();
                 return response()->json(['errors' => $errors], 422);
-            } else if ($cek->no_kartu_pengawas == '-' || $cek->no_kartu_pengawas == '') {
+            } else if (
+                $cek->JPermohonan->id_par_permohonan != 7 && ($cek->no_kartu_pengawas == '-' || $cek->no_kartu_pengawas == '')
+            ) {
                 return response()->json(['errors' => 'Silakan Isi Nomor Kartu Pengawas'], 423);
             } else {
                 ValidasiPermohonanModel::where('id_validasi_permohonan', $cek->id_validasi_permohonan)->update([

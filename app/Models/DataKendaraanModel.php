@@ -41,4 +41,9 @@ class DataKendaraanModel extends Model
     {
         return $this->belongsTo(CparKendaraanTypeModel::class, 'id_type_kendaraan', 'id_type_kendaraan');
     }
+
+    public function JBiodata()
+    {
+        return $this->belongsTo(BiodataModel::class, 'id_biodata', 'id_biodata');
+    }
 }

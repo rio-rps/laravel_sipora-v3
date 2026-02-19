@@ -11,6 +11,7 @@
                 @csrf
                 <input type="hidden" name="_method" value="PUT">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="id_par_permohonan" value="{{ $row->JPermohonan->id_par_permohonan }}">
                 <div class="modal-body">
                     <div class="container">
                         <div class="row">
@@ -26,7 +27,10 @@
                                         <div class="form-body">
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label  border-bottom">
-                                                    Nomor Kartu Pengawas<span class="text-danger">*</span>
+                                                    Nomor Kartu Pengawas
+                                                    @if ($row->JPermohonan->id_par_permohonan != 7)
+                                                        <span class="text-danger">*</span>
+                                                    @endif
                                                 </label>
                                                 <div class="col-md-8">
                                                     <input type="text" class="form-control" name="no_kartu_pengawas"
@@ -38,7 +42,9 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label  border-bottom">
                                                     Tanggal SK
-                                                    <span class="text-danger">*</span>
+                                                    @if ($row->JPermohonan->id_par_permohonan != 7)
+                                                        <span class="text-danger">*</span>
+                                                    @endif
                                                 </label>
                                                 <div class="col-md-8">
                                                     <div class="input-group date" id="datepicker1">
@@ -59,7 +65,9 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label  border-bottom">
                                                     Nomor SK
-                                                    <span class="text-danger">*</span>
+                                                    @if ($row->JPermohonan->id_par_permohonan != 7)
+                                                        <span class="text-danger">*</span>
+                                                    @endif
                                                 </label>
                                                 <div class="col-md-8">
                                                     <input type="text" class="form-control " name="no_sk"
@@ -71,13 +79,15 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label  border-bottom">
                                                     Tanggal Awal
-                                                    <span class="text-danger">*</span>
+                                                    @if ($row->JPermohonan->id_par_permohonan != 7)
+                                                        <span class="text-danger">*</span>
+                                                    @endif
                                                 </label>
                                                 <div class="col-md-8">
                                                     <div class="input-group date" id="datepicker_awal">
                                                         <input type="text" class="form-control" autocomplete="off"
                                                             name="tgl_awal"
-                                                            value="{{ $row->tgl_sk ? \Carbon\Carbon::parse($row->tgl_awal)->format('d-m-Y') : '' }}">
+                                                            value="{{ $row->tgl_awal ? \Carbon\Carbon::parse($row->tgl_awal)->format('d-m-Y') : '' }}">
                                                         <span class="input-group-append input-group-text">
                                                             <i class="fa fa-calendar"></i>
                                                         </span>
@@ -89,13 +99,15 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label  border-bottom">
                                                     Tanggal Akhir
-                                                    <span class="text-danger">*</span>
+                                                    @if ($row->JPermohonan->id_par_permohonan != 7)
+                                                        <span class="text-danger">*</span>
+                                                    @endif
                                                 </label>
                                                 <div class="col-md-8">
                                                     <div class="input-group date" id="datepicker_akhir">
                                                         <input type="text" class="form-control" autocomplete="off"
                                                             name="tgl_akhir"
-                                                            value="{{ $row->tgl_sk ? \Carbon\Carbon::parse($row->tgl_akhir)->format('d-m-Y') : '' }}">
+                                                            value="{{ $row->tgl_akhir ? \Carbon\Carbon::parse($row->tgl_akhir)->format('d-m-Y') : '' }}">
                                                         <span class="input-group-append input-group-text">
                                                             <i class="fa fa-calendar"></i>
                                                         </span>
@@ -103,6 +115,30 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @if ($row->JPermohonan->id_par_permohonan == 7)
+                                            <div class="card border-success">
+                                                <div class="card-body">
+                                                    <h4 class="card-title">Optional (Boleh diisi/ Tidak)</h4>
+                                                    <p class="card-text">
+                                                        <span class="badge badge-pill badge-primary">Nomor Kartu
+                                                            Pengawas</span>
+                                                        <span class="badge badge-pill badge-primary">Tanggal SK</span>
+                                                        <span class="badge badge-pill badge-primary">Tanggal
+                                                            Awal</span>
+                                                        <span class="badge badge-pill badge-primary">Tanggal
+                                                            Akhir</span>
+                                                    </p>
+                                                    <p>
+                                                        <span class="badge badge-pill badge-danger">
+                                                            Nomor Kartu Pengawas diisi -
+                                                        </span>
+                                                        <span class="badge badge-pill badge-danger">
+                                                            Nomor SK diisi -
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

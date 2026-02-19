@@ -12,10 +12,13 @@ class PICController extends Controller
 
     public function index()
     {
-        $data = [
-            'title' => 'DATA PIC KABKOTA',
-        ];
-        return view('private.PIC.view')->with($data);
+        if (isAdmin() || isKabkota()) {
+            $data = [
+                'title' => 'DATA PIC KABKOTA',
+            ];
+            return view('private.PIC.view')->with($data);
+        }
+        abort(404);
     }
 
 
@@ -81,12 +84,12 @@ class PICController extends Controller
                 'bpar_002_kabkota.kode_provinsi as kode_provinsix',
                 'bpar_002_kabkota.kode_kabkota as kode_kabkotax',
                 'bpar_002_kabkota.*',
-                'hhh_PIC.*'
+                'hhh_pic.*'
             )
-                ->leftJoin('hhh_PIC', function ($join) {
-                    $join->on('hhh_PIC.kode_provinsi', '=', 'bpar_002_kabkota.kode_provinsi');
-                    $join->on('hhh_PIC.kode_kabkota', '=', 'bpar_002_kabkota.kode_kabkota');
-                });
+            ->leftJoin('hhh_pic', function ($join) {
+                $join->on('hhh_pic.kode_provinsi', '=', 'bpar_002_kabkota.kode_provinsi');
+                $join->on('hhh_pic.kode_kabkota', '=', 'bpar_002_kabkota.kode_kabkota');
+            });
             $data = [
                 'result' => $result->get(),
 

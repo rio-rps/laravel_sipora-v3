@@ -38,7 +38,7 @@
     <div class="text-center">
         <div class="error-code">404</div>
         <div class="error-message">Halaman yang Anda cari tidak ditemukan</div>
-        <a href="{{ url('/') }}" class="btn btn-primary btn-home">Kembali ke Beranda</a>
+        <a href="{{ url('/panel') }}" class="btn btn-primary btn-home">Kembali ke Beranda</a>
     </div>
 </body>
 

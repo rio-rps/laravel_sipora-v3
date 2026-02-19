@@ -49,15 +49,19 @@
                                 <td>{{ $loop->iteration }}.</td>
                                 <td class="single-line">{{ $resultPermohonanAll->no_kartu_pengawas }} </td>
                                 <td class="single-line">{{ $resultPermohonanAll->plat_no_kendaraan }}</td>
-                                <td class="single-line">{{ $resultPermohonanAll->no_rangka }}</td>
-                                <td class="single-line">{{ $resultPermohonanAll->no_mesin }}</td>
+                                <td class="single-line">
+                                    {{ $resultPermohonanAll->no_rangka ? Str::mask($resultPermohonanAll->no_rangka, '*', 4, -4) : '-' }}
+                                </td>
+                                <td class="single-line">
+                                    {{ $resultPermohonanAll->no_mesin ? Str::mask($resultPermohonanAll->no_mesin, '*', 4, -4) : '-' }}
+                                </td>
                                 @php
                                     $now = \Carbon\Carbon::now();
                                     $isExpired = \Carbon\Carbon::parse($resultPermohonanAll->tgl_akhir)->lt($now);
                                 @endphp
 
                                 @if ($resultPermohonanAll->status_permohonan == 5)
-                                    <td class="{{ $isExpired ? 'bg-danger text-white' : 'bg-primary text-white' }}">
+                                    <td class="{{ $isExpired ? 'bg-danger text-white' : 'bg-success text-white' }}">
                                         <span class="single-line">
                                             {{ isset($resultPermohonanAll->tgl_awal) ? cek_date_ddmmyyyy_his_v2($resultPermohonanAll->tgl_awal) : '-' }}
                                             s/d

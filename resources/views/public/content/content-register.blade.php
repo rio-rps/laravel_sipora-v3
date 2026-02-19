@@ -61,8 +61,8 @@
                                             id="email" placeholder="Ketikan email....">
                                     </div>
                                 </div>
-                                {!! NoCaptcha::renderJs() !!}
-                                {!! NoCaptcha::display() !!}
+                                {{--  {!! NoCaptcha::renderJs() !!}
+                                {!! NoCaptcha::display() !!}  --}}
                                 <div class="d-flex justify-content-between align-items-center mt-4">
                                     <div>
                                         <a href="{{ route('login') }}" class="text-decoration-none btn btn-link p-0">
