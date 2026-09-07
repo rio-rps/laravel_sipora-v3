@@ -16,7 +16,6 @@ use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Maatwebsite\Excel\Events\BeforeSheet;
 
-
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
@@ -37,8 +36,7 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
 
     public function getData()
     {
-
-        list($tgl_awal, $tgl_akhir) = explode(' - ', $this->filters['tanggalFilter']);
+        [$tgl_awal, $tgl_akhir] = explode(' - ', $this->filters['tanggalFilter']);
         $id_jenis_permohonan = $this->filters['id_jenis_permohonan'];
         $status_permohonan = $this->filters['status_permohonan'];
         $id_kabkota = $this->filters['id_kabkota'];
@@ -47,8 +45,7 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
 
         $kabkota = BparKabKotaModel::where('id_kabkota', $id_kabkota)->first();
         $resultPermohonan = PengajuanPermohonanModel::join('bpar_002_kabkota', function ($join) {
-            $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')
-                ->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
+            $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
         })
             ->leftJoin('tr_permohonan_002_validasi', function ($join) {
                 $join->on('tr_permohonan_002_validasi.id_permohonan_izin', '=', 'tr_permohonan.id_permohonan_izin');
@@ -61,38 +58,29 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
             //     $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [$tgl_awal, $tgl_akhir]);
             // })
             ->when($tgl_awal && $tgl_akhir, function ($query) use ($tgl_awal, $tgl_akhir) {
-                $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [
-                    Carbon::parse($tgl_awal)->startOfDay(),
-                    Carbon::parse($tgl_akhir)->endOfDay()
-                ]);
+                $query->whereBetween('tr_permohonan.tgl_kirim_permohonan', [Carbon::parse($tgl_awal)->startOfDay(), Carbon::parse($tgl_akhir)->endOfDay()]);
             })
             ->orderBy('tr_permohonan.tgl_kirim_permohonan', 'ASC');
 
         // Cek jika id_jenis_permohonan bukan 'All'
         if ($id_jenis_permohonan != 'All') {
-            $resultPermohonan = $resultPermohonan
-                ->where('id_jenis_permohonan', $id_jenis_permohonan);
+            $resultPermohonan = $resultPermohonan->where('id_jenis_permohonan', $id_jenis_permohonan);
         }
 
         // Cek Semua peovinsi
         if ($id_kabkota != 'SEMUA') {
-            $resultPermohonan = $resultPermohonan->where('tr_permohonan.kode_provinsi', $kabkota->kode_provinsi)
-                ->where('tr_permohonan.kode_kabkota', $kabkota->kode_kabkota);
+            $resultPermohonan = $resultPermohonan->where('tr_permohonan.kode_provinsi', $kabkota->kode_provinsi)->where('tr_permohonan.kode_kabkota', $kabkota->kode_kabkota);
 
             $kabkotaRow = $kabkota->nm_kabkota;
         } else {
             $kabkotaRow = 'SEMUA';
         }
 
-
-
-
-
         $this->keterangan = [
             'jenisPermohonan' => CparJenisPermohonanModel::where('id_jenis_permohonan', $id_jenis_permohonan)->first()->nm_jenis_permohonan ?? 'SEMUA PERMOHONAN',
             'sttsPermohonan' => cek_status_permohonan($status_permohonan),
             'kabkota' => $kabkotaRow,
-            'datePeriode' => cek_ddmmyy_v1($tgl_awal) . ' s/d ' . cek_ddmmyy_v1($tgl_akhir)
+            'datePeriode' => cek_ddmmyy_v1($tgl_awal) . ' s/d ' . cek_ddmmyy_v1($tgl_akhir),
         ];
         return $resultPermohonan->get();
     }
@@ -106,21 +94,44 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
     {
         $this->rowNumber++;
 
-        $data = [
-            $this->rowNumber,
-            cek_date_ddmmyyyy_his_v2($row->tgl_kirim_permohonan),
-        ];
+        $data = [$this->rowNumber, cek_date_ddmmyyyy_his_v2($row->tgl_kirim_permohonan)];
 
         // Tambahkan kolom validasi hanya jika status_permohonan == 5
         if ($row->status_permohonan == 5) {
-            $data[] = $row->tgl_validasi_selesai ? cek_date_ddmmyyyy_his_v2($row->tgl_validasi_selesai) :  '-';
-            $data[] = $row->no_kartu_pengawas ?? '-';
+            $data[] = $row->tgl_validasi_selesai ? cek_date_ddmmyyyy_his_v2($row->tgl_validasi_selesai) : '-';
+            //$data[] = (string) ($row->no_kartu_pengawas ?? '-');
+            //$data[] = "'" . ($row->no_kartu_pengawas ?? '-');
+
+            $noKrtuPengws = $row->no_kartu_pengawas;
+            if (is_numeric($noKrtuPengws) && $noKrtuPengws !== '') {
+                $data[] = "'" . $noKrtuPengws;
+            } elseif (!empty($noKrtuPengws)) {
+                $data[] = $noKrtuPengws;
+            } else {
+                $data[] = '-';
+            }
+
             $data[] = $row->tgl_sk ? cek_ddmmyy_v1($row->tgl_sk) : '-';
-            $data[] = "'" . (string) ($row->no_sk ?? '-');
+            //$data[] = (string) ($row->no_sk ?? '-');
+            $no_sk = $row->no_sk;
+            if (is_numeric($no_sk) && $no_sk !== '') {
+                $data[] = "'" . $no_sk;
+            } elseif (!empty($no_sk)) {
+                $data[] = $no_sk;
+            } else {
+                $data[] = '-';
+            }
+
             $data[] = $row->tgl_awal ? cek_ddmmyy_v1($row->tgl_awal) : '-';
             $data[] = $row->tgl_akhir ? cek_ddmmyy_v1($row->tgl_akhir) : '-';
             $data[] = $row->tgl_kir_awal ? cek_ddmmyy_v1($row->tgl_kir_awal) : '-';
             $data[] = $row->tgl_kir_akhir ? cek_ddmmyy_v1($row->tgl_kir_akhir) : '-';
+
+            $data[] = $row->tgl_pkb_awal ? cek_ddmmyy_v1($row->tgl_pkb_awal) : '-';
+            $data[] = $row->tgl_pkb_akhir ? cek_ddmmyy_v1($row->tgl_pkb_akhir) : '-';
+
+            $data[] = $row->tgl_iwkbu_awal ? cek_ddmmyy_v1($row->tgl_iwkbu_awal) : '-';
+            $data[] = $row->tgl_iwkbu_akhir ? cek_ddmmyy_v1($row->tgl_iwkbu_akhir) : '-';
         }
 
         $data[] = $row->nm_perusahaan_personal . '/ ' . ($row->BadanUsaha->nm_badan_usaha ?? '-');
@@ -138,32 +149,27 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
         $data[] = $row->jmengangkut->nm_mengangkut ?? '-';
         $data[] = $row->daya_angkut_orang ?? '-';
         $data[] = $row->daya_angkut_barang ?? '-';
-        $data[] = "'" . $row->plat_no_kendaraan ?? '-';
-        $data[] = "'" . $row->warna_tnkb ?? '-';
-        $data[] = "'" . $row->bahan_bakar ?? '-';
+        $data[] = $row->plat_no_kendaraan ?? '-';
+        $data[] = $row->warna_tnkb ?? '-';
+        $data[] = $row->bahan_bakar ?? '-';
         $data[] = $row->nm_kabkota ?? '-';
 
         return $data;
     }
 
-
-
-
     public function columnFormats(): array
     {
         return [
-            'I' => NumberFormat::FORMAT_TEXT, // No Rangka
-            'J' => NumberFormat::FORMAT_TEXT, // No Mesin
-            'R' => NumberFormat::FORMAT_TEXT, // No Plat Kendaraan
+            'D' => NumberFormat::FORMAT_TEXT, // No Kartu Pengawas
+            'U' => NumberFormat::FORMAT_TEXT, // No Rangka
+            'V' => NumberFormat::FORMAT_TEXT, // No Mesin
+            'AD' => NumberFormat::FORMAT_TEXT, // No Plat Kendaraan
         ];
     }
 
     public function headings(): array
     {
-        $headings = [
-            'No',
-            'Tanggal Permohonan',
-        ];
+        $headings = ['No', 'Tanggal Permohonan'];
 
         if ($this->filters['status_permohonan'] == 5) {
             $headings[] = 'Tanggal Validasi';
@@ -174,33 +180,18 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
             $headings[] = 'Tanggal Akhir SK';
             $headings[] = 'Tanggal KIR Awal';
             $headings[] = 'Tanggal KIR Akhir';
+
+            $headings[] = 'Tanggal PKB Awal';
+            $headings[] = 'Tanggal PKB Akhir';
+
+            $headings[] = 'Tanggal IWKBU Awal';
+            $headings[] = 'Tanggal IWKBU Akhir';
         }
 
-        $headings = array_merge($headings, [
-            'Nama Perusahaan',
-            'Nama Pimpinan',
-            'Merek Kendaraan',
-            'Tipe Kendaraan',
-            'Nama Kendaraan',
-            'Tahun Pembuatan',
-            'No Rangka',
-            'No Mesin',
-            'Jenis Permohonan',
-            'Permohonan',
-            'Jenis Angkutan',
-            'Trayek',
-            'Mengangkut',
-            'Daya Angkut Orang',
-            'Daya Angkut Barang / Kg',
-            'No Plat Kendaraan',
-            'Warna TNKB',
-            'Bahan Bakar',
-            'Kab/Kota',
-        ]);
+        $headings = array_merge($headings, ['Nama Perusahaan', 'Nama Pimpinan', 'Merek Kendaraan', 'Tipe Kendaraan', 'Nama Kendaraan', 'Tahun Pembuatan', 'No Rangka', 'No Mesin', 'Jenis Permohonan', 'Permohonan', 'Jenis Angkutan', 'Trayek', 'Mengangkut', 'Daya Angkut Orang', 'Daya Angkut Barang / Kg', 'No Plat Kendaraan', 'Warna TNKB', 'Bahan Bakar', 'Kab/Kota']);
 
         return $headings;
     }
-
 
     public function registerEvents(): array
     {
@@ -234,7 +225,7 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
                 $sheet = $event->sheet->getDelegate();
 
                 $highestColumn = $sheet->getHighestColumn(); // Contoh: 'R'
-                $lastRow = $sheet->getHighestRow();          // Contoh: '14'
+                $lastRow = $sheet->getHighestRow(); // Contoh: '14'
 
                 // Header ada di baris ke-7 (baris judul kolom)
                 $headerRow = 7;

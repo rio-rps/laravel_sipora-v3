@@ -51,30 +51,80 @@
                 <hr>
             </td>
         </tr>
+
+        <!--  KIR  -->
         <tr class="alert alert-secondary">
             <td colspan="3">
-                <span style="color:#FFFFFF;"> &nbsp;&nbsp; <i class=" fa fa-edit"></i> KIR</span>
+                <span style="color:#FFFFFF;"> &nbsp;&nbsp; <i class=" fa fa-bus"></i> Uji KIR</span>
             </td>
         </tr>
 
         <tr>
-            <td style="vertical-align: top;">Tanggal Awal</td>
+            <td style="vertical-align: top;">Tgl Awal KIR</td>
             <td style="vertical-align: top;">:</td>
-            <td>{{ isset($row->tgl_kir_awal) ? cek_ddmmyy_v1($row->tgl_kir_awal) : '-' }}</td>
+            <td>{{ isset($rowPermohonan->tgl_kir_awal) ? cek_ddmmyy_v1($rowPermohonan->tgl_kir_awal) : '-' }}</td>
         </tr>
         <tr>
-            <td style="vertical-align: top;">Tanggal Akhir</td>
+            <td style="vertical-align: top;">Berlaku KIR s/d</td>
             <td style="vertical-align: top;">:</td>
-            <td>{{ isset($row->tgl_kir_akhir) ? cek_ddmmyy_v1($row->tgl_kir_akhir) : '-' }}</td>
+            <td>{{ isset($rowPermohonan->tgl_kir_akhir) ? cek_ddmmyy_v1($rowPermohonan->tgl_kir_akhir) : '-' }}</td>
         </tr>
         <tr>
             <td colspan="3">
                 <hr>
             </td>
         </tr>
+        <!--  PKB  -->
         <tr class="alert alert-secondary">
             <td colspan="3">
-                <span style="color:#FFFFFF;"> &nbsp;&nbsp; <i class=" fa fa-edit"></i>
+                <span style="color:#FFFFFF;"> &nbsp;&nbsp; <i class=" fa fa-id-card"></i> Pajak Kendaraan Bermotor
+                    (PKB)</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="vertical-align: top;">Tgl Awal PKB</td>
+            <td style="vertical-align: top;">:</td>
+            <td>{{ isset($rowPermohonan->tgl_pkb_awal) ? cek_ddmmyy_v1($rowPermohonan->tgl_pkb_awal) : '-' }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Berlaku PKB s/d</td>
+            <td style="vertical-align: top;">:</td>
+            <td>{{ isset($rowPermohonan->tgl_pkb_akhir) ? cek_ddmmyy_v1($rowPermohonan->tgl_pkb_akhir) : '-' }}</td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <hr>
+            </td>
+        </tr>
+        <!--  IWKBU  -->
+        <tr class="alert alert-secondary">
+            <td colspan="3">
+                <span style="color:#FFFFFF;"> &nbsp;&nbsp; <i class="fa fa-shield"></i> Iuran Wajib Kendaraan Bermotor
+                    Umum (IWKBU)</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="vertical-align: top;">Tgl Awal IWKBU</td>
+            <td style="vertical-align: top;">:</td>
+            <td>{{ isset($rowPermohonan->tgl_iwkbu_awal) ? cek_ddmmyy_v1($rowPermohonan->tgl_iwkbu_awal) : '-' }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Berlaku IWKBU s/d</td>
+            <td style="vertical-align: top;">:</td>
+            <td>{{ isset($rowPermohonan->tgl_iwkbu_akhir) ? cek_ddmmyy_v1($rowPermohonan->tgl_iwkbu_akhir) : '-' }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <hr>
+            </td>
+        </tr>
+        <!--  IWKBU  -->
+        <tr class="alert alert-secondary">
+            <td colspan="3">
+                <span style="color:#FFFFFF;"> &nbsp;&nbsp; <i class=" fa fa-desktop"></i>
                     INFORMASI TAMBAHAN DATA KENDARAAN</span>
             </td>
         </tr>

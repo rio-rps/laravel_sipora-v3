@@ -56,6 +56,14 @@
                 </thead>
                 <tbody>
                     @foreach ($resultKendaraan as $kendaraan)
+                        {{--  {{ dd($kendaraan->id_kendaraan, $kendaraan->JkendaraanType) }}  --}}
+                        {{--  {{ dd([
+                            'id_kendaraan' => $kendaraan->id_kendaraan ?? null,
+                            'id_type' => $kendaraan->id_type_kendaraan,
+                            'type' => $kendaraan->JkendaraanType,
+                            'id_merek' => $kendaraan->id_merek_kendaraan,
+                            'merek' => $kendaraan->JkendaraanMerek,
+                        ]) }}  --}}
                         <tr>
                             <td class="text-center" align="center">{{ $loop->iteration }}</td>
                             <td>
@@ -64,7 +72,16 @@
                             <td>
                                 ({{ $kendaraan->JBiodata->BadanUsaha->nm_badan_usaha }})
                             <td>
-                                {{ $kendaraan->JkendaraanMerek->nm_merek_kendaraan . ' / ' . $kendaraan->JkendaraanType->nm_type_kendaraan }}
+                                {{ $kendaraan->JkendaraanMerek?->nm_merek_kendaraan ?? '-' }}
+                                /
+                                {{ $kendaraan->JkendaraanType?->nm_type_kendaraan ?? '-' }}
+
+                                {{--  {{ optional($kendaraan->JkendaraanMerek)->nm_merek_kendaraan ||
+                                optional($kendaraan->JkendaraanType)->nm_type_kendaraan
+                                    ? (optional($kendaraan->JkendaraanMerek)->nm_merek_kendaraan ?? '-') .
+                                        ' / ' .
+                                        (optional($kendaraan->JkendaraanType)->nm_type_kendaraan ?? '-')
+                                    : '-' }}  --}}
                             </td>
                             <td>
                                 {{ $kendaraan->nm_kendaraan }}

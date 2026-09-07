@@ -19,6 +19,8 @@ use App\Http\Controllers\KartuCekController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LayoutController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\MaintenanceLoginController;
 use App\Http\Controllers\MutasiPICController;
 use App\Http\Controllers\PanelController;
 use App\Http\Controllers\PengajuanPermohonanController;
@@ -58,57 +60,60 @@ use Illuminate\Support\Facades\Route;
 //Route::get('beranda', [BerandaController::class, 'index'])->middleware('auth');
 //Route::get('/', [LoginController::class, 'index'])->name('index');
 
-Route::get('/', [LayoutController::class, 'index'])->name('index');
-Route::get('/panel', [PanelController::class, 'index'])->name('panel.index');
+Route::get('/', [LayoutController::class, 'index'])->middleware('maintenance')->name('index');
+
+Route::get('maintenance/login', [MaintenanceLoginController::class, 'login'])->name('maintenance.login');
+Route::post('maintenance/login', [MaintenanceLoginController::class, 'proses'])->name('maintenance.proses');
+Route::post('maintenance/logout', [MaintenanceLoginController::class, 'logout'])->name('maintenance.logout');
+
+Route::get('/panel', [PanelController::class, 'index'])->middleware('maintenance')->name('panel.index');
 
 // kartu cek
-Route::get('kartucek/QRcode/{id}', [KartuCekController::class, 'QRcode'])->name('kartucek.QRcode');
-Route::get('kartucek/NomorKartu', [KartuCekController::class, 'NomorKartu'])->name('kartucek.NomorKartu');
+Route::get('kartucek/QRcode/{id}', [KartuCekController::class, 'QRcode'])->middleware('maintenance')->name('kartucek.QRcode');
+Route::get('kartucek/NomorKartu', [KartuCekController::class, 'NomorKartu'])->middleware('maintenance')->name('kartucek.NomorKartu');
 
 Route::get('/generate-stiker', [StikerController::class, 'generateImage']);
 
 Route::controller(LoginController::class)->group(function () {
-    route::get('login', 'login')->name('login');
-    Route::post('proses', 'proses')->name('proses');
-    Route::get('logout', 'logout')->name('logout');
+    route::get('login', 'login')->middleware('maintenance')->name('login');
+    Route::post('proses', 'proses')->middleware('maintenance')->name('proses');
+    Route::get('logout', 'logout')->middleware('maintenance')->name('logout');
 });
 
 Route::controller(ForgotPasswordController::class)->group(function () {
-    Route::post('sendResetEmail', 'sendResetEmail')->name('sendResetEmail');
-    Route::get('reset-password-link', 'reset-password-link')->name('reset-password-link');
+    Route::post('sendResetEmail', 'sendResetEmail')->middleware('maintenance')->name('sendResetEmail');
+    Route::get('reset-password-link', 'reset-password-link')->middleware('maintenance')->name('reset-password-link');
 });
-Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('password.reset');
-Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->middleware('maintenance')->name('password.reset');
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('maintenance')->name('password.update');
 
-
-Route::get('/mshow_lupa_password', [ForgotPasswordController::class, 'mshow_lupa_password'])->name('mshow_lupa_password');
-Route::get('/mshow_lupa_email', [ForgotPasswordController::class, 'mshow_lupa_email'])->name('mshow_lupa_email');
-
+Route::get('/mshow_lupa_password', [ForgotPasswordController::class, 'mshow_lupa_password'])->middleware('maintenance')->name('mshow_lupa_password');
+Route::get('/mshow_lupa_email', [ForgotPasswordController::class, 'mshow_lupa_email'])->middleware('maintenance')->name('mshow_lupa_email');
 
 Route::controller(RegisterController::class)->group(function () {
-    route::get('register/success/{name}/{email}', 'success')->name('success');
+    route::get('register/success/{name}/{email}', 'success')->middleware('maintenance')->name('success');
 });
 
 // halaman depan
-Route::get('show_pencarian', [LayoutController::class, 'show_pencarian'])->name('show_pencarian');
-
+Route::get('show_pencarian', [LayoutController::class, 'show_pencarian'])->middleware('maintenance')->name('show_pencarian');
 
 // register
-Route::get('register', [RegisterController::class, 'register'])->name('register');
-Route::post('store_register', [RegisterController::class, 'store_register'])->name('store_register');
-Route::get('register_success', [RegisterController::class, 'register_success'])->name('register_success');
+Route::get('register', [RegisterController::class, 'register'])->middleware('maintenance')->name('register');
+Route::post('store_register', [RegisterController::class, 'store_register'])->middleware('maintenance')->name('store_register');
+Route::get('register_success', [RegisterController::class, 'register_success'])->middleware('maintenance')->name('register_success');
+
+Route::get('mshow_detail/{id}', [LayoutController::class, 'mshow_detail'])->middleware('maintenance')->name('mshow_detail');
+
+Route::get('kirimUjiEmail', [EmailController::class, 'kirimUjiEmail'])->middleware('maintenance')->name('kirimUjiEmail');
+
+Route::get('laporan/cetakSuratRekomendasiKepala/{id}', [LaporanController::class, 'cetakSuratRekomendasiKepala'])->middleware('maintenance')->name('laporan.cetakSuratRekomendasiKepala');
 
 
-
-Route::get('mshow_detail/{id}', [LayoutController::class, 'mshow_detail'])->name('mshow_detail');
-
-
-Route::get('kirimUjiEmail', [EmailController::class, 'kirimUjiEmail'])->name('kirimUjiEmail');
+Route::group(['middleware' => ['auth', 'maintenance']], function () {
+    Route::get('maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
+    Route::post('maintenance/update', [MaintenanceController::class, 'update'])->name('maintenance.update');
 
 
-Route::get('laporan/cetakSuratRekomendasiKepala/{id}', [LaporanController::class, 'cetakSuratRekomendasiKepala'])->name('laporan.cetakSuratRekomendasiKepala');
-
-Route::group(['middleware' => ['auth']], function () {
     Route::get('cekpassword/password', [CekPasswordController::class, 'password'])->name('cekpassword.password');
 
     //panel
@@ -129,8 +134,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('pengaturanakun/updatepassword/{id}', [PengaturanAkunController::class, 'updatepassword'])->name('pengaturanakun.updatepassword');
     Route::put('pengaturanakun/updateemail', [PengaturanAkunController::class, 'updateemail'])->name('pengaturanakun.updateemail');
 
-
-
     // data user
     Route::get('dataUser/email', [PengaturanAkunController::class, 'email'])->name('dataUser.email');
     Route::get('dataUser/password', [PengaturanAkunController::class, 'index'])->name('dataUser.password');
@@ -142,7 +145,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('dataUser/updateEmail/{id}', [DataUserController::class, 'updateEmail'])->name('dataUser.updateEmail');
     Route::get('dataUser/viewBiodata/{id}', [DataUserController::class, 'viewBiodata'])->name('dataUser.viewBiodata');
 
-    // data 
+    // data
     Route::get('dataUserPetugas/editResetPassword/{id}', [DataUserPetugasController::class, 'editResetPassword'])->name('dataUserPetugas.editResetPassword');
     Route::put('dataUserPetugas/updateResetPassword/{id}', [DataUserPetugasController::class, 'updateResetPassword'])->name('dataUserPetugas.updateResetPassword');
     Route::get('dataUserPetugas/editEmail/{id}', [DataUserPetugasController::class, 'editEmail'])->name('dataUserPetugas.editEmail');
@@ -152,14 +155,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('cparJenisPermohonan', [CparJenisPermohonanController::class, 'index'])->name('cparJenisPermohonan.index');
     Route::get('cparJenisPermohonan/show', [CparJenisPermohonanController::class, 'show'])->name('cparJenisPermohonan.show');
 
-
     // jenis permohonan
     Route::get('cparJenisPermohonan/data-tab1', [CparJenisPermohonanController::class, 'tab1Data'])->name('cparJenisPermohonan.data-tab1');
     Route::get('cparJenisPermohonan/data-tab2', [CparJenisPermohonanController::class, 'tab2Data'])->name('cparJenisPermohonan.data-tab2');
     Route::get('cparJenisPermohonan/data-tab3/{id}', [CparJenisPermohonanController::class, 'tab3Data'])->name('cparJenisPermohonan.data-tab3');
-
-
-
 
     // kendaraan
     Route::get('datakendaraan/getTypeKendaraan', [DataKendaraanController::class, 'getTypeKendaraan'])->name('datakendaraan.getTypeKendaraan');
@@ -173,8 +172,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('datakendaraan/destroyUploadKir/{id}', [DataKendaraanController::class, 'destroyUploadKir'])->name('datakendaraan.destroyUploadKir');
     Route::put('datakendaraan/destroyUploadSTNK/{id}', [DataKendaraanController::class, 'destroyUploadSTNK'])->name('datakendaraan.destroyUploadSTNK');
     Route::put('datakendaraan/update_status/{id}', [DataKendaraanController::class, 'update_status'])->name('datakendaraan.update_status');
-
-
 
     Route::resource('datakendaraan', DataKendaraanController::class);
 
@@ -194,7 +191,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('datapermohonan/detailView/{id}', [DataPermohonanController::class, 'detailView'])->name('datapermohonan.detailView');
     Route::delete('datapermohonan/destroy/{id}', [DataPermohonanController::class, 'destroy'])->name('datapermohonan.destroy');
 
-
     //admin data permohonan // ADMIN || KIR
     Route::get('datapermohonan/viewProses/{act}', [DataPermohonanController::class, 'viewProses'])->name('datapermohonan.viewProses');
     Route::get('datapermohonan/showProses', [DataPermohonanController::class, 'showProses'])->name('datapermohonan.showProses');
@@ -211,20 +207,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('datapermohonan/getModal_kartuInputValidasi/{id}', [DataPermohonanController::class, 'getModal_kartuInputValidasi'])->name('datapermohonan.getModal_kartuInputValidasi');
     Route::delete('datapermohonan/destroyBatalProses/{id}', [DataPermohonanController::class, 'destroyBatalProses'])->name('datapermohonan.destroyBatalProses');
 
-
-
     Route::get('qrcode', [QrcodeController::class, 'index'])->name('qrcode.index');
     Route::group(['middleware' => ['cekUserLogin:1']], function () {
-
-
-
         // kartu pengawas
         Route::get('tools/ubahStatusKartuPengawas', [ToolsController::class, 'ubahStatusKartuPengawas'])->name('tools.ubahStatusKartuPengawas');
         Route::get('tools/showKartuPengawas', [ToolsController::class, 'showKartuPengawas'])->name('tools.showKartuPengawas');
         Route::get('tools/editKartuPengawas/{id}', [ToolsController::class, 'editKartuPengawas'])->name('tools.editKartuPengawas');
         Route::put('tools/updateKartuPengawas/{id}', [ToolsController::class, 'updateKartuPengawas'])->name('tools.updateKartuPengawas');
-
-
 
         // proses
         Route::get('tools/ubahStatusProses', [ToolsController::class, 'ubahStatusProses'])->name('tools.ubahStatusProses');
@@ -251,7 +240,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('laporan/cetakKendaraanFilterPdf', [LaporanController::class, 'cetakKendaraanFilterPdf'])->name('laporan.cetakKendaraanFilterPdf');
     Route::get('laporan/exportKendaraanFilterExcel', [LaporanController::class, 'exportKendaraanFilterExcel'])->name('laporan.exportKendaraanFilterExcel');
 
-    // mengangkut 
+    // mengangkut
     Route::get('cparMengangkut/createMapping/{id}', [CparMengangkutController::class, 'createMapping'])->name('cparMengangkut.createMapping');
     Route::get('cparMengangkut/createMappingForm/{id}', [CparMengangkutController::class, 'createMappingForm'])->name('cparMengangkut.createMappingForm');
     Route::get('cparMengangkut/showJenisAngkutanData', [CparMengangkutController::class, 'showJenisAngkutanData'])->name('cparMengangkut.showJenisAngkutanData');

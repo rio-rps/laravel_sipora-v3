@@ -572,6 +572,7 @@ class LaporanController extends Controller
         $data = [
             'resultKendaraan' => $result,
         ];
+
         return view('private.laporan.kendaraan.show', $data);
     }
 

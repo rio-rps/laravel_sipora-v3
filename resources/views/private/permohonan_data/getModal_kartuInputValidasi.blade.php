@@ -16,7 +16,8 @@
                     <div class="form-group">
                         <label>Tanggal Validasi</label>
                         <div class="input-group date" id="datepicker1">
-                            <input type="text" class="form-control" autocomplete="off" name="tgl_validasi_selesai">
+                            <input type="text" class="form-control border-1 shadow-xs bg-white" autocomplete="off"
+                                readonly style="cursor: pointer;" name="tgl_validasi_selesai">
                             <span class="input-group-append input-group-text">
                                 <i class="fa fa-calendar"></i>
                             </span>

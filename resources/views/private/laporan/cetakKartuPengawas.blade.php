@@ -75,7 +75,7 @@
                         Kotak Pos No. 1132 Telp. 352005 / 363125</div>
                     <div style="font-size:12px; font-weight: bold; padding-top:2px;">Kode Pos : 30129</div>
                 </td>
-                <td><img src="{{ public_path('images/logo/logo_dishub.png') }}" width="70px;"></td>
+                <td><img src="{{ public_path('images/logo/logo_dishubx.png') }}" width="70px;"></td>
             </tr>
             <tr>
                 <td colspan="3" style="padding-top: 1px;">

@@ -9,17 +9,13 @@ use Illuminate\Http\Request;
 
 class HistoriKartuPengawasController extends Controller
 {
-
     public function index()
     {
         if (isAdmin() or isKabkota()) {
             if (getLevel() == 2) {
                 $user = getIdUser();
                 $aksesKabkota = UserDataAksesKabKotaModel::where('id_user', $user)->get();
-                $kabkota = BparKabKotaModel::whereIn('kode_provinsi', $aksesKabkota->pluck('kode_provinsi'))
-                    ->whereIn('kode_kabkota', $aksesKabkota->pluck('kode_kabkota'))
-                    ->orderBy('kode_kabkota', 'ASC')
-                    ->get();
+                $kabkota = BparKabKotaModel::whereIn('kode_provinsi', $aksesKabkota->pluck('kode_provinsi'))->whereIn('kode_kabkota', $aksesKabkota->pluck('kode_kabkota'))->orderBy('kode_kabkota', 'ASC')->get();
             } else {
                 $kabkota = null;
             }
@@ -27,7 +23,7 @@ class HistoriKartuPengawasController extends Controller
             $data = [
                 'title' => act('HistoriPengawas'),
                 'status' => 5,
-                'kabkota' => $kabkota
+                'kabkota' => $kabkota,
             ];
             return view('private/histori_kartu_pengawas/view')->with($data);
         }
@@ -75,8 +71,7 @@ class HistoriKartuPengawasController extends Controller
             }
 
             $resultPermohonan = PengajuanPermohonanModel::join('bpar_002_kabkota', function ($join) {
-                $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')
-                    ->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
+                $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
             })
                 ->leftJoin('tr_permohonan_002_validasi', function ($join) {
                     $join->on('tr_permohonan_002_validasi.id_permohonan_izin', '=', 'tr_permohonan.id_permohonan_izin');
@@ -85,21 +80,14 @@ class HistoriKartuPengawasController extends Controller
                     $join->on('bpar_badan_usaha.id_badan_usaha', '=', 'tr_permohonan.id_badan_usaha');
                 })
                 ->when(getLevel() == 2, function ($query) use ($aksesKabkota) {
-                    $query->whereIn(
-                        'tr_permohonan.kode_provinsi',
-                        $aksesKabkota->pluck('kode_provinsi')->toArray()
-                    )->whereIn(
-                        'tr_permohonan.kode_kabkota',
-                        $aksesKabkota->pluck('kode_kabkota')->toArray()
-                    );
+                    $query->whereIn('tr_permohonan.kode_provinsi', $aksesKabkota->pluck('kode_provinsi')->toArray())->whereIn('tr_permohonan.kode_kabkota', $aksesKabkota->pluck('kode_kabkota')->toArray());
                 })
                 ->where('tr_permohonan.status_permohonan', 5)
                 ->where($cari_field, 'like', '%' . $cari_data . '%');
             //->where($cari_field, $cari_data);
 
-
             $data = [
-                'resultPermohonan' => $resultPermohonan = $resultPermohonan->get(),
+                'resultPermohonan' => ($resultPermohonan = $resultPermohonan->get()),
             ];
             return view('private.histori_kartu_pengawas.show', $data);
         } else {

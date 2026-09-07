@@ -13,9 +13,6 @@ class KartuCekController extends Controller
 {
     public function QRcode($id)
     {
-
-
-
         // Coba decode dengan Hashids
         $decoded = Hashids::decode($id);
         if (!empty($decoded)) {
@@ -30,19 +27,17 @@ class KartuCekController extends Controller
             }
         }
 
-
-
         //$id_permohonan_izin = Crypt::decrypt($id);
         $dt = PengajuanPermohonanModel::Join('bpar_002_kabkota', function ($join) {
-            $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')
-                ->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
+            $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
         })
-            ->where('id_permohonan_izin', $decodedId)->first();
+            ->where('id_permohonan_izin', $decodedId)
+            ->first();
 
         $data = [
-            'title' => "INFORMASI KARTU PENGAWAS",
+            'title' => 'INFORMASI KARTU PENGAWAS',
             'row' => $dt,
-            'row_validasi' => ValidasiPermohonanModel::where('id_permohonan_izin', $decodedId)->first()
+            'row_validasi' => ValidasiPermohonanModel::where('id_permohonan_izin', $decodedId)->first(),
         ];
         return view('private/kartu_cek/qrcode')->with($data);
     }

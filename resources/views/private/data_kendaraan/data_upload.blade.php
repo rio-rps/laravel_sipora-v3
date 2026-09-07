@@ -1,3 +1,8 @@
+<div class="card">
+    <div class="card-body">
+        <p class="card-text">Upload Dokumen KIR dan STNK Sesuai Dokumen yang masih Berlaku/Akif.</p>
+    </div>
+</div>
 <table class="table table-responsive">
     <tr>
         <td width="30%">KIR</td>

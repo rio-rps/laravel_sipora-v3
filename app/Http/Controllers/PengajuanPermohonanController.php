@@ -27,6 +27,11 @@ class PengajuanPermohonanController extends Controller
 {
 
 
+    private function parseDate(?string $date): ?string
+    {
+        return $date ? Carbon::createFromFormat('d-m-Y', $date)->format('Y-m-d') : null;
+    }
+
     public function index()
     {
 
@@ -142,12 +147,22 @@ class PengajuanPermohonanController extends Controller
                 $id_trayek = $trayek;
             }
             $validator = Validator::make($r->all(), [
+                'id_kabkota' => 'required',
                 'id_jenis_permohonan' => 'required',
                 'id_par_permohonan' => 'required',
                 'id_trayek' => 'required_if:id_jenis_permohonan,2',
                 'id_jenis_angkutan' => 'required',
                 'id_mengangkut' => 'required',
-                'id_kabkota' => 'required',
+
+                // Wajib diisi jika id_jenis_permohonan == 2
+                'kir_tgl_awal'   => 'required_if:id_jenis_permohonan,2|nullable|date_format:d-m-Y',
+                'pkb_tgl_awal'   => 'required_if:id_jenis_permohonan,2|nullable|date_format:d-m-Y',
+                'iwkbu_tgl_awal' => 'required_if:id_jenis_permohonan,2|nullable|date_format:d-m-Y',
+
+                // Tanggal akhir tetap mengikuti hasil kalkulasi (opsional diisi user)
+                'kir_tgl_akhir'  => 'nullable|date_format:d-m-Y',
+                'pkb_tgl_akhir'  => 'nullable|date_format:d-m-Y',
+                'iwkbu_tgl_akhir' => 'nullable|date_format:d-m-Y',
 
                 'id_merek_kendaraan' => 'required',
                 'id_type_kendaraan' => 'required',
@@ -164,12 +179,17 @@ class PengajuanPermohonanController extends Controller
                 'thn_pembuatan' => 'required',
 
             ], [
+                'id_kabkota.required' => 'Kab/kota Tidak Boleh Kosong',
                 'id_jenis_permohonan.required' => 'Jenis Permohonan Tidak Boleh Kosong',
                 'id_par_permohonan.required' => 'Permohonan Tidak Boleh Kosong',
                 'id_trayek.required_if' => 'Trayek tidak boleh kosong.',
                 'id_jenis_angkutan.required' => 'Jenis Angkutan Tidak Boleh Kosong',
                 'id_mengangkut.required' => 'Mengangkut Tidak Boleh Kosong',
-                'id_kabkota.required' => 'Kab/kota Tidak Boleh Kosong',
+
+                // Pesan Error kustom (Opsional)
+                'kir_tgl_awal.required_if'   => 'Tanggal awal Uji KIR wajib diisi untuk jenis permohonan ini.',
+                'pkb_tgl_awal.required_if'   => 'Tanggal awal PKB wajib diisi untuk jenis permohonan ini.',
+                'iwkbu_tgl_awal.required_if' => 'Tanggal awal IWKBU wajib diisi untuk jenis permohonan ini.',
 
 
                 'id_merek_kendaraan.required' => 'Nama Merek Kendaraan Tidak Boleh Kosong',
@@ -226,6 +246,8 @@ class PengajuanPermohonanController extends Controller
                     $tgl_faktur_jual_beli = null;
                 }
 
+                // Cek apakah jenis permohonan bernilai 2
+                $isPermohonanDua = ($r->id_jenis_permohonan == 2);
 
                 $post = PengajuanPermohonanModel::create([
                     'id_merek_kendaraan'  => $r->id_merek_kendaraan,
@@ -264,6 +286,15 @@ class PengajuanPermohonanController extends Controller
                     'bahan_bakar'  => $r->bahan_bakar,
                     'nmr_faktur_jual_beli'  => $r->nmr_faktur_jual_beli,
                     'tgl_faktur_jual_beli'  => $tgl_faktur_jual_beli,
+
+                    // Jika id_jenis_permohonan == 2, ambil dan parse tanggalnya. Jika selain 2, set NULL
+                    'tgl_kir_awal'   => $isPermohonanDua ? $this->parseDate($r->kir_tgl_awal) : null,
+                    'tgl_kir_akhir'  => $isPermohonanDua ? $this->parseDate($r->kir_tgl_akhir) : null,
+                    'tgl_pkb_awal'   => $isPermohonanDua ? $this->parseDate($r->pkb_tgl_awal) : null,
+                    'tgl_pkb_akhir'  => $isPermohonanDua ? $this->parseDate($r->pkb_tgl_akhir) : null,
+                    'tgl_iwkbu_awal' => $isPermohonanDua ? $this->parseDate($r->iwkbu_tgl_awal) : null,
+                    'tgl_iwkbu_akhir' => $isPermohonanDua ? $this->parseDate($r->iwkbu_tgl_akhir) : null
+
                 ]);
 
 

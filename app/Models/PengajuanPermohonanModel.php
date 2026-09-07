@@ -8,46 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PengajuanPermohonanModel extends Model
 {
     use HasFactory;
-    public $table = "tr_permohonan";
-    protected $primarykey = "id_permohonan_izin";
-    protected $fillable = [
-        'id_jenis_permohonan',
-        'id_par_permohonan',
-        'id_trayek',
-        'id_jenis_angkutan',
-        'id_mengangkut',
-        'id_merek_kendaraan',
-        'id_type_kendaraan',
-        'nm_kendaraan',
-        'plat_no_kendaraan',
-        'daya_angkut_orang',
-        'daya_angkut_barang',
-        'thn_pembuatan',
-        'no_rangka',
-        'no_mesin',
-        'id_biodata',
-        'id_badan_usaha',
-        'nm_perusahaan_personal',
-        'nm_pimpinan_pemilik',
-        'alamat_biodata',
-        'email',
-        'no_telp',
-        'tgl_kirim_permohonan',
-        'status_permohonan',
-        'file_kir',
-        'file_stnk',
-        'id_kendaraan_history',
-        'kode_provinsi',
-        'kode_kabkota',
-        'nomor_uji',
-        'warna_tnkb',
-        'bahan_bakar',
-        'kombinasi_yg_diperoleh',
-        'sk_reg_uji_type',
-        'nmr_faktur_jual_beli',
-        'tgl_faktur_jual_beli',
-        'ket_lain'
-    ];
+    public $table = 'tr_permohonan';
+    protected $primarykey = 'id_permohonan_izin';
+    protected $fillable = ['id_jenis_permohonan', 'id_par_permohonan', 'id_trayek', 'id_jenis_angkutan', 'id_mengangkut', 'id_merek_kendaraan', 'id_type_kendaraan', 'nm_kendaraan', 'plat_no_kendaraan', 'daya_angkut_orang', 'daya_angkut_barang', 'thn_pembuatan', 'no_rangka', 'no_mesin', 'id_biodata', 'id_badan_usaha', 'nm_perusahaan_personal', 'nm_pimpinan_pemilik', 'alamat_biodata', 'email', 'no_telp', 'tgl_kirim_permohonan', 'status_permohonan', 'file_kir', 'file_stnk', 'id_kendaraan_history', 'kode_provinsi', 'kode_kabkota', 'nomor_uji', 'warna_tnkb', 'bahan_bakar', 'kombinasi_yg_diperoleh', 'sk_reg_uji_type', 'nmr_faktur_jual_beli', 'tgl_faktur_jual_beli', 'ket_lain', 'tgl_kir_awal', 'tgl_kir_akhir', 'tgl_pkb_awal', 'tgl_pkb_akhir', 'tgl_iwkbu_awal', 'tgl_iwkbu_akhir'];
 
     public function JPermohonanValidasi()
     {

@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables as DataTables;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class DataPermohonanController extends Controller
 {
@@ -403,10 +404,12 @@ class DataPermohonanController extends Controller
     {
         if (request()->ajax()) {
             $row = ValidasiPermohonanModel::where('id_permohonan_izin', $id)->first();
+            $rowPermohonan =  PengajuanPermohonanModel::where('id_permohonan_izin', $id)->first();
             $data = [
-                'title_form' => 'INPUT KARTU PENGAWAS',
-                'id' => $row->id_validasi_permohonan,
-                'row' => $row,
+                'title_form'    => 'INPUT KARTU PENGAWAS',
+                'id'            => $row->id_validasi_permohonan,
+                'row'           => $row,
+                'rowPermohonan' => $rowPermohonan,
             ];
             return view('private.permohonan_data.getModal_kartuInput', $data);
         } else {
@@ -418,7 +421,8 @@ class DataPermohonanController extends Controller
     {
         if (request()->ajax()) {
             $data = [
-                'row' => ValidasiPermohonanModel::where('id_permohonan_izin', $id)->first()
+                'row' => ValidasiPermohonanModel::where('id_permohonan_izin', $id)->first(),
+                'rowPermohonan' => PengajuanPermohonanModel::where('id_permohonan_izin', $id)->first()
             ];
             return view('private.permohonan_data.dataKartuPengawas', $data);
         } else {
@@ -442,46 +446,151 @@ class DataPermohonanController extends Controller
     {
         if (request()->ajax()) {
 
+            // $validator = Validator::make($r->all(), [
+            //     'no_kartu_pengawas' => [
+            //         'required',
+            //         function ($attribute, $value, $fail) use ($id, $r) {
+
+            //             // 👉 Jika id_par_permohonan = 7, LEWATI pengecekan unik
+            //             if ($r->input('id_par_permohonan') == 7) {
+            //                 return;
+            //             }
+
+            //             $exists = ValidasiPermohonanModel::where('no_kartu_pengawas', $value)
+            //                 ->where('id_validasi_permohonan', '!=', $id)
+            //                 ->exists();
+
+            //             if ($exists) {
+            //                 $fail('Nomor Kartu Pengawas sudah ada');
+            //             }
+            //         }
+            //     ],
+
+            //     'tgl_sk' => 'required_unless:id_par_permohonan,7',
+            //     'no_sk' => 'required_unless:id_par_permohonan,7',
+            //     'tgl_awal' => 'required_unless:id_par_permohonan,7',
+            //     'tgl_akhir' => 'required_unless:id_par_permohonan,7',
+            //     'tgl_kir_awal' => $r->input('ck_tgl_kir_awal_clear') !== '0' ? 'required' : '',
+            //     'tgl_kir_akhir' => $r->input('ck_tgl_kir_akhir_clear') !== '0' ? 'required' : '',
+            // ], [
+            //     'no_kartu_pengawas.required' => 'Nomor Kartu Pengawas Tidak Boleh Kosong',
+            //     'tgl_sk.required_unless' => 'Tanggal SK Tidak Boleh Kosong',
+            //     'no_sk.required_unless' => 'Nomor SK Tidak Boleh Kosong',
+            //     'tgl_awal.required_unless' => 'Tanggal Awal Tidak Boleh Kosong',
+
+            //     'tgl_akhir.required_unless' => 'Tanggal Akhir Tidak Boleh Kosong',
+            //     'tgl_kir_awal.required' => 'Tanggal Awal KIR Tidak Boleh Kosong',
+            //     'tgl_kir_akhir.required' => 'Tanggal Akhir KIR Tidak Boleh Kosong',
+            // ]);
+
             $validator = Validator::make($r->all(), [
+
                 'no_kartu_pengawas' => [
                     'required',
                     function ($attribute, $value, $fail) use ($id, $r) {
 
-                        // 👉 Jika id_par_permohonan = 7, LEWATI pengecekan unik
+                        $value = trim($value);
                         if ($r->input('id_par_permohonan') == 7) {
-                            return;
+                            if ($value === '-') {
+                                return;
+                            }
                         }
+                        // ==========================================
+                        // CEK DUPLIKAT
+                        // Untuk selain "-" atau jenis lainnya
+                        // ==========================================
 
-                        $exists = ValidasiPermohonanModel::where('no_kartu_pengawas', $value)
-                            ->where('id_validasi_permohonan', '!=', $id)
-                            ->exists();
+                        $query = ValidasiPermohonanModel::where('no_kartu_pengawas', $value);
 
-                        if ($exists) {
-                            $fail('Nomor Kartu Pengawas sudah ada');
+                        // Jika EDIT, abaikan data miliknya sendiri
+                        if (!empty($id)) {
+                            $query->where('id_validasi_permohonan', '!=', $id);
+                        }
+                        // Jika ditemukan data yang sama
+                        if ($query->exists()) {
+                            $fail('Nomor Kartu Pengawas sudah ada.');
                         }
                     }
                 ],
 
-                //'tgl_sk' => 'required',
-                'tgl_sk' => 'required_unless:id_par_permohonan,7',
-                //'no_sk' => 'required',
-                'no_sk' => 'required_unless:id_par_permohonan,7',
-                'tgl_awal' => 'required_unless:id_par_permohonan,7',
-                'tgl_akhir' => 'required_unless:id_par_permohonan,7',
-                'tgl_kir_awal' => $r->input('ck_tgl_kir_awal_clear') !== '0' ? 'required' : '',
-                //'tgl_kir_akhir' => 'required',
-                'tgl_kir_akhir' => $r->input('ck_tgl_kir_akhir_clear') !== '0' ? 'required' : '',
+                'tgl_sk' => [
+                    'required_unless:id_par_permohonan,7'
+                ],
+
+                'no_sk' => [
+                    'required_unless:id_par_permohonan,7'
+                ],
+
+                'tgl_awal' => [
+                    'required_unless:id_par_permohonan,7'
+                ],
+
+                'tgl_akhir' => [
+                    'required_unless:id_par_permohonan,7'
+                ],
+                'tgl_kir_awal' => [
+                    Rule::requiredIf(
+                        !$r->boolean('ck_tgl_kir_awal_clear')
+                    ),
+                    'nullable'
+                ],
+
+                'tgl_kir_akhir' => [
+                    Rule::requiredIf(
+                        !$r->boolean('ck_tgl_kir_akhir_clear')
+                    ),
+                    'nullable'
+                ],
+
+                'tgl_pkb_awal' => [
+                    Rule::requiredIf(
+                        !$r->boolean('ck_tgl_pkb_awal_clear')
+                    ),
+                    'nullable'
+                ],
+
+                'tgl_pkb_akhir' => [
+                    Rule::requiredIf(
+                        !$r->boolean('ck_tgl_pkb_akhir_clear')
+                    ),
+                    'nullable'
+                ],
+
+                'tgl_iwkbu_awal' => [
+                    Rule::requiredIf(
+                        !$r->boolean('ck_tgl_iwkbu_awal_clear')
+                    ),
+                    'nullable'
+                ],
+
+                'tgl_iwkbu_akhir' => [
+                    Rule::requiredIf(
+                        !$r->boolean('ck_tgl_iwkbu_akhir_clear')
+                    ),
+                    'nullable'
+                ],
+
             ], [
+
+
                 'no_kartu_pengawas.required' => 'Nomor Kartu Pengawas Tidak Boleh Kosong',
                 'tgl_sk.required_unless' => 'Tanggal SK Tidak Boleh Kosong',
-                //'no_sk.required' => 'Nomor SK Tidak Boleh Kosong',
                 'no_sk.required_unless' => 'Nomor SK Tidak Boleh Kosong',
-                //'tgl_awal.required' => 'Tanggal Awal Tidak Boleh Kosong',
                 'tgl_awal.required_unless' => 'Tanggal Awal Tidak Boleh Kosong',
-
                 'tgl_akhir.required_unless' => 'Tanggal Akhir Tidak Boleh Kosong',
                 'tgl_kir_awal.required' => 'Tanggal Awal KIR Tidak Boleh Kosong',
                 'tgl_kir_akhir.required' => 'Tanggal Akhir KIR Tidak Boleh Kosong',
+                'tgl_pkb_awal.required' =>
+                'Tanggal Awal PKB Tidak Boleh Kosong',
+                'tgl_pkb_akhir.required' =>
+                'Tanggal Akhir PKB Tidak Boleh Kosong',
+
+                'tgl_iwkbu_awal.required' =>
+                'Tanggal Awal IWKBU Tidak Boleh Kosong',
+
+                'tgl_iwkbu_akhir.required' =>
+                'Tanggal Akhir IWKBU Tidak Boleh Kosong',
+
             ]);
 
             if ($validator->fails()) {
@@ -533,19 +642,53 @@ class DataPermohonanController extends Controller
                     'no_sk'  => $r->no_sk,
                     'tgl_awal'  => $tgl_awal,
                     'tgl_akhir'  => $tgl_akhir,
-                    'tgl_kir_awal'  => $tgl_kir_awal,
-                    'tgl_kir_akhir'  =>  $tgl_kir_akhir,
-                    'ck_tgl_kir_awal_clear' => $r->input('ck_tgl_kir_awal_clear') == '' ? '1' : '0',
-                    'ck_tgl_kir_akhir_clear' => $r->input('ck_tgl_kir_akhir_clear') == '' ? '1' : '0',
+                    // 'tgl_kir_awal'  => $tgl_kir_awal,
+                    // 'tgl_kir_akhir'  =>  $tgl_kir_akhir,
+                    // 'ck_tgl_kir_awal_clear' => $r->input('ck_tgl_kir_awal_clear') == '' ? '1' : '0',
+                    // 'ck_tgl_kir_akhir_clear' => $r->input('ck_tgl_kir_akhir_clear') == '' ? '1' : '0',
                 ]);
                 if ($post) {
                     $post = PengajuanPermohonanModel::where('id_permohonan_izin', $row->id_permohonan_izin)->update([
-                        'nomor_uji'  =>  $r->nomor_uji,
-                        'kombinasi_yg_diperoleh'  =>  $r->kombinasi_yg_diperoleh,
-                        'sk_reg_uji_type'  =>  $r->sk_reg_uji_type,
-                        'ket_lain'  =>  $r->ket_lain,
-                    ]);
+                        'nomor_uji' => $r->nomor_uji,
+                        'kombinasi_yg_diperoleh' => $r->kombinasi_yg_diperoleh,
+                        'sk_reg_uji_type' => $r->sk_reg_uji_type,
+                        'ket_lain' => $r->ket_lain,
+                        'tgl_kir_awal' => $r->boolean('ck_tgl_kir_awal_clear')
+                            ? null
+                            : ($r->tgl_kir_awal
+                                ? \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_kir_awal)->format('Y-m-d')
+                                : null),
+                        'tgl_kir_akhir' => $r->boolean('ck_tgl_kir_akhir_clear')
+                            ? null
+                            : ($r->tgl_kir_akhir
+                                ? \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_kir_akhir)->format('Y-m-d')
+                                : null),
 
+                        'tgl_pkb_awal' => $r->boolean('ck_tgl_pkb_awal_clear')
+                            ? null
+                            : ($r->tgl_pkb_awal
+                                ? \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_pkb_awal)->format('Y-m-d')
+                                : null),
+
+                        'tgl_pkb_akhir' => $r->boolean('ck_tgl_pkb_akhir_clear')
+                            ? null
+                            : ($r->tgl_pkb_akhir
+                                ? \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_pkb_akhir)->format('Y-m-d')
+                                : null),
+
+                        'tgl_iwkbu_awal' => $r->boolean('ck_tgl_iwkbu_awal_clear')
+                            ? null
+                            : ($r->tgl_iwkbu_awal
+                                ? \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_iwkbu_awal)->format('Y-m-d')
+                                : null),
+
+                        'tgl_iwkbu_akhir' => $r->boolean('ck_tgl_iwkbu_akhir_clear')
+                            ? null
+                            : ($r->tgl_iwkbu_akhir
+                                ? \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_iwkbu_akhir)->format('Y-m-d')
+                                : null),
+
+                    ]);
                     return response()->json([
                         'success' => 'Data berhasil disimpan',
                         'action' => 'storeInputKartu_dataPermohonan'
@@ -572,45 +715,134 @@ class DataPermohonanController extends Controller
 
     public function validasiSelesai(Request $r, $id)
     {
-        if (request()->ajax()) {
-            $tanggal = \Carbon\Carbon::createFromFormat('d-m-Y', $r->tgl_validasi_selesai)
-                ->format('Y-m-d');
-
-
-            $cek = ValidasiPermohonanModel::where('id_permohonan_izin', $id)->first();
-            // echo $cek->id_validasi_permohonan;
-            // echo "<br>";
-            // echo $id;
-            $validator = Validator::make($r->all(), [
-                'tgl_validasi_selesai' => 'required',
-            ], [
-                'tgl_validasi_selesai.required' => 'Tanggal Validasi Tidak Boleh Kosong',
-            ]);
-
-            if ($validator->fails()) {
-                $errors = $validator->errors();
-                return response()->json(['errors' => $errors], 422);
-            } else if (
-                $cek->JPermohonan->id_par_permohonan != 7 && ($cek->no_kartu_pengawas == '-' || $cek->no_kartu_pengawas == '')
-            ) {
-                return response()->json(['errors' => 'Silakan Isi Nomor Kartu Pengawas'], 423);
-            } else {
-                ValidasiPermohonanModel::where('id_validasi_permohonan', $cek->id_validasi_permohonan)->update([
-                    'status_validasi'  => '5',
-                    'tgl_validasi_selesai'  => $tanggal,
-                ]);
-
-                PengajuanPermohonanModel::where('id_permohonan_izin', $id)->update([
-                    'status_permohonan'  => '5',
-                ]);
-                return response()->json([
-                    'success' => 'Data berhasil disimpan dan diproses, terimakasih',
-                    'action' => "validasiSelesai_dataPermohonan"
-                ]);
-            }
-        } else {
+        if (!request()->ajax()) {
             exit('Maaf Tidak Dapat diproses...');
         }
+
+        // =====================================================
+        // VALIDASI INPUT
+        // =====================================================
+        $validator = Validator::make($r->all(), [
+
+            'tgl_validasi_selesai' => [
+                'required',
+                'date_format:d-m-Y',
+            ],
+
+        ], [
+
+            'tgl_validasi_selesai.required' =>
+            'Tanggal Validasi Tidak Boleh Kosong',
+
+            'tgl_validasi_selesai.date_format' =>
+            'Format Tanggal Validasi harus dd-mm-yyyy',
+
+        ]);
+
+
+        if ($validator->fails()) {
+
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+
+        // =====================================================
+        // CARI DATA VALIDASI
+        // =====================================================
+        $cek = ValidasiPermohonanModel::where(
+            'id_permohonan_izin',
+            $id
+        )->first();
+
+
+        if (!$cek) {
+
+            return response()->json([
+                'errors' => 'Data validasi permohonan tidak ditemukan.'
+            ], 404);
+        }
+
+
+        // =====================================================
+        // CEK JENIS PERMOHONAN
+        // =====================================================
+        $idParPermohonan = optional($cek->JPermohonan)
+            ->id_par_permohonan;
+
+
+        // =====================================================
+        // NOMOR KARTU PENGAWAS
+        //
+        // Jika id_par_permohonan != 7
+        // maka nomor kartu wajib diisi
+        // dan tidak boleh "-"
+        // =====================================================
+        if (
+            $idParPermohonan != 7 &&
+            in_array(
+                trim($cek->no_kartu_pengawas ?? ''),
+                ['', '-'],
+                true
+            )
+        ) {
+
+            return response()->json([
+                'errors' => 'Silakan Isi Nomor Kartu Pengawas'
+            ], 423);
+        }
+
+
+        // =====================================================
+        // KONVERSI TANGGAL
+        // =====================================================
+        $tanggal = \Carbon\Carbon::createFromFormat(
+            'd-m-Y',
+            $r->tgl_validasi_selesai
+        )->format('Y-m-d');
+
+
+        // =====================================================
+        // UPDATE VALIDASI
+        // =====================================================
+        ValidasiPermohonanModel::where(
+            'id_validasi_permohonan',
+            $cek->id_validasi_permohonan
+        )->update([
+
+            'status_validasi' => '5',
+
+            'tgl_validasi_selesai' => $tanggal,
+
+        ]);
+
+
+        // =====================================================
+        // UPDATE PENGAJUAN PERMOHONAN
+        // =====================================================
+        PengajuanPermohonanModel::where(
+            'id_permohonan_izin',
+            $id
+        )->update([
+
+            'status_permohonan' => '5',
+
+        ]);
+
+
+        // =====================================================
+        // RESPONSE
+        // =====================================================
+        return response()->json([
+
+            'success' =>
+            'Data berhasil disimpan dan diproses, terimakasih',
+
+            'action' =>
+            'validasiSelesai_dataPermohonan'
+
+        ]);
     }
 
     public function createTolak($id)

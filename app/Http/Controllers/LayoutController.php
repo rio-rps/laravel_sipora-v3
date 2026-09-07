@@ -35,8 +35,7 @@ class LayoutController extends Controller
             $cari_data = $r->cari_data;
 
             $resultPermohonan = PengajuanPermohonanModel::join('bpar_002_kabkota', function ($join) {
-                $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')
-                    ->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
+                $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
             })
                 ->leftJoin('tr_permohonan_002_validasi', function ($join) {
                     $join->on('tr_permohonan_002_validasi.id_permohonan_izin', '=', 'tr_permohonan.id_permohonan_izin');
@@ -47,10 +46,9 @@ class LayoutController extends Controller
                 ->whereIn('tr_permohonan.status_permohonan', ['4', '5'])
                 ->where($cari_field, $cari_data);
 
-
             $data = [
                 'search' => $cari_data,
-                'resultPermohonan' => $resultPermohonan = $resultPermohonan->get(),
+                'resultPermohonan' => ($resultPermohonan = $resultPermohonan->get()),
             ];
             return view('public.content.content-search-show', $data);
             // echo "okeee";
@@ -59,17 +57,16 @@ class LayoutController extends Controller
         }
     }
 
-
     public function mshow_detail($id)
     {
         if (request()->ajax()) {
             $data = [
                 'title_form' => 'LIHAT DATA',
                 'row' => PengajuanPermohonanModel::Join('bpar_002_kabkota', function ($join) {
-                    $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')
-                        ->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
+                    $join->on('bpar_002_kabkota.kode_provinsi', '=', 'tr_permohonan.kode_provinsi')->on('bpar_002_kabkota.kode_kabkota', '=', 'tr_permohonan.kode_kabkota');
                 })
-                    ->where('id_permohonan_izin', $id)->first()
+                    ->where('id_permohonan_izin', $id)
+                    ->first(),
             ];
             return view('public.content.content-search-show-detail', $data);
         } else {

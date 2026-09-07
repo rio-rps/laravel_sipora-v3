@@ -51,10 +51,11 @@
                  <th width="1%">NO</th>
                  <th>TANGGAL VALIDASI</th>
                  <th>NOMOR KARTU PENGAWAS</th>
-                 <th>Tanggal SK<br>Nomor SK</th>
-                 <th><span class="single-line">Tgl Mulai SK</span><br><span class="single-line">Tgl Akhir SK</span>
-                 </th>
-                 <th><span class="single-line">Tgl KIR Awal</span><br><span class="single-line">Tgl KIR Akhir</span>
+                 <th>Nomor SK<br>Tanggal SK</th>
+                 <th><span class="single-line">Tgl Mulai SK</span><br><span class="single-line">Tgl Akhir SK</span></th>
+                 <th><span class="single-line">Tgl KIR Awal</span><br><span class="single-line">Tgl KIR Akhir</span></th>
+                 <th><span class="single-line">Tgl PKB Awal</span><br><span class="single-line">Tgl PKB Akhir</span></th>
+                 <th><span class="single-line">Tgl IWKBU Awal</span><br><span class="single-line">Tgl IWKBU Akhir</span>
                  </th>
                  <th>PERUSAHAAN</th>
                  <th>PIMPINAN</th>
@@ -81,8 +82,8 @@
                          {{ $resultPermohonanAll->no_kartu_pengawas }}
                      </td>
                      <td>
-                         {{ cek_ddmmyy_v1($resultPermohonanAll->tgl_sk) }}<br>
-                         {{ $resultPermohonanAll->no_sk }}
+                         {{ $resultPermohonanAll->no_sk }}<br>
+                         {{ cek_ddmmyy_v1($resultPermohonanAll->tgl_sk) }}
                      </td>
                      <td>
                          {{ $resultPermohonanAll->tgl_awal ? cek_ddmmyy_v1($resultPermohonanAll->tgl_awal) : '-' }}
@@ -92,7 +93,17 @@
                      <td>
                          {{ $resultPermohonanAll->tgl_kir_awal ? cek_ddmmyy_v1($resultPermohonanAll->tgl_kir_awal) : '-' }}
                          <br>
-                         {{ $resultPermohonanAll->tgl_Kir_akhir ? cek_ddmmyy_v1($resultPermohonanAll->tgl_Kir_akhir) : '-' }}
+                         {{ $resultPermohonanAll->tgl_kir_akhir ? cek_ddmmyy_v1($resultPermohonanAll->tgl_kir_akhir) : '-' }}
+                     </td>
+                     <td>
+                         {{ $resultPermohonanAll->tgl_pkb_awal ? cek_ddmmyy_v1($resultPermohonanAll->tgl_pkb_awal) : '-' }}
+                         <br>
+                         {{ $resultPermohonanAll->tgl_pkb_akhir ? cek_ddmmyy_v1($resultPermohonanAll->tgl_pkb_akhir) : '-' }}
+                     </td>
+                     <td>
+                         {{ $resultPermohonanAll->tgl_iwkbu_awal ? cek_ddmmyy_v1($resultPermohonanAll->tgl_iwkbu_awal) : '-' }}
+                         <br>
+                         {{ $resultPermohonanAll->tgl_iwkbu_akhir ? cek_ddmmyy_v1($resultPermohonanAll->tgl_iwkbu_akhir) : '-' }}
                      </td>
                      <td>
                          {{ $resultPermohonanAll->nm_perusahaan_personal }}
