@@ -153,6 +153,8 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
         $data[] = $row->warna_tnkb ?? '-';
         $data[] = $row->bahan_bakar ?? '-';
         $data[] = $row->nm_kabkota ?? '-';
+        $data[] = $row->id_permohonan_izin ?? '-';
+        $data[] = $row->id_validasi_permohonan ?? '-';
 
         return $data;
     }
@@ -188,7 +190,7 @@ class PermohonanFilterExport implements FromCollection, WithHeadings, WithMappin
             $headings[] = 'Tanggal IWKBU Akhir';
         }
 
-        $headings = array_merge($headings, ['Nama Perusahaan', 'Nama Pimpinan', 'Merek Kendaraan', 'Tipe Kendaraan', 'Nama Kendaraan', 'Tahun Pembuatan', 'No Rangka', 'No Mesin', 'Jenis Permohonan', 'Permohonan', 'Jenis Angkutan', 'Trayek', 'Mengangkut', 'Daya Angkut Orang', 'Daya Angkut Barang / Kg', 'No Plat Kendaraan', 'Warna TNKB', 'Bahan Bakar', 'Kab/Kota']);
+        $headings = array_merge($headings, ['Nama Perusahaan', 'Nama Pimpinan', 'Merek Kendaraan', 'Tipe Kendaraan', 'Nama Kendaraan', 'Tahun Pembuatan', 'No Rangka', 'No Mesin', 'Jenis Permohonan', 'Permohonan', 'Jenis Angkutan', 'Trayek', 'Mengangkut', 'Daya Angkut Orang', 'Daya Angkut Barang / Kg', 'No Plat Kendaraan', 'Warna TNKB', 'Bahan Bakar', 'Kab/Kota', 'kd_prmhn', 'kd_vdasi_prmhn']);
 
         return $headings;
     }
